@@ -18,6 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useLocale } from "@/lib/i18n/locale-context";
 import type { Job, JobContent } from "@/db/schema";
 
 type Props = {
@@ -39,28 +40,30 @@ const item = {
 };
 
 export function JobContentSections({ job, content }: Props) {
+  const { t } = useLocale();
+
   const blocks = [
     {
       key: "tasks",
-      title: "Tööülesanded",
+      title: t.jobDetailTasks,
       icon: ClipboardList,
       items: content.responsibilities,
     },
     {
       key: "expectations",
-      title: "Ootused",
+      title: t.jobDetailExpectations,
       icon: Briefcase,
       items: content.requirements,
     },
     {
       key: "nice",
-      title: "Kasuks tuleb",
+      title: t.jobDetailNice,
       icon: Sparkles,
       items: content.niceToHave,
     },
     {
       key: "offer",
-      title: "Omalt poolt pakume",
+      title: t.jobDetailWeOffer,
       icon: HeartHandshake,
       items: content.weOffer,
       highlight:
@@ -73,17 +76,17 @@ export function JobContentSections({ job, content }: Props) {
       <div className="mx-auto max-w-3xl space-y-8">
         <div className="space-y-2 text-center sm:text-left">
           <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-            Ametikoht
+            {t.jobDetailEyebrow}
           </p>
           <h2 className="font-heading text-2xl font-bold text-neutral-950 sm:text-3xl">
-            Üks leht — kõik oluline
+            {t.jobDetailOnePager}
           </h2>
           <p className="text-pretty text-neutral-700">
-            Töökoht:{" "}
+            {t.jobDetailLocLabel}{" "}
             <span className="font-medium text-neutral-900">
               {content.location}
             </span>
-            . Kandideerimise tähtaeg:{" "}
+            . {t.jobDetailDeadLabel}{" "}
             <span className="font-medium text-neutral-900">
               {content.deadlineDisplay}
             </span>
@@ -140,15 +143,15 @@ export function JobContentSections({ job, content }: Props) {
         >
           <span className="inline-flex items-center gap-2">
             <Wrench className="size-4 text-neutral-600" aria-hidden />
-            Masinaehitus &amp; testimine
+            {t.jobDetailBadge1}
           </span>
           <span className="inline-flex items-center gap-2">
             <Cpu className="size-4 text-neutral-600" aria-hidden />
-            CAD &amp; automaatika keskkond
+            {t.jobDetailBadge2}
           </span>
           <span className="inline-flex items-center gap-2">
             <Truck className="size-4 text-neutral-600" aria-hidden />
-            Reisivalmidus
+            {t.jobDetailBadge3}
           </span>
         </motion.div>
       </div>

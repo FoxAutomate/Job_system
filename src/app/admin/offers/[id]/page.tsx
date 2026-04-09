@@ -1,11 +1,10 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { eq } from "drizzle-orm";
-
+import { AdminOfferPageHeader } from "@/components/admin/AdminOfferPageHeader";
 import { JobOfferForm } from "@/components/admin/JobOfferForm";
 import { getDb } from "@/db";
 import { jobs } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth-guard";
+import { eq } from "drizzle-orm";
+import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -21,15 +20,7 @@ export default async function EditOfferPage({ params }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <Link
-          href="/admin/offers"
-          className="text-sm text-neutral-600 hover:underline"
-        >
-          ← Kuulutused
-        </Link>
-        <h1 className="mt-2 font-heading text-2xl font-bold">Muuda kuulutust</h1>
-      </div>
+      <AdminOfferPageHeader variant="edit" />
       <JobOfferForm job={job} />
     </div>
   );

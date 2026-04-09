@@ -6,14 +6,19 @@ import { updateDefaultApplicationEmail } from "@/actions/settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 export function SettingsEmailForm({ initialEmail }: { initialEmail: string }) {
   const [state, formAction] = useActionState(updateDefaultApplicationEmail, null);
+  const { t } = useLocale();
 
   return (
-    <form action={formAction} className="space-y-3 rounded-lg border border-neutral-200 bg-white p-4">
+    <form
+      action={formAction}
+      className="space-y-3 rounded-lg border border-neutral-200 bg-white p-4"
+    >
       <Label htmlFor="defaultApplicationEmail">
-        Vaikimisi e-post üldiste kandideerimiste jaoks
+        {t.adminSettingsEmailLabel}
       </Label>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
         <Input
@@ -25,11 +30,11 @@ export function SettingsEmailForm({ initialEmail }: { initialEmail: string }) {
           className="min-h-10 sm:max-w-md"
         />
         <Button type="submit" variant="secondary">
-          Salvesta
+          {t.adminSettingsSave}
         </Button>
       </div>
       {state?.ok ? (
-        <p className="text-sm text-emerald-700">Salvestatud.</p>
+        <p className="text-sm text-emerald-700">{t.adminSettingsSaved}</p>
       ) : null}
       {state && !state.ok ? (
         <p className="text-sm text-destructive">{state.message}</p>

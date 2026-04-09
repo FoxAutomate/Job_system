@@ -76,6 +76,7 @@ export type Messages = {
   adminLoginLoading: string;
   adminToastStatusOk: string;
   adminToastNotesOk: string;
+  adminToastCvRatingOk: string;
   validationFullNameMin: string;
   validationFullNameMax: string;
   validationEmailRequired: string;
@@ -88,6 +89,86 @@ export type Messages = {
   serverCvType: string;
   serverJobInactive: string;
   serverFieldsHint: string;
+  /** Admin dashboard & CRM */
+  adminDashTitle: string;
+  adminDashSubtitle: string;
+  adminDashJobsCard: string;
+  adminDashAppsCard: string;
+  adminDashNewOffer: string;
+  adminDashManageOffers: string;
+  adminDashOpenApps: string;
+  adminOffersTitle: string;
+  adminOffersSub: string;
+  adminOffersNewBtn: string;
+  adminOffersHiddenBadge: string;
+  adminOffersPublicLink: string;
+  adminOffersEmpty: string;
+  adminOffersEmptyLink: string;
+  adminAppsTitle: string;
+  adminAppsSub: string;
+  adminBackToOffers: string;
+  adminOfferNewTitle: string;
+  adminOfferEditTitle: string;
+  adminFormSlug: string;
+  adminFormSlugPh: string;
+  adminFormTitleLabel: string;
+  adminFormShortDesc: string;
+  adminFormActive: string;
+  adminFormShowSalary: string;
+  adminFormSalaryRange: string;
+  adminFormSalaryPh: string;
+  adminFormEmailTo: string;
+  adminFormSectionPage: string;
+  adminFormTagline: string;
+  adminFormTaglinePh: string;
+  adminFormHeroIntro: string;
+  adminFormLocation: string;
+  adminFormDeadlineText: string;
+  adminFormResp: string;
+  adminFormReq: string;
+  adminFormNice: string;
+  adminFormWeOffer: string;
+  adminFormListLineHint: string;
+  adminFormSalaryCardLine: string;
+  adminFormFooterEmail: string;
+  adminFormSaved: string;
+  adminFormSubmitOffer: string;
+  adminSettingsEmailLabel: string;
+  adminSettingsSave: string;
+  adminSettingsSaved: string;
+  adminJobRowActive: string;
+  adminJobRowSalary: string;
+  adminJobDeleteConfirm: string;
+  adminJobDelete: string;
+  adminAppTblDate: string;
+  adminAppTblName: string;
+  adminAppTblOffer: string;
+  adminAppTblStatus: string;
+  adminAppTblNotes: string;
+  adminAppTblCv: string;
+  adminAppTblCvRating: string;
+  adminAppGeneral: string;
+  adminAppCvDownload: string;
+  adminAppSaveNotes: string;
+  adminCrmNew: string;
+  adminCrmNext: string;
+  adminCrmInteresting: string;
+  adminCrmRejected: string;
+  adminCrmHired: string;
+  jobDetailEyebrow: string;
+  jobDetailOnePager: string;
+  jobDetailLocLabel: string;
+  jobDetailDeadLabel: string;
+  jobDetailTasks: string;
+  jobDetailExpectations: string;
+  jobDetailNice: string;
+  jobDetailWeOffer: string;
+  jobDetailBadge1: string;
+  jobDetailBadge2: string;
+  jobDetailBadge3: string;
+  adminAppFilterLabel: string;
+  adminAppFilterAll: string;
+  adminCvRatingClear: string;
 };
 
 const et: Messages = {
@@ -177,6 +258,7 @@ const et: Messages = {
   adminLoginLoading: "Laadin…",
   adminToastStatusOk: "Olek uuendatud",
   adminToastNotesOk: "Märkmed salvestatud",
+  adminToastCvRatingOk: "CV hinne salvestatud",
   validationFullNameMin: "Palun sisesta vähemalt 2 tähemärki.",
   validationFullNameMax: "Nimi on liiga pikk.",
   validationEmailRequired: "E-post on kohustuslik.",
@@ -191,6 +273,86 @@ const et: Messages = {
     "Lubatud on ainult PDF, DOC või DOCX failid. / Only PDF, DOC, or DOCX files are allowed.",
   serverJobInactive: "See tööpakkumine ei ole enam aktiivne.",
   serverFieldsHint: "Palun kontrolli väljasid. / Please check the fields.",
+  adminDashTitle: "Haldus",
+  adminDashSubtitle: "Cannery Careers — kuulutused ja kandidaadid",
+  adminDashJobsCard: "Kuulutused",
+  adminDashAppsCard: "Kandideerimised",
+  adminDashNewOffer: "+ Uus kuulutus",
+  adminDashManageOffers: "Halda kuulutusi",
+  adminDashOpenApps: "Kandidaadid",
+  adminOffersTitle: "Kuulutused",
+  adminOffersSub: "Muuda aktiivsust, palka või ava muutmiseks",
+  adminOffersNewBtn: "+ Uus",
+  adminOffersHiddenBadge: "Peidetud",
+  adminOffersPublicLink: "Ava avalik leht",
+  adminOffersEmpty: "Kuulutusi pole.",
+  adminOffersEmptyLink: "Loo esimene",
+  adminAppsTitle: "Kandidaadid",
+  adminAppsSub: "CRM: staatus ja märkmed",
+  adminBackToOffers: "← Kuulutused",
+  adminOfferNewTitle: "Uus kuulutus",
+  adminOfferEditTitle: "Muuda kuulutust",
+  adminFormSlug: "Slug (URL) *",
+  adminFormSlugPh: "villimismasinate-koostaja-tehnik",
+  adminFormTitleLabel: "Pealkiri *",
+  adminFormShortDesc: "Lühikirjeldus (nimekiri) *",
+  adminFormActive: "Aktiivne",
+  adminFormShowSalary: "Näita palka",
+  adminFormSalaryRange: "Palga vahemik",
+  adminFormSalaryPh: "1400–1700 € / kuu",
+  adminFormEmailTo: "E-post vastuvõtt *",
+  adminFormSectionPage: "Lehe sisu",
+  adminFormTagline: "Ribatekst (hero)",
+  adminFormTaglinePh: "Cannery OÜ · Harjumaa",
+  adminFormHeroIntro: "Sissejuhatus *",
+  adminFormLocation: "Asukoht *",
+  adminFormDeadlineText: "Tähtaeg (tekst) *",
+  adminFormResp: "Tööülesanded (üks rida = üks punkt) *",
+  adminFormReq: "Ootused (üks rida = üks punkt) *",
+  adminFormNice: "Kasuks tuleb *",
+  adminFormWeOffer: "Pakume *",
+  adminFormListLineHint: "Üks rida = üks loendipunkt",
+  adminFormSalaryCardLine: "Palga rida (kaardi all)",
+  adminFormFooterEmail: "Jalus / kontakt e-post (valikuline)",
+  adminFormSaved: "Salvestatud.",
+  adminFormSubmitOffer: "Salvesta kuulutus",
+  adminSettingsEmailLabel: "Vaikimisi e-post üldiste kandideerimiste jaoks",
+  adminSettingsSave: "Salvesta",
+  adminSettingsSaved: "Salvestatud.",
+  adminJobRowActive: "Aktiivne",
+  adminJobRowSalary: "Palk",
+  adminJobDeleteConfirm:
+    "Kustuta kuulutus? Kandideerimised jäävad alles (seos eemaldatakse).",
+  adminJobDelete: "Kustuta",
+  adminAppTblDate: "Kuupäev",
+  adminAppTblName: "Nimi",
+  adminAppTblOffer: "Kuulutus",
+  adminAppTblStatus: "Staatus",
+  adminAppTblNotes: "Märkmed",
+  adminAppTblCv: "CV",
+  adminAppTblCvRating: "CV hinne",
+  adminAppGeneral: "Üldine",
+  adminAppCvDownload: "Laadi alla",
+  adminAppSaveNotes: "Salvesta märkmed",
+  adminCrmNew: "Uus",
+  adminCrmNext: "Järgmine etapp",
+  adminCrmInteresting: "Huvitav",
+  adminCrmRejected: "Tagasi lükatud",
+  adminCrmHired: "Tööle võetud",
+  jobDetailEyebrow: "Ametikoht",
+  jobDetailOnePager: "Üks leht — kõik oluline",
+  jobDetailLocLabel: "Töökoht:",
+  jobDetailDeadLabel: "Kandideerimise tähtaeg:",
+  jobDetailTasks: "Tööülesanded",
+  jobDetailExpectations: "Ootused",
+  jobDetailNice: "Kasuks tuleb",
+  jobDetailWeOffer: "Omalt poolt pakume",
+  jobDetailBadge1: "Masinaehitus & testimine",
+  jobDetailBadge2: "CAD & automaatika keskkond",
+  jobDetailBadge3: "Reisivalmidus",
+  adminAppFilterLabel: "Filtreeri kuulutuse järgi",
+  adminAppFilterAll: "Kõik kuulutused",
+  adminCvRatingClear: "Tühista hinne",
 };
 
 const en: Messages = {
@@ -279,6 +441,7 @@ const en: Messages = {
   adminLoginLoading: "Loading…",
   adminToastStatusOk: "Status updated",
   adminToastNotesOk: "Notes saved",
+  adminToastCvRatingOk: "CV score saved",
   validationFullNameMin: "Please enter at least 2 characters.",
   validationFullNameMax: "Name is too long.",
   validationEmailRequired: "Email is required.",
@@ -293,6 +456,86 @@ const en: Messages = {
     "Only PDF, DOC, or DOCX files are allowed. / Lubatud on ainult PDF, DOC või DOCX.",
   serverJobInactive: "This job listing is no longer active.",
   serverFieldsHint: "Please check the fields. / Palun kontrolli väljasid.",
+  adminDashTitle: "Admin",
+  adminDashSubtitle: "Cannery Careers — job posts and candidates",
+  adminDashJobsCard: "Job posts",
+  adminDashAppsCard: "Applications",
+  adminDashNewOffer: "+ New job post",
+  adminDashManageOffers: "Manage job posts",
+  adminDashOpenApps: "Candidates",
+  adminOffersTitle: "Job posts",
+  adminOffersSub: "Toggle visibility, salary, or open to edit",
+  adminOffersNewBtn: "+ New",
+  adminOffersHiddenBadge: "Hidden",
+  adminOffersPublicLink: "Open public page",
+  adminOffersEmpty: "No job posts yet.",
+  adminOffersEmptyLink: "Create the first one",
+  adminAppsTitle: "Candidates",
+  adminAppsSub: "CRM: status and notes",
+  adminBackToOffers: "← Job posts",
+  adminOfferNewTitle: "New job post",
+  adminOfferEditTitle: "Edit job post",
+  adminFormSlug: "Slug (URL) *",
+  adminFormSlugPh: "filling-line-technician",
+  adminFormTitleLabel: "Title *",
+  adminFormShortDesc: "Short description (for listings) *",
+  adminFormActive: "Active",
+  adminFormShowSalary: "Show salary",
+  adminFormSalaryRange: "Salary range",
+  adminFormSalaryPh: "€1,400–1,700 / month",
+  adminFormEmailTo: "Applications inbox email *",
+  adminFormSectionPage: "Page content",
+  adminFormTagline: "Tagline (hero)",
+  adminFormTaglinePh: "Cannery OÜ · Harju County",
+  adminFormHeroIntro: "Introduction *",
+  adminFormLocation: "Location *",
+  adminFormDeadlineText: "Deadline (display text) *",
+  adminFormResp: "Responsibilities (one line = one bullet) *",
+  adminFormReq: "Requirements (one line = one bullet) *",
+  adminFormNice: "Nice to have *",
+  adminFormWeOffer: "We offer *",
+  adminFormListLineHint: "One line = one bullet",
+  adminFormSalaryCardLine: "Salary line (under card)",
+  adminFormFooterEmail: "Footer / contact email (optional)",
+  adminFormSaved: "Saved.",
+  adminFormSubmitOffer: "Save job post",
+  adminSettingsEmailLabel: "Default email for general applications",
+  adminSettingsSave: "Save",
+  adminSettingsSaved: "Saved.",
+  adminJobRowActive: "Active",
+  adminJobRowSalary: "Salary",
+  adminJobDeleteConfirm:
+    "Delete this job post? Applications are kept (link removed).",
+  adminJobDelete: "Delete",
+  adminAppTblDate: "Date",
+  adminAppTblName: "Name",
+  adminAppTblOffer: "Listing",
+  adminAppTblStatus: "Status",
+  adminAppTblNotes: "Notes",
+  adminAppTblCv: "CV",
+  adminAppTblCvRating: "CV score",
+  adminAppGeneral: "General",
+  adminAppCvDownload: "Download",
+  adminAppSaveNotes: "Save notes",
+  adminCrmNew: "New",
+  adminCrmNext: "Next stage",
+  adminCrmInteresting: "Interesting",
+  adminCrmRejected: "Rejected",
+  adminCrmHired: "Hired",
+  jobDetailEyebrow: "Role",
+  jobDetailOnePager: "One page — everything that matters",
+  jobDetailLocLabel: "Location:",
+  jobDetailDeadLabel: "Application deadline:",
+  jobDetailTasks: "Responsibilities",
+  jobDetailExpectations: "Requirements",
+  jobDetailNice: "Nice to have",
+  jobDetailWeOffer: "What we offer",
+  jobDetailBadge1: "Machine build & testing",
+  jobDetailBadge2: "CAD & automation environment",
+  jobDetailBadge3: "Willingness to travel",
+  adminAppFilterLabel: "Filter by job post",
+  adminAppFilterAll: "All job posts",
+  adminCvRatingClear: "Clear score",
 };
 
 export const messages: Record<Locale, Messages> = { et, en };

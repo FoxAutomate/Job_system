@@ -4,12 +4,10 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import {
+  updateApplicationCvRating,
   updateApplicationNotes,
   updateApplicationStatus,
 } from "@/actions/applications";
-import { useLocale } from "@/lib/i18n/locale-context";
-import type { Application, ApplicationStatus } from "@/db/schema";
-import { APPLICATION_STATUS_LABELS } from "@/lib/admin-labels";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -27,6 +25,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { useLocale } from "@/lib/i18n/locale-context";
+import { applicationStatusLabel } from "@/lib/i18n/crm-status";
+import { cn } from "@/lib/utils";
+import type { Application, ApplicationStatus } from "@/db/schema";
 
 type Row = Application & { jobTitle: string | null };
 
@@ -38,6 +40,19 @@ const statuses: ApplicationStatus[] = [
   "hired",
 ];
 
+/** 1 = sad red … 5 = happy green */
+const CV_FACES: {
+  score: number;
+  emoji: string;
+  activeClass: string;
+}[] = [
+  { score: 1, emoji: "😢", activeClass: "ring-red-500 bg-red-50" },
+  { score: 2, emoji: "😕", activeClass: "ring-orange-400 bg-orange-50" },
+  { score: 3, emoji: "😐", activeClass: "ring-amber-400 bg-amber-50" },
+  { score: 4, emoji: "🙂", activeClass: "ring-lime-500 bg-lime-50" },
+  { score: 5, emoji: "🤩", activeClass: "ring-green-500 bg-green-50" },
+];
+
 export function ApplicationsTable({
   rows,
   highlightId,
@@ -45,9 +60,11 @@ export function ApplicationsTable({
   rows: Row[];
   highlightId?: string;
 }) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [pending, startTransition] = useTransition();
   const highlighted = useRef(false);
+
+  const dateLocale = locale === "en" ? "en-GB" : "et-EE";
 
   useEffect(() => {
     if (!highlightId || highlighted.current) return;
@@ -65,12 +82,15 @@ export function ApplicationsTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Kuupäev</TableHead>
-            <TableHead>Nimi</TableHead>
-            <TableHead>Kuulutus</TableHead>
-            <TableHead>Staatus</TableHead>
-            <TableHead className="min-w-[200px]">Märkmed</TableHead>
-            <TableHead>CV</TableHead>
+            <TableHead>{t.adminAppTblDate}</TableHead>
+            <TableHead>{t.adminAppTblName}</TableHead>
+            <TableHead>{t.adminAppTblOffer}</TableHead>
+            <TableHead>{t.adminAppTblStatus}</TableHead>
+            <TableHead className="min-w-[220px]">
+              {t.adminAppTblCvRating}
+            </TableHead>
+            <TableHead>{t.adminAppTblCv}</TableHead>
+            <TableHead className="min-w-[200px]">{t.adminAppTblNotes}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -83,7 +103,7 @@ export function ApplicationsTable({
               }
             >
               <TableCell className="whitespace-nowrap text-sm text-neutral-600">
-                {new Date(a.createdAt ?? "").toLocaleString("et-EE")}
+                {new Date(a.createdAt ?? "").toLocaleString(dateLocale)}
               </TableCell>
               <TableCell>
                 <div className="font-medium">{a.name}</div>
@@ -92,7 +112,7 @@ export function ApplicationsTable({
               </TableCell>
               <TableCell className="max-w-[140px] text-sm">
                 {a.jobTitle ?? (
-                  <span className="text-neutral-400">Üldine</span>
+                  <span className="text-neutral-400">{t.adminAppGeneral}</span>
                 )}
               </TableCell>
               <TableCell>
@@ -119,14 +139,17 @@ export function ApplicationsTable({
                   <SelectContent>
                     {statuses.map((s) => (
                       <SelectItem key={s} value={s}>
-                        {APPLICATION_STATUS_LABELS[s]}
+                        {applicationStatusLabel(locale, s)}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </TableCell>
               <TableCell>
-                <NotesCell id={a.id} initialNotes={a.notes} />
+                <CvRatingCell
+                  applicationId={a.id}
+                  initialRating={a.cvRating ?? null}
+                />
               </TableCell>
               <TableCell>
                 {a.cvUrl ? (
@@ -136,16 +159,84 @@ export function ApplicationsTable({
                     rel="noopener noreferrer"
                     className="text-sm font-medium text-amber-900 underline"
                   >
-                    {a.cvFileName ?? "Laadi alla"}
+                    {a.cvFileName ?? t.adminAppCvDownload}
                   </a>
                 ) : (
                   <span className="text-neutral-400">—</span>
                 )}
               </TableCell>
+              <TableCell>
+                <NotesCell id={a.id} initialNotes={a.notes} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+    </div>
+  );
+}
+
+function CvRatingCell({
+  applicationId,
+  initialRating,
+}: {
+  applicationId: string;
+  initialRating: number | null;
+}) {
+  const { t } = useLocale();
+  const [value, setValue] = useState<number | null>(initialRating);
+  const [pending, startTransition] = useTransition();
+
+  return (
+    <div className="flex flex-wrap items-center gap-1">
+      {CV_FACES.map(({ score, emoji, activeClass }) => (
+        <button
+          key={score}
+          type="button"
+          disabled={pending}
+          title={`${score}/5`}
+          onClick={() => {
+            startTransition(async () => {
+              const r = await updateApplicationCvRating(applicationId, score);
+              if (r.ok) {
+                setValue(score);
+                toast.success(t.adminToastCvRatingOk);
+              } else {
+                toast.error(r.message);
+              }
+            });
+          }}
+          className={cn(
+            "flex size-9 items-center justify-center rounded-lg border border-transparent text-xl leading-none transition hover:opacity-90",
+            value === score
+              ? cn("ring-2", activeClass)
+              : "bg-neutral-50 opacity-70 hover:bg-neutral-100 hover:opacity-100"
+          )}
+        >
+          <span aria-hidden>{emoji}</span>
+          <span className="sr-only">
+            {score}/5
+          </span>
+        </button>
+      ))}
+      <button
+        type="button"
+        disabled={pending || value === null}
+        onClick={() => {
+          startTransition(async () => {
+            const r = await updateApplicationCvRating(applicationId, null);
+            if (r.ok) {
+              setValue(null);
+              toast.success(t.adminToastCvRatingOk);
+            } else {
+              toast.error(r.message);
+            }
+          });
+        }}
+        className="ml-1 rounded px-1.5 py-0.5 text-xs text-neutral-500 underline decoration-neutral-300 hover:text-neutral-800 disabled:opacity-30"
+      >
+        {t.adminCvRatingClear}
+      </button>
     </div>
   );
 }
@@ -187,7 +278,7 @@ function NotesCell({
           });
         }}
       >
-        Salvesta märkmed
+        {t.adminAppSaveNotes}
       </Button>
     </div>
   );

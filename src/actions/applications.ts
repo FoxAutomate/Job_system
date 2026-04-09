@@ -191,3 +191,27 @@ export async function updateApplicationNotes(
     return { ok: false, message: "Could not save notes." };
   }
 }
+
+export async function updateApplicationCvRating(
+  applicationId: string,
+  rating: number | null
+): Promise<{ ok: true } | { ok: false; message: string }> {
+  try {
+    await requireAdmin();
+    if (
+      rating !== null &&
+      (!Number.isInteger(rating) || rating < 1 || rating > 5)
+    ) {
+      return { ok: false, message: "Rating must be 1–5 or cleared." };
+    }
+    const db = getDb();
+    await db
+      .update(applications)
+      .set({ cvRating: rating })
+      .where(eq(applications.id, applicationId));
+    revalidatePath("/admin/applications");
+    return { ok: true };
+  } catch {
+    return { ok: false, message: "Could not update CV score." };
+  }
+}

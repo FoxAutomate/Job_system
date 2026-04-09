@@ -1,5 +1,6 @@
 import {
   boolean,
+  integer,
   jsonb,
   pgTable,
   text,
@@ -63,6 +64,8 @@ export const applications = pgTable("applications", {
   cvFileName: text("cv_file_name"),
   status: text("status").notNull().default("new").$type<ApplicationStatus>(),
   notes: text("notes").notNull().default(""),
+  /** Admin-only CV quality score 1–5 (null = not rated) */
+  cvRating: integer("cv_rating"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 

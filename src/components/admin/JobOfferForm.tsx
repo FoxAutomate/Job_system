@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useLocale } from "@/lib/i18n/locale-context";
 import type { Job } from "@/db/schema";
 
 type Props = {
@@ -16,6 +17,7 @@ type Props = {
 export function JobOfferForm({ job }: Props) {
   const c = job?.content;
   const [state, formAction] = useActionState(upsertJob, null);
+  const { t } = useLocale();
 
   return (
     <form action={formAction} className="space-y-8">
@@ -23,18 +25,18 @@ export function JobOfferForm({ job }: Props) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="slug">Slug (URL) *</Label>
+          <Label htmlFor="slug">{t.adminFormSlug}</Label>
           <Input
             id="slug"
             name="slug"
             required
             defaultValue={job?.slug ?? ""}
-            placeholder="villimismasinate-koostaja-tehnik"
+            placeholder={t.adminFormSlugPh}
             className="min-h-10 font-mono text-sm"
           />
         </div>
         <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="title">Pealkiri *</Label>
+          <Label htmlFor="title">{t.adminFormTitleLabel}</Label>
           <Input
             id="title"
             name="title"
@@ -44,7 +46,7 @@ export function JobOfferForm({ job }: Props) {
           />
         </div>
         <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="shortDescription">Lühikirjeldus (nimekiri) *</Label>
+          <Label htmlFor="shortDescription">{t.adminFormShortDesc}</Label>
           <Textarea
             id="shortDescription"
             name="shortDescription"
@@ -62,7 +64,7 @@ export function JobOfferForm({ job }: Props) {
               defaultChecked={job?.active ?? true}
               className="size-4 rounded border-neutral-300"
             />
-            Aktiivne
+            {t.adminFormActive}
           </label>
           <label className="flex items-center gap-2 text-sm font-medium">
             <input
@@ -72,20 +74,20 @@ export function JobOfferForm({ job }: Props) {
               defaultChecked={job?.showSalary ?? true}
               className="size-4 rounded border-neutral-300"
             />
-            Näita palka
+            {t.adminFormShowSalary}
           </label>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="salaryRange">Palga vahemik</Label>
+          <Label htmlFor="salaryRange">{t.adminFormSalaryRange}</Label>
           <Input
             id="salaryRange"
             name="salaryRange"
             defaultValue={job?.salaryRange ?? ""}
-            placeholder="1400–1700 € / kuu"
+            placeholder={t.adminFormSalaryPh}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="emailTo">E-post vastuvõtt *</Label>
+          <Label htmlFor="emailTo">{t.adminFormEmailTo}</Label>
           <Input
             id="emailTo"
             name="emailTo"
@@ -97,18 +99,18 @@ export function JobOfferForm({ job }: Props) {
       </div>
 
       <div className="space-y-4 border-t border-neutral-200 pt-6">
-        <h3 className="text-lg font-semibold">Lehe sisu</h3>
+        <h3 className="text-lg font-semibold">{t.adminFormSectionPage}</h3>
         <div className="space-y-2">
-          <Label htmlFor="tagline">Ribatekst (hero)</Label>
+          <Label htmlFor="tagline">{t.adminFormTagline}</Label>
           <Input
             id="tagline"
             name="tagline"
             defaultValue={c?.tagline ?? ""}
-            placeholder="Cannery OÜ · Harjumaa"
+            placeholder={t.adminFormTaglinePh}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="heroIntro">Sissejuhatus *</Label>
+          <Label htmlFor="heroIntro">{t.adminFormHeroIntro}</Label>
           <Textarea
             id="heroIntro"
             name="heroIntro"
@@ -119,7 +121,7 @@ export function JobOfferForm({ job }: Props) {
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="location">Asukoht *</Label>
+            <Label htmlFor="location">{t.adminFormLocation}</Label>
             <Input
               id="location"
               name="location"
@@ -128,7 +130,7 @@ export function JobOfferForm({ job }: Props) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="deadlineDisplay">Tähtaeg (tekst) *</Label>
+            <Label htmlFor="deadlineDisplay">{t.adminFormDeadlineText}</Label>
             <Input
               id="deadlineDisplay"
               name="deadlineDisplay"
@@ -138,7 +140,8 @@ export function JobOfferForm({ job }: Props) {
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="responsibilities">Tööülesanded (üks rida = üks punkt) *</Label>
+          <Label htmlFor="responsibilities">{t.adminFormResp}</Label>
+          <p className="text-xs text-neutral-500">{t.adminFormListLineHint}</p>
           <Textarea
             id="responsibilities"
             name="responsibilities"
@@ -149,7 +152,7 @@ export function JobOfferForm({ job }: Props) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="requirements">Ootused (üks rida = üks punkt) *</Label>
+          <Label htmlFor="requirements">{t.adminFormReq}</Label>
           <Textarea
             id="requirements"
             name="requirements"
@@ -160,7 +163,7 @@ export function JobOfferForm({ job }: Props) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="niceToHave">Kasuks tuleb *</Label>
+          <Label htmlFor="niceToHave">{t.adminFormNice}</Label>
           <Textarea
             id="niceToHave"
             name="niceToHave"
@@ -171,7 +174,7 @@ export function JobOfferForm({ job }: Props) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="weOffer">Pakume *</Label>
+          <Label htmlFor="weOffer">{t.adminFormWeOffer}</Label>
           <Textarea
             id="weOffer"
             name="weOffer"
@@ -182,7 +185,7 @@ export function JobOfferForm({ job }: Props) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="salaryCardLine">Palga rida (kaardi all)</Label>
+          <Label htmlFor="salaryCardLine">{t.adminFormSalaryCardLine}</Label>
           <Input
             id="salaryCardLine"
             name="salaryCardLine"
@@ -190,7 +193,7 @@ export function JobOfferForm({ job }: Props) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="footerEmail">Jalus / kontakt e-post (valikuline)</Label>
+          <Label htmlFor="footerEmail">{t.adminFormFooterEmail}</Label>
           <Input
             id="footerEmail"
             name="footerEmail"
@@ -204,11 +207,11 @@ export function JobOfferForm({ job }: Props) {
         <p className="text-sm text-destructive">{state.message}</p>
       ) : null}
       {state?.ok ? (
-        <p className="text-sm text-emerald-700">Salvestatud.</p>
+        <p className="text-sm text-emerald-700">{t.adminFormSaved}</p>
       ) : null}
 
       <Button type="submit" size="lg" className="min-h-11">
-        Salvesta kuulutus
+        {t.adminFormSubmitOffer}
       </Button>
     </form>
   );
