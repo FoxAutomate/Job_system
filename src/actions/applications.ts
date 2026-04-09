@@ -40,7 +40,6 @@ export async function submitApplication(
   _prev: SubmitState | null,
   formData: FormData
 ): Promise<SubmitState> {
-  const db = getDb();
   const locale = parseLocale(formData.get("locale"));
   const msg = messages[locale];
 
@@ -62,98 +61,116 @@ export async function submitApplication(
     return { ok: false, message: fieldMsg };
   }
 
-  const cv = formData.get("cv");
-  let cvUrl: string | null = null;
-  let cvFileName: string | null = null;
-
-  if (cv instanceof File && cv.size > 0) {
-    if (cv.size > MAX_CV_BYTES) {
-      return {
-        ok: false,
-        message: msg.serverCvTooLarge,
-      };
-    }
-    const type = cv.type || "application/octet-stream";
-    if (!ALLOWED_CV_MIME.has(type)) {
-      return {
-        ok: false,
-        message: msg.serverCvType,
-      };
-    }
-
-    const token = process.env.BLOB_READ_WRITE_TOKEN;
-    if (!token) {
-      console.warn("[apply] BLOB_READ_WRITE_TOKEN missing — CV not stored");
-    } else {
-      const blob = await put(cv.name || "cv.pdf", cv, {
-        access: "public",
-        token,
-      });
-      cvUrl = blob.url;
-      cvFileName = cv.name;
-    }
-  }
-
-  let notifyTo: string;
-  let jobRow: Job | null = null;
-
-  if (jobId) {
-    const [job] = await db.select().from(jobs).where(eq(jobs.id, jobId)).limit(1);
-    if (!job || !job.active) {
-      return { ok: false, message: msg.serverJobInactive };
-    }
-    notifyTo = job.emailTo;
-    jobRow = job;
-  } else {
-    const [settings] = await db
-      .select()
-      .from(siteSettings)
-      .where(eq(siteSettings.id, "default"))
-      .limit(1);
-    notifyTo = settings?.defaultApplicationEmail ?? "Birgit@cannery.eu";
-  }
-
-  const [inserted] = await db
-    .insert(applications)
-    .values({
-      jobId: jobId ?? null,
-      name: parsed.data.fullName,
-      email: parsed.data.email,
-      phone: parsed.data.phone,
-      message: parsed.data.message ?? "",
-      cvUrl,
-      cvFileName,
-      status: "new",
-      notes: "",
-    })
-    .returning();
-
-  let emailSimulated = false;
-  let extra = "";
-
   try {
-    const result = await sendApplicationNotification(
-      inserted,
-      jobRow,
-      notifyTo
-    );
-    if (result.via === "simulated") {
-      emailSimulated = true;
-      extra =
-        " (Email simulation — set RESEND_API_KEY on the server for real delivery.)";
-    }
-  } catch (err) {
-    console.error("[apply] sendApplicationNotification failed:", err);
-    extra =
-      " Teavituskirja saatmine ebaõnnestus; kandideerimine on salvestatud. / Email notification failed; your application was still saved.";
-  }
+    const db = getDb();
+    const cv = formData.get("cv");
+    let cvUrl: string | null = null;
+    let cvFileName: string | null = null;
 
-  revalidatePath("/admin/applications");
-  return {
-    ok: true,
-    message: SUCCESS_BASE + extra,
-    emailSimulated,
-  };
+    if (cv instanceof File && cv.size > 0) {
+      if (cv.size > MAX_CV_BYTES) {
+        return {
+          ok: false,
+          message: msg.serverCvTooLarge,
+        };
+      }
+      const type = cv.type || "application/octet-stream";
+      if (!ALLOWED_CV_MIME.has(type)) {
+        return {
+          ok: false,
+          message: msg.serverCvType,
+        };
+      }
+
+      const token = process.env.BLOB_READ_WRITE_TOKEN;
+      if (!token) {
+        console.warn("[apply] BLOB_READ_WRITE_TOKEN missing — CV not stored");
+      } else {
+        try {
+          const blob = await put(cv.name || "cv.pdf", cv, {
+            access: "public",
+            token,
+          });
+          cvUrl = blob.url;
+          cvFileName = cv.name;
+        } catch (blobErr) {
+          console.error("[apply] Vercel Blob upload failed:", blobErr);
+          return { ok: false, message: msg.serverCvUploadFailed };
+        }
+      }
+    }
+
+    let notifyTo: string;
+    let jobRow: Job | null = null;
+
+    if (jobId) {
+      const [job] = await db
+        .select()
+        .from(jobs)
+        .where(eq(jobs.id, jobId))
+        .limit(1);
+      if (!job || !job.active) {
+        return { ok: false, message: msg.serverJobInactive };
+      }
+      notifyTo = job.emailTo;
+      jobRow = job;
+    } else {
+      const [settings] = await db
+        .select()
+        .from(siteSettings)
+        .where(eq(siteSettings.id, "default"))
+        .limit(1);
+      notifyTo = settings?.defaultApplicationEmail ?? "Birgit@cannery.eu";
+    }
+
+    const [inserted] = await db
+      .insert(applications)
+      .values({
+        jobId: jobId ?? null,
+        name: parsed.data.fullName,
+        email: parsed.data.email,
+        phone: parsed.data.phone,
+        message: parsed.data.message ?? "",
+        cvUrl,
+        cvFileName,
+        status: "new",
+        notes: "",
+      })
+      .returning();
+
+    let emailSimulated = false;
+    let extra = "";
+
+    try {
+      const result = await sendApplicationNotification(
+        inserted,
+        jobRow,
+        notifyTo
+      );
+      if (result.via === "simulated") {
+        emailSimulated = true;
+        extra =
+          " (Email simulation — set RESEND_API_KEY on the server for real delivery.)";
+      }
+    } catch (err) {
+      console.error("[apply] sendApplicationNotification failed:", err);
+      extra =
+        " Teavituskirja saatmine ebaõnnestus; kandideerimine on salvestatud. / Email notification failed; your application was still saved.";
+    }
+
+    revalidatePath("/admin/applications");
+    return {
+      ok: true,
+      message: SUCCESS_BASE + extra,
+      emailSimulated,
+    };
+  } catch (err) {
+    console.error("[apply] submitApplication failed:", err);
+    return {
+      ok: false,
+      message: msg.serverApplyUnexpected,
+    };
+  }
 }
 
 export async function updateApplicationStatus(

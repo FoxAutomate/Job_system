@@ -89,6 +89,8 @@ export type Messages = {
   serverCvType: string;
   serverJobInactive: string;
   serverFieldsHint: string;
+  serverApplyUnexpected: string;
+  serverCvUploadFailed: string;
   /** Admin dashboard & CRM */
   adminDashTitle: string;
   adminDashSubtitle: string;
@@ -274,6 +276,10 @@ const et: Messages = {
     "Lubatud on ainult PDF, DOC või DOCX failid. / Only PDF, DOC, or DOCX files are allowed.",
   serverJobInactive: "See tööpakkumine ei ole enam aktiivne.",
   serverFieldsHint: "Palun kontrolli väljasid. / Please check the fields.",
+  serverApplyUnexpected:
+    "Salvestamine ebaõnnestus. Proovi uuesti või kirjuta otse e-postiga. Kui probleem püsib, kontrolli andmebaasi migratsiooni (cv_rating). / Save failed. Please try again or email us directly.",
+  serverCvUploadFailed:
+    "CV üleslaadimine ebaõnnestus. Proovi uuesti ilma failita või väiksema PDF-iga. / CV upload failed. Try again without a file or with a smaller PDF.",
   adminDashTitle: "Haldus",
   adminDashSubtitle: "Cannery Careers — kuulutused ja kandidaadid",
   adminDashJobsCard: "Kuulutused",
@@ -458,6 +464,10 @@ const en: Messages = {
     "Only PDF, DOC, or DOCX files are allowed. / Lubatud on ainult PDF, DOC või DOCX.",
   serverJobInactive: "This job listing is no longer active.",
   serverFieldsHint: "Please check the fields. / Palun kontrolli väljasid.",
+  serverApplyUnexpected:
+    "Save failed. Please try again or email us. If this persists, ensure the database migration was applied (e.g. cv_rating column). / Salvestamine ebaõnnestus.",
+  serverCvUploadFailed:
+    "CV upload failed. Try again without a file or with a smaller PDF. / CV üleslaadimine ebaõnnestus.",
   adminDashTitle: "Admin",
   adminDashSubtitle: "Cannery Careers — job posts and candidates",
   adminDashJobsCard: "Job posts",

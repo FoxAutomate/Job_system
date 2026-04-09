@@ -88,7 +88,18 @@ export function ApplicationForm({
     if (jobId) body.append("jobId", jobId);
     if (cvFile) body.append("cv", cvFile);
 
-    const result = await submitApplication(null, body);
+    let result: Awaited<ReturnType<typeof submitApplication>>;
+    try {
+      result = await submitApplication(null, body);
+    } catch (err) {
+      console.error("[ApplicationForm] submitApplication threw:", err);
+      setRootError(t.serverApplyUnexpected);
+      toast.error(t.toastErrorTitle, {
+        description: t.serverApplyUnexpected,
+      });
+      return;
+    }
+
     if (result.ok) {
       toast.success(t.toastSuccessTitle, {
         description: result.emailSimulated
