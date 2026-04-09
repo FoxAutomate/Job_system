@@ -5,6 +5,7 @@ import { CheckCircle2, Home, LayoutGrid, Mail } from "lucide-react";
 import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { cn } from "@/lib/utils";
 
 type SuccessScreenProps = {
@@ -16,6 +17,8 @@ export function SuccessScreen({
   contactEmail = "Birgit@cannery.eu",
   variant = "general",
 }: SuccessScreenProps) {
+  const { t } = useLocale();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -29,11 +32,10 @@ export function SuccessScreen({
           <CheckCircle2 className="size-8" aria-hidden />
         </span>
         <h2 className="font-heading text-xl font-bold text-neutral-900 sm:text-2xl">
-          Aitäh — saime sinu andmed kätte
+          {t.successTitle}
         </h2>
         <p className="text-pretty text-neutral-700">
-          Võtame peagi ühendust. Kui sa ei lisanud veel CV-d, võid selle
-          hiljem saata aadressile{" "}
+          {t.successBody}{" "}
           <a
             className="font-medium text-neutral-900 underline underline-offset-2"
             href={`mailto:${contactEmail}?subject=CV`}
@@ -44,7 +46,7 @@ export function SuccessScreen({
         </p>
         <p className="flex items-center justify-center gap-2 text-sm text-neutral-600">
           <Mail className="size-4 shrink-0" aria-hidden />
-          Lisa võimalik tööle asumise aeg kirja sisusse.
+          {t.successHint}
         </p>
 
         <div className="flex w-full flex-col gap-3 pt-2 sm:flex-row sm:justify-center">
@@ -56,31 +58,18 @@ export function SuccessScreen({
             )}
           >
             <Home className="size-4" aria-hidden />
-            Tagasi avalehele
+            {t.successHome}
           </Link>
-          {variant === "job" ? (
-            <Link
-              href="/#jobs"
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "inline-flex min-h-12 w-full items-center justify-center gap-2 border border-amber-500/30 bg-[var(--cannery-amber)] text-neutral-950 hover:bg-[var(--cannery-amber)]/90 sm:w-auto"
-              )}
-            >
-              <LayoutGrid className="size-4" aria-hidden />
-              Vaata teisi pakkumisi
-            </Link>
-          ) : (
-            <Link
-              href="/#jobs"
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "inline-flex min-h-12 w-full items-center justify-center gap-2 border border-amber-500/30 bg-[var(--cannery-amber)] text-neutral-950 hover:bg-[var(--cannery-amber)]/90 sm:w-auto"
-              )}
-            >
-              <LayoutGrid className="size-4" aria-hidden />
-              Kõik ametikohad
-            </Link>
-          )}
+          <Link
+            href="/#jobs"
+            className={cn(
+              buttonVariants({ size: "lg" }),
+              "inline-flex min-h-12 w-full items-center justify-center gap-2 border border-amber-500/30 bg-[var(--cannery-amber)] text-neutral-950 hover:bg-[var(--cannery-amber)]/90 sm:w-auto"
+            )}
+          >
+            <LayoutGrid className="size-4" aria-hidden />
+            {variant === "job" ? t.successJobsJob : t.successJobsGeneral}
+          </Link>
         </div>
       </div>
     </motion.div>

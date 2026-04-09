@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ApplySection } from "@/components/ApplySection";
 import { JobContentSections } from "@/components/jobs/JobContentSections";
 import { JobHero } from "@/components/jobs/JobHero";
+import { JobPageFooter } from "@/components/jobs/JobPageFooter";
 import { getJobBySlug } from "@/lib/queries";
 import type { ApplyFormValues } from "@/lib/validation";
 
@@ -58,29 +58,11 @@ export default async function JobDetailPage({ params, searchParams }: Props) {
         mailtoSubject={`Cannery — ${job.title}`}
         prefill={prefill}
       />
-      <footer className="border-t border-neutral-200 bg-neutral-100 px-4 py-8 text-center text-sm text-neutral-600 sm:px-6">
-        <p className="font-medium text-neutral-800">
-          Kandideerimise tähtaeg:{" "}
-          <time dateTime={job.content.deadlineIso ?? undefined}>
-            {job.content.deadlineDisplay}
-          </time>
-        </p>
-        <p className="mt-2">
-          CV ja tööleasumine:{" "}
-          <a
-            className="font-medium text-neutral-900 underline underline-offset-2"
-            href={`mailto:${mail}`}
-          >
-            {mail}
-          </a>
-        </p>
-        <p className="mt-6">
-          <Link href="/" className="font-medium text-neutral-800 hover:underline">
-            ← Tagasi avalehele
-          </Link>
-        </p>
-        <p className="mt-4 text-xs text-neutral-500">Cannery Careers · Cannery OÜ</p>
-      </footer>
+      <JobPageFooter
+        deadlineDisplay={job.content.deadlineDisplay}
+        deadlineIso={job.content.deadlineIso}
+        mail={mail}
+      />
     </div>
   );
 }

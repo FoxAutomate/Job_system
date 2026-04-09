@@ -1,9 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
+import { JobBackNav } from "@/components/jobs/JobBackNav";
 import { SmoothScrollAnchor } from "@/components/SmoothScrollAnchor";
 import { buttonVariants } from "@/components/ui/button";
 import type { Job } from "@/db/schema";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { cn } from "@/lib/utils";
 
 type JobHeroProps = {
@@ -14,6 +18,7 @@ type JobHeroProps = {
 export function JobHero({ job, applyHref = "#apply-job" }: JobHeroProps) {
   const { content } = job;
   const showSalary = job.showSalary && job.salaryRange;
+  const { t } = useLocale();
 
   return (
     <section className="relative isolate overflow-hidden bg-neutral-100">
@@ -29,7 +34,9 @@ export function JobHero({ job, applyHref = "#apply-job" }: JobHeroProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/95 via-neutral-50/90 to-neutral-100" />
       </div>
 
-      <div className="relative mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-12 pt-8 sm:px-6 sm:pb-16 sm:pt-12">
+      <div className="relative mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8">
+        <JobBackNav />
+
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <p className="text-xs font-medium uppercase tracking-wider text-neutral-600">
@@ -39,7 +46,7 @@ export function JobHero({ job, applyHref = "#apply-job" }: JobHeroProps) {
           <Link
             href="/"
             className="relative h-10 w-36 shrink-0 sm:h-12 sm:w-44"
-            aria-label="Cannery Careers avaleht"
+            aria-label="Cannery Careers"
           >
             <Image
               src="/cannery/Cannery_logo_horizontal.png"
@@ -69,7 +76,7 @@ export function JobHero({ job, applyHref = "#apply-job" }: JobHeroProps) {
                 "min-h-12 min-w-[11rem] justify-center rounded-lg border border-amber-500/30 bg-[var(--cannery-amber)] px-6 text-base font-semibold text-neutral-950 shadow-sm hover:bg-[var(--cannery-amber)]/90"
               )}
             >
-              Kandideeri kohe
+              {t.jobHeroApply}
             </SmoothScrollAnchor>
           ) : (
             <Link
@@ -79,18 +86,18 @@ export function JobHero({ job, applyHref = "#apply-job" }: JobHeroProps) {
                 "min-h-12 min-w-[11rem] justify-center rounded-lg border border-amber-500/30 bg-[var(--cannery-amber)] px-6 text-base font-semibold text-neutral-950 shadow-sm hover:bg-[var(--cannery-amber)]/90"
               )}
             >
-              Kandideeri kohe
+              {t.jobHeroApply}
             </Link>
           )}
           {showSalary ? (
             <p className="text-sm text-neutral-700">
-              Brutopalk:{" "}
+              {t.jobHeroSalaryPrefix}{" "}
               <span className="font-semibold text-neutral-900">
                 {job.salaryRange}
               </span>
             </p>
           ) : (
-            <p className="text-sm text-neutral-500">Palk: kokkuleppel</p>
+            <p className="text-sm text-neutral-500">{t.jobHeroSalaryNegotiable}</p>
           )}
         </div>
 

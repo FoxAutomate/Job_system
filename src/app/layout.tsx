@@ -11,11 +11,13 @@ const inter = Inter({
   variable: "--font-sans",
 });
 
+const publicSite = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_URL != null
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000");
+  publicSite && publicSite.length > 0
+    ? publicSite
+    : process.env.VERCEL_URL != null
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000";
 
 const siteTitle = "Cannery Careers — Cannery OÜ tööpakkumised";
 const description =

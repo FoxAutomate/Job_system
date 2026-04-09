@@ -4,17 +4,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { cn } from "@/lib/utils";
-
-const links = [
-  { href: "/admin", label: "Ülevaade" },
-  { href: "/admin/offers", label: "Kuulutused" },
-  { href: "/admin/applications", label: "Kandidaadid" },
-];
 
 export function AdminNav() {
   const pathname = usePathname();
+  const { t } = useLocale();
+
+  const links = [
+    { href: "/admin", label: t.adminNavOverview },
+    { href: "/admin/offers", label: t.adminNavOffers },
+    { href: "/admin/applications", label: t.adminNavApplications },
+  ];
 
   return (
     <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white/95 backdrop-blur">
@@ -24,7 +27,7 @@ export function AdminNav() {
             href="/"
             className="text-sm font-medium text-neutral-600 hover:text-neutral-900"
           >
-            Avalik leht
+            {t.adminNavPublic}
           </Link>
           <nav className="flex flex-wrap gap-2">
             {links.map((l) => (
@@ -43,14 +46,17 @@ export function AdminNav() {
             ))}
           </nav>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => signOut({ callbackUrl: "/" })}
-        >
-          Logi välja
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <LanguageSwitcher />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => signOut({ callbackUrl: "/" })}
+          >
+            {t.adminNavSignOut}
+          </Button>
+        </div>
       </div>
     </header>
   );

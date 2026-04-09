@@ -5,6 +5,7 @@ import { ArrowRight, Briefcase, Calendar, MapPin } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { cn } from "@/lib/utils";
 import type { Job } from "@/db/schema";
 
@@ -26,11 +27,12 @@ const cardVariants = {
 };
 
 export function JobList({ jobs }: Props) {
+  const { t } = useLocale();
+
   if (jobs.length === 0) {
     return (
       <p className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50/80 px-4 py-10 text-center text-neutral-600">
-        Hetkel pole avatud ametikohti. Jälgi lehte või saada üldine
-        kandideerimine allpool.
+        {t.jobListEmpty}
       </p>
     );
   }
@@ -58,7 +60,7 @@ export function JobList({ jobs }: Props) {
                       variant="secondary"
                       className="border border-emerald-200/80 bg-emerald-50 text-emerald-900"
                     >
-                      Avatud
+                      {t.jobListBadgeOpen}
                     </Badge>
                     <Badge
                       variant="outline"
@@ -69,7 +71,9 @@ export function JobList({ jobs }: Props) {
                           : "border-neutral-200 bg-neutral-50 text-neutral-600"
                       )}
                     >
-                      {salaryVisible ? "Palk avaldatud" : "Palk ei ole avaldatud"}
+                      {salaryVisible
+                        ? t.jobListSalaryPublished
+                        : t.jobListSalaryHidden}
                     </Badge>
                   </div>
                   {salaryVisible ? (
@@ -102,14 +106,16 @@ export function JobList({ jobs }: Props) {
                         className="size-4 shrink-0 text-neutral-400"
                         aria-hidden
                       />
-                      <span>Tähtaeg: {job.content.deadlineDisplay}</span>
+                      <span>
+                        {t.jobListDeadline} {job.content.deadlineDisplay}
+                      </span>
                     </p>
                   ) : null}
                 </div>
 
                 <span className="inline-flex items-center gap-1 text-sm font-semibold text-amber-950/90">
                   <Briefcase className="size-4" aria-hidden />
-                  Vaata kuulutust
+                  {t.jobListCta}
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
                 </span>
               </div>

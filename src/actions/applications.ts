@@ -14,8 +14,9 @@ import {
 } from "@/db/schema";
 import { sendApplicationNotification } from "@/lib/email";
 import { requireAdmin } from "@/lib/auth-guard";
+import { type Locale, messages } from "@/lib/i18n/messages";
 import {
-  applyFormSchema,
+  getApplyFormSchema,
   ALLOWED_CV_MIME,
   MAX_CV_BYTES,
 } from "@/lib/validation";
@@ -31,16 +32,23 @@ export type SubmitState =
 const SUCCESS_BASE =
   "Aitäh! Kandideerimine on salvestatud. Võtame peagi ühendust. — Application submitted successfully. We will contact you soon.";
 
+function parseLocale(raw: unknown): Locale {
+  return raw === "en" ? "en" : "et";
+}
+
 export async function submitApplication(
   _prev: SubmitState | null,
   formData: FormData
 ): Promise<SubmitState> {
   const db = getDb();
+  const locale = parseLocale(formData.get("locale"));
+  const msg = messages[locale];
+
   const jobIdRaw = formData.get("jobId");
   const jobId =
     typeof jobIdRaw === "string" && jobIdRaw.length > 0 ? jobIdRaw : null;
 
-  const parsed = applyFormSchema.safeParse({
+  const parsed = getApplyFormSchema(locale).safeParse({
     fullName: formData.get("fullName"),
     email: formData.get("email"),
     phone: formData.get("phone"),
@@ -48,10 +56,10 @@ export async function submitApplication(
   });
 
   if (!parsed.success) {
-    const msg =
+    const fieldMsg =
       Object.values(parsed.error.flatten().fieldErrors).flat()[0] ??
-      "Palun kontrolli väljasid.";
-    return { ok: false, message: msg };
+      msg.serverFieldsHint;
+    return { ok: false, message: fieldMsg };
   }
 
   const cv = formData.get("cv");
@@ -62,15 +70,14 @@ export async function submitApplication(
     if (cv.size > MAX_CV_BYTES) {
       return {
         ok: false,
-        message:
-          "CV fail on liiga suur (max 5 MB). Proovi väiksemat PDF-i või jäta praegu lisamata.",
+        message: msg.serverCvTooLarge,
       };
     }
     const type = cv.type || "application/octet-stream";
     if (!ALLOWED_CV_MIME.has(type)) {
       return {
         ok: false,
-        message: "Lubatud on ainult PDF, DOC või DOCX failid.",
+        message: msg.serverCvType,
       };
     }
 
@@ -93,7 +100,7 @@ export async function submitApplication(
   if (jobId) {
     const [job] = await db.select().from(jobs).where(eq(jobs.id, jobId)).limit(1);
     if (!job || !job.active) {
-      return { ok: false, message: "See tööpakkumine ei ole enam aktiivne." };
+      return { ok: false, message: msg.serverJobInactive };
     }
     notifyTo = job.emailTo;
     jobRow = job;

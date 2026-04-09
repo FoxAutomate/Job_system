@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useLocale } from "@/lib/i18n/locale-context";
 import type { ApplyFormValues } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 
@@ -35,23 +36,27 @@ export function ApplySection({
   prefill,
 }: ApplySectionProps) {
   const [success, setSuccess] = useState(false);
+  const { locale, t } = useLocale();
 
   const title =
     variant === "general"
-      ? "Tahad liituda Cannery meeskonnaga?"
-      : "Kandideeri sellele ametikohale";
+      ? t.applySectionTitleGeneral
+      : t.applySectionTitleJob;
 
   const description =
     variant === "general"
-      ? "Täida vähemalt nimi, e-post ja telefon. CV võid jätta praegu lisamata — saad selle hiljem e-postiga saata."
-      : "Täida vähemalt nimi, e-post ja telefon. CV pole kohustuslik — eriti telefonist kandideerides.";
+      ? t.applySectionDescGeneral
+      : t.applySectionDescJob;
+
+  const stickyLabel =
+    variant === "job" ? t.stickyApplyJob : t.stickyApply;
 
   return (
     <>
       <StickyCTA
         visible={!success}
         href={`#${sectionId}`}
-        label={variant === "job" ? "Kandideeri kohe" : "Kandideeri"}
+        label={stickyLabel}
       />
 
       <section
@@ -79,6 +84,7 @@ export function ApplySection({
               </CardHeader>
               <CardContent>
                 <ApplicationForm
+                  key={locale}
                   onSuccess={() => setSuccess(true)}
                   jobId={jobId}
                   defaultValues={prefill}
@@ -96,7 +102,7 @@ export function ApplySection({
                   "flex min-h-12 w-full items-center justify-center text-center"
                 )}
               >
-                Eelistad otse e-posti? Kirjuta {mailtoEmail}
+                {t.applySectionEmailCta} {mailtoEmail}
               </a>
             </div>
           ) : null}

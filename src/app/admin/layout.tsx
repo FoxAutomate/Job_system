@@ -1,5 +1,4 @@
-import Link from "next/link";
-
+import { AdminHomeLink } from "@/components/admin/AdminHomeLink";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { auth } from "@/auth";
 
@@ -16,9 +15,7 @@ export default async function AdminLayout({
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">{children}</div>
       {!session ? (
         <p className="pb-6 text-center text-sm text-neutral-500">
-          <Link href="/" className="hover:underline">
-            ← Avaleht
-          </Link>
+          <AdminHomeLink />
         </p>
       ) : null}
     </div>

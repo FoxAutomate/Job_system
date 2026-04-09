@@ -1,11 +1,17 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SmoothScrollAnchor } from "@/components/SmoothScrollAnchor";
 import { buttonVariants } from "@/components/ui/button";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { cn } from "@/lib/utils";
 
 export function HomeHero() {
+  const { t } = useLocale();
+
   return (
     <section className="relative isolate overflow-hidden bg-neutral-100">
       <div className="pointer-events-none absolute inset-0">
@@ -24,29 +30,31 @@ export function HomeHero() {
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1 space-y-2">
             <p className="text-xs font-medium uppercase tracking-wider text-neutral-600">
-              Cannery Careers
+              {t.homeHeroEyebrow}
             </p>
             <h1 className="font-heading text-balance text-3xl font-bold leading-tight tracking-tight text-neutral-950 sm:text-4xl">
-              Tule tööle joogitööstuse masinaehituse juurde
+              {t.homeHeroTitle}
             </h1>
             <p className="text-pretty text-base text-neutral-800 sm:text-lg">
-              Cannery OÜ ehitab ja seadistab villimisliine. Siit leiad avatud
-              ametikohad — kandideeri kiiresti, ka telefonist.
+              {t.homeHeroBody}
             </p>
           </div>
-          <Link
-            href="/"
-            className="relative h-10 w-36 shrink-0 sm:h-12 sm:w-44"
-            aria-label="Cannery"
-          >
-            <Image
-              src="/cannery/Cannery_logo_horizontal.png"
-              alt="Cannery"
-              fill
-              className="object-contain object-right"
-              sizes="(max-width: 640px) 144px, 176px"
-            />
-          </Link>
+          <div className="flex shrink-0 flex-col items-end gap-3">
+            <LanguageSwitcher />
+            <Link
+              href="/"
+              className="relative h-10 w-36 sm:h-12 sm:w-44"
+              aria-label="Cannery"
+            >
+              <Image
+                src="/cannery/Cannery_logo_horizontal.png"
+                alt="Cannery"
+                fill
+                className="object-contain object-right"
+                sizes="(max-width: 640px) 144px, 176px"
+              />
+            </Link>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-3">
@@ -57,7 +65,7 @@ export function HomeHero() {
               "min-h-12 justify-center rounded-lg"
             )}
           >
-            Vaata tööpakkumisi
+            {t.homeHeroCtaJobs}
           </SmoothScrollAnchor>
           <SmoothScrollAnchor
             href="#apply-general"
@@ -66,7 +74,7 @@ export function HomeHero() {
               "min-h-12 justify-center rounded-lg border border-amber-500/30 bg-[var(--cannery-amber)] px-6 text-base font-semibold text-neutral-950 shadow-sm hover:bg-[var(--cannery-amber)]/90"
             )}
           >
-            Üldine kandideerimine
+            {t.homeHeroCtaGeneral}
           </SmoothScrollAnchor>
         </div>
       </div>

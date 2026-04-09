@@ -7,6 +7,7 @@ import {
   updateApplicationNotes,
   updateApplicationStatus,
 } from "@/actions/applications";
+import { useLocale } from "@/lib/i18n/locale-context";
 import type { Application, ApplicationStatus } from "@/db/schema";
 import { APPLICATION_STATUS_LABELS } from "@/lib/admin-labels";
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,7 @@ export function ApplicationsTable({
   rows: Row[];
   highlightId?: string;
 }) {
+  const { t } = useLocale();
   const [pending, startTransition] = useTransition();
   const highlighted = useRef(false);
 
@@ -103,7 +105,7 @@ export function ApplicationsTable({
                         v as ApplicationStatus
                       );
                       if (r.ok) {
-                        toast.success("Status updated");
+                        toast.success(t.adminToastStatusOk);
                       } else {
                         toast.error(r.message);
                       }
@@ -155,6 +157,7 @@ function NotesCell({
   id: string;
   initialNotes: string;
 }) {
+  const { t } = useLocale();
   const [value, setValue] = useState(initialNotes);
   const [savedNotes, setSavedNotes] = useState(initialNotes);
   const [pending, startTransition] = useTransition();
@@ -177,7 +180,7 @@ function NotesCell({
             const r = await updateApplicationNotes(id, value);
             if (r.ok) {
               setSavedNotes(value);
-              toast.success("Notes saved");
+              toast.success(t.adminToastNotesOk);
             } else {
               toast.error(r.message);
             }
