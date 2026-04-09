@@ -4,7 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
+import { submitApplication } from "@/actions/applications";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,19 +20,26 @@ import { cn } from "@/lib/utils";
 
 type ApplicationFormProps = {
   onSuccess: () => void;
+  jobId?: string | null;
+  defaultValues?: Partial<ApplyFormValues>;
 };
 
-export function ApplicationForm({ onSuccess }: ApplicationFormProps) {
+export function ApplicationForm({
+  onSuccess,
+  jobId,
+  defaultValues,
+}: ApplicationFormProps) {
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvHint, setCvHint] = useState<string | null>(null);
+  const [rootError, setRootError] = useState<string | null>(null);
 
   const form = useForm<ApplyFormValues>({
     resolver: zodResolver(applyFormSchema),
     defaultValues: {
-      fullName: "",
-      email: "",
-      phone: "",
-      message: "",
+      fullName: defaultValues?.fullName ?? "",
+      email: defaultValues?.email ?? "",
+      phone: defaultValues?.phone ?? "",
+      message: defaultValues?.message ?? "",
     },
   });
 
@@ -54,39 +63,29 @@ export function ApplicationForm({ onSuccess }: ApplicationFormProps) {
   );
 
   const onSubmit = form.handleSubmit(async (values) => {
+    setRootError(null);
     const body = new FormData();
     body.append("fullName", values.fullName);
     body.append("email", values.email);
     body.append("phone", values.phone);
     body.append("message", values.message ?? "");
+    if (jobId) body.append("jobId", jobId);
     if (cvFile) body.append("cv", cvFile);
 
-    try {
-      const res = await fetch("/api/apply", {
-        method: "POST",
-        body,
+    const result = await submitApplication(null, body);
+    if (result.ok) {
+      toast.success("Kandideerimine salvestatud", {
+        description: result.emailSimulated
+          ? "Teavitus simuleeritud (seadista RESEND_API_KEY). / Application submitted — we will contact you soon."
+          : "Võtame peagi ühendust. / Application submitted successfully. We will contact you soon.",
       });
-      const data = (await res.json().catch(() => null)) as
-        | { ok?: boolean; message?: string }
-        | null;
-
-      if (!res.ok) {
-        form.setError("root", {
-          message:
-            data?.message ??
-            "Saatmine ebaõnnestus. Kontrolli võrku ja proovi uuesti.",
-        });
-        return;
-      }
-
-      if (data?.ok) {
-        console.log("[cannery.apply] client: success");
-        onSuccess();
-      }
-    } catch {
-      form.setError("root", {
-        message: "Võrgu viga. Proovi hetke pärast uuesti.",
-      });
+      form.reset();
+      setCvFile(null);
+      onSuccess();
+    } else {
+      const msg = result.message ?? "Viga";
+      setRootError(msg);
+      toast.error("Saatmine ebaõnnestus", { description: msg });
     }
   });
 
@@ -96,12 +95,7 @@ export function ApplicationForm({ onSuccess }: ApplicationFormProps) {
   } = form;
 
   return (
-    <form
-      onSubmit={onSubmit}
-      className="space-y-5"
-      noValidate
-      aria-describedby="apply-intro"
-    >
+    <form onSubmit={onSubmit} className="space-y-5" noValidate>
       <div className="grid gap-4 sm:grid-cols-1">
         <div className="space-y-2">
           <Label htmlFor="fullName">Ees- ja perekonnanimi *</Label>
@@ -169,6 +163,7 @@ export function ApplicationForm({ onSuccess }: ApplicationFormProps) {
               "min-h-12 cursor-pointer text-base file:mr-3 file:rounded-md file:border-0 file:bg-neutral-200 file:px-3 file:py-1.5 file:text-sm file:font-medium"
             )}
             onChange={onFileChange}
+            disabled={isSubmitting}
           />
           <p className="text-sm text-neutral-600">
             PDF, DOC või DOCX, kuni 5 MB. Telefonist kandideerides võid CV
@@ -199,9 +194,9 @@ export function ApplicationForm({ onSuccess }: ApplicationFormProps) {
         </div>
       </div>
 
-      {errors.root ? (
+      {rootError ? (
         <p className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
-          {errors.root.message}
+          {rootError}
         </p>
       ) : null}
 

@@ -1,9 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle2, Mail } from "lucide-react";
+import { CheckCircle2, Home, LayoutGrid, Mail } from "lucide-react";
+import Link from "next/link";
 
-export function SuccessScreen() {
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+type SuccessScreenProps = {
+  contactEmail?: string;
+  variant?: "general" | "job";
+};
+
+export function SuccessScreen({
+  contactEmail = "Birgit@cannery.eu",
+  variant = "general",
+}: SuccessScreenProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -24,9 +36,9 @@ export function SuccessScreen() {
           hiljem saata aadressile{" "}
           <a
             className="font-medium text-neutral-900 underline underline-offset-2"
-            href="mailto:Birgit@cannery.eu?subject=Villimismasinate%20koostaja-tehnik%20—%20CV"
+            href={`mailto:${contactEmail}?subject=CV`}
           >
-            Birgit@cannery.eu
+            {contactEmail}
           </a>
           .
         </p>
@@ -34,6 +46,42 @@ export function SuccessScreen() {
           <Mail className="size-4 shrink-0" aria-hidden />
           Lisa võimalik tööle asumise aeg kirja sisusse.
         </p>
+
+        <div className="flex w-full flex-col gap-3 pt-2 sm:flex-row sm:justify-center">
+          <Link
+            href="/"
+            className={cn(
+              buttonVariants({ variant: "outline", size: "lg" }),
+              "inline-flex min-h-12 w-full items-center justify-center gap-2 sm:w-auto"
+            )}
+          >
+            <Home className="size-4" aria-hidden />
+            Tagasi avalehele
+          </Link>
+          {variant === "job" ? (
+            <Link
+              href="/#jobs"
+              className={cn(
+                buttonVariants({ size: "lg" }),
+                "inline-flex min-h-12 w-full items-center justify-center gap-2 border border-amber-500/30 bg-[var(--cannery-amber)] text-neutral-950 hover:bg-[var(--cannery-amber)]/90 sm:w-auto"
+              )}
+            >
+              <LayoutGrid className="size-4" aria-hidden />
+              Vaata teisi pakkumisi
+            </Link>
+          ) : (
+            <Link
+              href="/#jobs"
+              className={cn(
+                buttonVariants({ size: "lg" }),
+                "inline-flex min-h-12 w-full items-center justify-center gap-2 border border-amber-500/30 bg-[var(--cannery-amber)] text-neutral-950 hover:bg-[var(--cannery-amber)]/90 sm:w-auto"
+              )}
+            >
+              <LayoutGrid className="size-4" aria-hidden />
+              Kõik ametikohad
+            </Link>
+          )}
+        </div>
       </div>
     </motion.div>
   );

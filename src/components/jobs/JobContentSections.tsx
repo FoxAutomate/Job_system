@@ -18,59 +18,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { Job, JobContent } from "@/db/schema";
 
-const sections = [
-  {
-    key: "tasks",
-    title: "Tööülesanded",
-    icon: ClipboardList,
-    items: [
-      "Mehaaniline montaaž ja seadmete kokkupanek",
-      "Seadistamine ja testimine",
-      "Vigade tuvastamine ja lahendamine",
-      "Suhtlemine tarnijatega",
-      "Komponentide inventuur",
-      "Töökeskkonna ja seadmete hooldus",
-      "Vajadusel väiksed muudatused CAD-is",
-    ],
-  },
-  {
-    key: "expectations",
-    title: "Ootused",
-    icon: Briefcase,
-    items: [
-      "Tehniline haridus (omandatud või pooleli) või kogemus masinate kokkupanekus",
-      "Hea käelisus ja tehniline mõtlemine",
-      "Kiire õppimisvõime",
-      "Täpsus, hoolikkus ja vastutus",
-      "Hea füüsiline vorm",
-      "Valmidus ärireisideks",
-    ],
-  },
-  {
-    key: "nice",
-    title: "Kasuks tuleb",
-    icon: Sparkles,
-    items: [
-      "Kogemus tootmisliinide või automatikaga",
-      "Põhiteadmised elektrist ja pneumaatikast",
-      "Huvi masinate ja joogitööstuse vastu",
-      "B-kategooria juhiluba",
-    ],
-  },
-  {
-    key: "offer",
-    title: "Omalt poolt pakume",
-    icon: HeartHandshake,
-    items: [
-      "Huvitavaid ja mitmekülgseid projekte",
-      "Õpetamist kohapeal",
-      "Tervisekindlustust või spordikompensatsiooni",
-      "Arenguvõimalusi",
-    ],
-    highlight: "Brutopalk 1400–1700 € kuus",
-  },
-] as const;
+type Props = {
+  job: Job;
+  content: JobContent;
+};
 
 const container = {
   hidden: { opacity: 0 },
@@ -85,7 +38,36 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-export function JobSections() {
+export function JobContentSections({ job, content }: Props) {
+  const blocks = [
+    {
+      key: "tasks",
+      title: "Tööülesanded",
+      icon: ClipboardList,
+      items: content.responsibilities,
+    },
+    {
+      key: "expectations",
+      title: "Ootused",
+      icon: Briefcase,
+      items: content.requirements,
+    },
+    {
+      key: "nice",
+      title: "Kasuks tuleb",
+      icon: Sparkles,
+      items: content.niceToHave,
+    },
+    {
+      key: "offer",
+      title: "Omalt poolt pakume",
+      icon: HeartHandshake,
+      items: content.weOffer,
+      highlight:
+        job.showSalary && content.salaryCardLine ? content.salaryCardLine : null,
+    },
+  ];
+
   return (
     <section className="border-t border-neutral-200 bg-neutral-50/80 px-4 py-10 sm:px-6 sm:py-14">
       <div className="mx-auto max-w-3xl space-y-8">
@@ -99,10 +81,13 @@ export function JobSections() {
           <p className="text-pretty text-neutral-700">
             Töökoht:{" "}
             <span className="font-medium text-neutral-900">
-              Hoiu 16, Laagri, Harjumaa
+              {content.location}
             </span>
             . Kandideerimise tähtaeg:{" "}
-            <span className="font-medium text-neutral-900">30.06.2026</span>.
+            <span className="font-medium text-neutral-900">
+              {content.deadlineDisplay}
+            </span>
+            .
           </p>
         </div>
 
@@ -113,7 +98,7 @@ export function JobSections() {
           viewport={{ once: true, margin: "-40px" }}
           className="grid gap-4"
         >
-          {sections.map((block) => {
+          {blocks.map((block) => {
             const Icon = block.icon;
             return (
               <motion.div key={block.key} variants={item}>
@@ -134,7 +119,7 @@ export function JobSections() {
                         </li>
                       ))}
                     </ul>
-                    {"highlight" in block && block.highlight ? (
+                    {block.highlight ? (
                       <p className="flex flex-wrap items-center gap-2 rounded-lg border border-amber-400/40 bg-[var(--cannery-amber)]/15 px-3 py-2 text-sm font-semibold text-neutral-900">
                         <BadgeEuro className="size-4 shrink-0" aria-hidden />
                         {block.highlight}

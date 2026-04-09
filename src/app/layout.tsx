@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 
+import { Providers } from "@/components/Providers";
+
 import "./globals.css";
 
 const inter = Inter({
@@ -15,10 +17,9 @@ const siteUrl =
     ? `https://${process.env.VERCEL_URL}`
     : "http://localhost:3000");
 
-const siteTitle =
-  "Cannery Jobs — Villimismasinate koostaja-tehnik | Cannery OÜ";
+const siteTitle = "Cannery Careers — Cannery OÜ tööpakkumised";
 const description =
-  "Liitu Cannery OÜ meeskonnaga: villimisliinide montaaž, seadistamine ja testimine Laagris (Harjumaa). Brutopalk 1400–1700 €. Kandideeri kiiresti ka telefonist.";
+  "Cannery OÜ ametikohad: villimisliinid, masinaehitus, Laagri. Kandideeri veebis või saada CV.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -59,7 +60,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="et" className={inter.variable}>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

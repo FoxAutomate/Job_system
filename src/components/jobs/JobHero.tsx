@@ -1,10 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { SmoothScrollAnchor } from "@/components/SmoothScrollAnchor";
 import { buttonVariants } from "@/components/ui/button";
+import type { Job } from "@/db/schema";
 import { cn } from "@/lib/utils";
 
-export function Hero() {
+type JobHeroProps = {
+  job: Job;
+  applyHref?: string;
+};
+
+export function JobHero({ job, applyHref = "#apply-job" }: JobHeroProps) {
+  const { content } = job;
+  const showSalary = job.showSalary && job.salaryRange;
+
   return (
     <section className="relative isolate overflow-hidden bg-neutral-100">
       <div className="pointer-events-none absolute inset-0">
@@ -23,13 +33,13 @@ export function Hero() {
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <p className="text-xs font-medium uppercase tracking-wider text-neutral-600">
-              Cannery OÜ · Harjumaa
+              {content.tagline}
             </p>
           </div>
           <Link
             href="/"
             className="relative h-10 w-36 shrink-0 sm:h-12 sm:w-44"
-            aria-label="Cannery avaleht"
+            aria-label="Cannery Careers avaleht"
           >
             <Image
               src="/cannery/Cannery_logo_horizontal.png"
@@ -43,31 +53,45 @@ export function Hero() {
 
         <div className="space-y-4">
           <h1 className="font-heading text-balance text-3xl font-bold leading-tight tracking-tight text-neutral-950 sm:text-4xl">
-            Villimismasinate koostaja-tehnik
+            {job.title}
           </h1>
           <p className="text-pretty text-base leading-relaxed text-neutral-800 sm:text-lg">
-            Cannery OÜ arendab ja ehitab joogitööstusele mõeldud purkidesse
-            villimise liine ning tegeleb jookide tootmisega. Liitu meeskonnaga,
-            kes paneb kokku ja seadistab päris villimisliine üle Eesti ja välismaal.
+            {content.heroIntro}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Link
-            href="#apply"
-            className={cn(
-              buttonVariants({ size: "lg" }),
-              "min-h-12 min-w-[11rem] justify-center rounded-lg border border-amber-500/30 bg-[var(--cannery-amber)] px-6 text-base font-semibold text-neutral-950 shadow-sm hover:bg-[var(--cannery-amber)]/90"
-            )}
-          >
-            Kandideeri kohe
-          </Link>
-          <p className="text-sm text-neutral-700">
-            Brutopalk:{" "}
-            <span className="font-semibold text-neutral-900">
-              1400–1700 € / kuu
-            </span>
-          </p>
+          {applyHref.startsWith("#") ? (
+            <SmoothScrollAnchor
+              href={applyHref}
+              className={cn(
+                buttonVariants({ size: "lg" }),
+                "min-h-12 min-w-[11rem] justify-center rounded-lg border border-amber-500/30 bg-[var(--cannery-amber)] px-6 text-base font-semibold text-neutral-950 shadow-sm hover:bg-[var(--cannery-amber)]/90"
+              )}
+            >
+              Kandideeri kohe
+            </SmoothScrollAnchor>
+          ) : (
+            <Link
+              href={applyHref}
+              className={cn(
+                buttonVariants({ size: "lg" }),
+                "min-h-12 min-w-[11rem] justify-center rounded-lg border border-amber-500/30 bg-[var(--cannery-amber)] px-6 text-base font-semibold text-neutral-950 shadow-sm hover:bg-[var(--cannery-amber)]/90"
+              )}
+            >
+              Kandideeri kohe
+            </Link>
+          )}
+          {showSalary ? (
+            <p className="text-sm text-neutral-700">
+              Brutopalk:{" "}
+              <span className="font-semibold text-neutral-900">
+                {job.salaryRange}
+              </span>
+            </p>
+          ) : (
+            <p className="text-sm text-neutral-500">Palk: kokkuleppel</p>
+          )}
         </div>
 
         <div className="relative mx-auto mt-2 w-full max-w-xs sm:max-w-sm">
