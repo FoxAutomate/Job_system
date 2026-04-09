@@ -1,5 +1,6 @@
 import { AdminHomeLink } from "@/components/admin/AdminHomeLink";
 import { AdminNav } from "@/components/admin/AdminNav";
+import { SiteFooterCredits } from "@/components/SiteFooterCredits";
 import { auth } from "@/auth";
 
 export default async function AdminLayout({
@@ -10,14 +11,15 @@ export default async function AdminLayout({
   const session = await auth();
 
   return (
-    <div className="min-h-dvh bg-neutral-100">
+    <div className="flex min-h-dvh flex-col bg-neutral-100">
       {session ? <AdminNav /> : null}
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">{children}</div>
+      <div className="mx-auto max-w-5xl flex-1 px-4 py-8 sm:px-6">{children}</div>
       {!session ? (
-        <p className="pb-6 text-center text-sm text-neutral-500">
+        <p className="pb-4 text-center text-sm text-neutral-500">
           <AdminHomeLink />
         </p>
       ) : null}
+      <SiteFooterCredits className="mt-auto border-t border-neutral-200/90 bg-neutral-100/90" />
     </div>
   );
 }

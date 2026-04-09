@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { SiteFooterCredits } from "@/components/SiteFooterCredits";
 import { useLocale } from "@/lib/i18n/locale-context";
 
 type JobPageFooterProps = {
@@ -38,6 +39,7 @@ export function JobPageFooter({
         </Link>
       </p>
       <p className="mt-4 text-xs text-neutral-500">{t.jobFooterCompany}</p>
+      <SiteFooterCredits className="mt-6 border-t border-neutral-200/80 bg-transparent pt-4" />
     </footer>
   );
 }

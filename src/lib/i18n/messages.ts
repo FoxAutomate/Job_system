@@ -169,6 +169,7 @@ export type Messages = {
   adminAppFilterLabel: string;
   adminAppFilterAll: string;
   adminCvRatingClear: string;
+  footerMadeByPrefix: string;
 };
 
 const et: Messages = {
@@ -353,6 +354,7 @@ const et: Messages = {
   adminAppFilterLabel: "Filtreeri kuulutuse järgi",
   adminAppFilterAll: "Kõik kuulutused",
   adminCvRatingClear: "Tühista hinne",
+  footerMadeByPrefix: "Teostas",
 };
 
 const en: Messages = {
@@ -536,6 +538,7 @@ const en: Messages = {
   adminAppFilterLabel: "Filter by job post",
   adminAppFilterAll: "All job posts",
   adminCvRatingClear: "Clear score",
+  footerMadeByPrefix: "Made by",
 };
 
 export const messages: Record<Locale, Messages> = { et, en };

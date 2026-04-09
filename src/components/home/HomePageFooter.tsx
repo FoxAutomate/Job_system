@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { SiteFooterCredits } from "@/components/SiteFooterCredits";
 import { useLocale } from "@/lib/i18n/locale-context";
 
 type HomePageFooterProps = {
@@ -33,6 +34,7 @@ export function HomePageFooter({ defaultMail }: HomePageFooterProps) {
           {t.homeFooterAdmin}
         </Link>
       </p>
+      <SiteFooterCredits className="mt-6 border-t border-neutral-200/80 bg-transparent pt-4" />
     </footer>
   );
 }
