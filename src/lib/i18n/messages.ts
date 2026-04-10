@@ -182,6 +182,9 @@ export type Messages = {
   adminAppFilterAll: string;
   adminAppStatusFilterLabel: string;
   adminAppStatusFilterAll: string;
+  adminAppCvRatingFilterLabel: string;
+  adminAppCvRatingFilterAll: string;
+  adminAppCvRatingFilterNone: string;
   adminCvRatingClear: string;
   footerMadeByPrefix: string;
 };
@@ -380,6 +383,9 @@ const et: Messages = {
   adminAppFilterAll: "Kõik kuulutused",
   adminAppStatusFilterLabel: "Filtreeri oleku järgi",
   adminAppStatusFilterAll: "Kõik olekud",
+  adminAppCvRatingFilterLabel: "Filtreeri CV hinde järgi",
+  adminAppCvRatingFilterAll: "Kõik hinded",
+  adminAppCvRatingFilterNone: "Hindamata",
   adminCvRatingClear: "Tühista hinne",
   footerMadeByPrefix: "Teostas",
 };
@@ -577,6 +583,9 @@ const en: Messages = {
   adminAppFilterAll: "All job posts",
   adminAppStatusFilterLabel: "Filter by status",
   adminAppStatusFilterAll: "All statuses",
+  adminAppCvRatingFilterLabel: "Filter by CV score",
+  adminAppCvRatingFilterAll: "All scores",
+  adminAppCvRatingFilterNone: "Not rated",
   adminCvRatingClear: "Clear score",
   footerMadeByPrefix: "Made by",
 };

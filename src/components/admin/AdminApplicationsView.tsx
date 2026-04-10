@@ -36,6 +36,8 @@ export function AdminApplicationsView({
   const [statusFilter, setStatusFilter] = useState<"all" | ApplicationStatus>(
     "all"
   );
+  /** all | none (no score) | 1–5 */
+  const [cvRatingFilter, setCvRatingFilter] = useState<string>("all");
 
   const filteredRows = useMemo(() => {
     let list = rows;
@@ -49,8 +51,14 @@ export function AdminApplicationsView({
     if (statusFilter !== "all") {
       list = list.filter((r) => r.status === statusFilter);
     }
+    if (cvRatingFilter === "none") {
+      list = list.filter((r) => r.cvRating == null);
+    } else if (cvRatingFilter !== "all") {
+      const n = Number(cvRatingFilter);
+      list = list.filter((r) => r.cvRating === n);
+    }
     return list;
-  }, [rows, jobFilter, statusFilter]);
+  }, [rows, jobFilter, statusFilter, cvRatingFilter]);
 
   return (
     <div className="space-y-6">
@@ -100,6 +108,31 @@ export function AdminApplicationsView({
               {applicationStatusEnum.map((s) => (
                 <SelectItem key={s} value={s}>
                   {applicationStatusLabel(locale, s)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="cv-rating-filter" className="text-neutral-700">
+            {t.adminAppCvRatingFilterLabel}
+          </Label>
+          <Select
+            value={cvRatingFilter}
+            onValueChange={(v) => setCvRatingFilter(v ?? "all")}
+          >
+            <SelectTrigger
+              id="cv-rating-filter"
+              className="w-[min(100%,320px)]"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t.adminAppCvRatingFilterAll}</SelectItem>
+              <SelectItem value="none">{t.adminAppCvRatingFilterNone}</SelectItem>
+              {([1, 2, 3, 4, 5] as const).map((n) => (
+                <SelectItem key={n} value={String(n)}>
+                  {n}/5
                 </SelectItem>
               ))}
             </SelectContent>

@@ -40,6 +40,20 @@ const statuses: ApplicationStatus[] = [
   "hired",
 ];
 
+function applicationRowClass(
+  status: ApplicationStatus,
+  isDeepLinked: boolean
+): string {
+  return cn(
+    "border-b border-neutral-100",
+    isDeepLinked && "relative z-[1] ring-2 ring-inset ring-amber-400",
+    status === "new" && "bg-orange-50/85",
+    status === "rejected" &&
+      "bg-neutral-100/90 text-neutral-600 [&_.text-neutral-500]:text-neutral-500",
+    status === "hired" && "bg-emerald-50/85"
+  );
+}
+
 /** 1 = sad red … 5 = happy green */
 const CV_FACES: {
   score: number;
@@ -82,7 +96,9 @@ export function ApplicationsTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>{t.adminAppTblDate}</TableHead>
+            <TableHead className="w-[1%] min-w-0 max-w-[5.75rem] whitespace-normal">
+              {t.adminAppTblDate}
+            </TableHead>
             <TableHead>{t.adminAppTblName}</TableHead>
             <TableHead>{t.adminAppTblOffer}</TableHead>
             <TableHead>{t.adminAppTblStatus}</TableHead>
@@ -98,12 +114,32 @@ export function ApplicationsTable({
             <TableRow
               key={a.id}
               data-application-id={a.id}
-              className={
-                highlightId === a.id ? "bg-amber-50/80" : undefined
-              }
+              className={applicationRowClass(
+                a.status,
+                highlightId === a.id
+              )}
             >
-              <TableCell className="whitespace-nowrap text-sm text-neutral-600">
-                {new Date(a.createdAt ?? "").toLocaleString(dateLocale)}
+              <TableCell className="max-w-[6rem] align-top text-xs leading-snug text-neutral-600">
+                {(() => {
+                  const d = new Date(a.createdAt ?? "");
+                  if (Number.isNaN(d.getTime())) {
+                    return <span className="text-neutral-400">—</span>;
+                  }
+                  return (
+                    <div className="flex flex-col gap-0.5 tabular-nums">
+                      <span>
+                        {d.toLocaleDateString(dateLocale, {
+                          dateStyle: "short",
+                        })}
+                      </span>
+                      <span className="text-[11px] text-neutral-500 sm:text-xs">
+                        {d.toLocaleTimeString(dateLocale, {
+                          timeStyle: "short",
+                        })}
+                      </span>
+                    </div>
+                  );
+                })()}
               </TableCell>
               <TableCell>
                 <div className="font-medium">{a.name}</div>
