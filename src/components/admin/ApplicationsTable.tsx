@@ -49,7 +49,18 @@ function applicationRowClass(
     isDeepLinked && "relative z-[1] ring-2 ring-inset ring-amber-400",
     status === "new" && "bg-orange-50/85",
     status === "rejected" &&
-      "bg-neutral-100/90 text-neutral-600 [&_.text-neutral-500]:text-neutral-500",
+      cn(
+        "border-b border-neutral-500/30 bg-neutral-500/45",
+        "text-neutral-400",
+        "[&_td]:!text-neutral-400",
+        "[&_.font-medium]:!text-neutral-500",
+        "[&_.text-xs]:!text-neutral-400/90",
+        "[&_a]:!text-neutral-500",
+        "[&_textarea]:!border-neutral-500/30 [&_textarea]:!bg-white/15 [&_textarea]:!text-neutral-400",
+        "[&_[data-slot=select-trigger]]:!border-neutral-500/50 [&_[data-slot=select-trigger]]:!bg-white/25 [&_[data-slot=select-trigger]]:!text-neutral-500",
+        "[&_button[type=button]]:!border-neutral-500/30 [&_button[type=button]]:!bg-white/10",
+        "[&_.tabular-nums_span]:!text-neutral-400/90"
+      ),
     status === "hired" && "bg-emerald-50/85"
   );
 }
