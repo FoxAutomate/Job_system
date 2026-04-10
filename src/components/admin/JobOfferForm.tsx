@@ -1,14 +1,20 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useRef, useState, useTransition } from "react";
 
 import { upsertJob } from "@/actions/jobs";
+import { AdminPresetPicker } from "@/components/admin/AdminPresetPicker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useLocale } from "@/lib/i18n/locale-context";
 import type { Job } from "@/db/schema";
+import {
+  PRESET_INBOX_EMAILS,
+  PRESET_LOCATIONS,
+  PRESET_TAGLINES,
+} from "@/lib/admin/presets";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 type Props = {
   job?: Job | null;
@@ -20,13 +26,32 @@ export function JobOfferForm({ job }: Props) {
   const [secondLang, setSecondLang] = useState(
     Boolean(c?.secondLanguageEnabled && en)
   );
-  const [state, formAction] = useActionState(upsertJob, null);
+  const [state, setState] = useState<{ ok: boolean; message?: string } | null>(
+    null
+  );
+  const [pending, startTransition] = useTransition();
+  const emailToRef = useRef<HTMLInputElement>(null);
+  const taglineRef = useRef<HTMLInputElement>(null);
+  const locationRef = useRef<HTMLInputElement>(null);
   const { t } = useLocale();
   const sx = t.adminFormEnSuffix;
 
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    startTransition(async () => {
+      const result = await upsertJob(null, new FormData(form));
+      setState(result);
+    });
+  }
+
   return (
-    <form action={formAction} className="space-y-8">
+    <form onSubmit={onSubmit} className="space-y-8" noValidate>
       {job ? <input type="hidden" name="id" value={job.id} /> : null}
+
+      <p className="rounded-lg border border-amber-200/90 bg-amber-50/95 px-3 py-2.5 text-sm text-neutral-800">
+        {t.adminFormValidationPreservesData}
+      </p>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2 sm:col-span-2">
@@ -39,6 +64,9 @@ export function JobOfferForm({ job }: Props) {
             placeholder={t.adminFormSlugPh}
             className="min-h-10 font-mono text-sm"
           />
+          <p className="text-xs leading-snug text-neutral-600">
+            {t.adminFormSlugWarning}
+          </p>
         </div>
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="title">{t.adminFormTitleLabel}</Label>
@@ -91,9 +119,20 @@ export function JobOfferForm({ job }: Props) {
             placeholder={t.adminFormSalaryPh}
           />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="emailTo">{t.adminFormEmailTo}</Label>
+          <AdminPresetPicker
+            id="preset-inbox-email"
+            label={t.adminFormPresetPickLabel}
+            placeholder={t.adminFormPresetPickPlaceholder}
+            options={PRESET_INBOX_EMAILS}
+            onPick={(v) => {
+              if (emailToRef.current) emailToRef.current.value = v;
+            }}
+            className="max-w-md"
+          />
           <Input
+            ref={emailToRef}
             id="emailTo"
             name="emailTo"
             type="email"
@@ -107,7 +146,18 @@ export function JobOfferForm({ job }: Props) {
         <h3 className="text-lg font-semibold">{t.adminFormSectionPage}</h3>
         <div className="space-y-2">
           <Label htmlFor="tagline">{t.adminFormTagline}</Label>
+          <AdminPresetPicker
+            id="preset-tagline"
+            label={t.adminFormPresetPickLabel}
+            placeholder={t.adminFormPresetPickPlaceholder}
+            options={PRESET_TAGLINES}
+            onPick={(v) => {
+              if (taglineRef.current) taglineRef.current.value = v;
+            }}
+            className="max-w-xl"
+          />
           <Input
+            ref={taglineRef}
             id="tagline"
             name="tagline"
             defaultValue={c?.tagline ?? ""}
@@ -127,7 +177,17 @@ export function JobOfferForm({ job }: Props) {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="location">{t.adminFormLocation}</Label>
+            <AdminPresetPicker
+              id="preset-location"
+              label={t.adminFormPresetPickLabel}
+              placeholder={t.adminFormPresetPickPlaceholder}
+              options={PRESET_LOCATIONS}
+              onPick={(v) => {
+                if (locationRef.current) locationRef.current.value = v;
+              }}
+            />
             <Input
+              ref={locationRef}
               id="location"
               name="location"
               required
@@ -416,7 +476,7 @@ export function JobOfferForm({ job }: Props) {
         <p className="text-sm text-emerald-700">{t.adminFormSaved}</p>
       ) : null}
 
-      <Button type="submit" size="lg" className="min-h-11">
+      <Button type="submit" size="lg" className="min-h-11" disabled={pending}>
         {t.adminFormSubmitOffer}
       </Button>
     </form>

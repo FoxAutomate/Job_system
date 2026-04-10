@@ -115,6 +115,13 @@ export type Messages = {
   adminOfferEditTitle: string;
   adminFormSlug: string;
   adminFormSlugPh: string;
+  /** Warn: invalid slug does not delete data; fix and save again */
+  adminFormSlugWarning: string;
+  /** Banner: validation errors do not clear the form */
+  adminFormValidationPreservesData: string;
+  /** Label for preset dropdown above a field */
+  adminFormPresetPickLabel: string;
+  adminFormPresetPickPlaceholder: string;
   adminFormTitleLabel: string;
   adminFormShortDesc: string;
   adminFormActive: string;
@@ -146,6 +153,7 @@ export type Messages = {
   adminFormSaved: string;
   adminFormSubmitOffer: string;
   adminSettingsEmailLabel: string;
+  adminSettingsPresetHint: string;
   adminSettingsSave: string;
   adminSettingsSaved: string;
   adminJobRowActive: string;
@@ -317,6 +325,12 @@ const et: Messages = {
   adminOfferEditTitle: "Muuda kuulutust",
   adminFormSlug: "Slug (URL) *",
   adminFormSlugPh: "villimismasinate-koostaja-tehnik",
+  adminFormSlugWarning:
+    "Vale slug ei kustuta kuulutust ega salvestatud sisu — salvestamine lihtsalt ei õnnestu, kuni slug on kehtiv (väiketähed, numbrid, sidekriipsud). Paranda slug ja salvesta uuesti; vormi tekst jääb alles.",
+  adminFormValidationPreservesData:
+    "Vorm kontrollib välju enne salvestamist. Ükski viga ei kustuta juba kirjutatud teksti — paranda märgitud koht ja salvesta uuesti.",
+  adminFormPresetPickLabel: "Vali valmis väärtus (täidab alloleva välja)",
+  adminFormPresetPickPlaceholder: "— vali —",
   adminFormTitleLabel: "Pealkiri *",
   adminFormShortDesc: "Lühikirjeldus (nimekiri) *",
   adminFormActive: "Aktiivne",
@@ -346,6 +360,7 @@ const et: Messages = {
   adminFormSaved: "Salvestatud.",
   adminFormSubmitOffer: "Salvesta kuulutus",
   adminSettingsEmailLabel: "Vaikimisi e-post üldiste kandideerimiste jaoks",
+  adminSettingsPresetHint: "Vali sageli kasutatav aadress või kirjuta käsitsi.",
   adminSettingsSave: "Salvesta",
   adminSettingsSaved: "Salvestatud.",
   adminJobRowActive: "Aktiivne",
@@ -517,6 +532,12 @@ const en: Messages = {
   adminOfferEditTitle: "Edit job post",
   adminFormSlug: "Slug (URL) *",
   adminFormSlugPh: "filling-line-technician",
+  adminFormSlugWarning:
+    "An invalid slug does not delete the job or clear your draft — save fails until the slug is valid (lowercase letters, numbers, hyphens). Fix the slug and save again; your text stays in the form.",
+  adminFormValidationPreservesData:
+    "Fields are validated before saving. No error clears what you typed — fix the issue and submit again.",
+  adminFormPresetPickLabel: "Insert a preset (fills the field below)",
+  adminFormPresetPickPlaceholder: "— pick —",
   adminFormTitleLabel: "Title *",
   adminFormShortDesc: "Short description (for listings) *",
   adminFormActive: "Active",
@@ -546,6 +567,7 @@ const en: Messages = {
   adminFormSaved: "Saved.",
   adminFormSubmitOffer: "Save job post",
   adminSettingsEmailLabel: "Default email for general applications",
+  adminSettingsPresetHint: "Pick a common inbox or type your own.",
   adminSettingsSave: "Save",
   adminSettingsSaved: "Saved.",
   adminJobRowActive: "Active",
