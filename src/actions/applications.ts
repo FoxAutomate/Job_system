@@ -26,6 +26,8 @@ export type SubmitState =
       ok: true;
       message: string;
       emailSimulated?: boolean;
+      /** ISO timestamp from DB (for success UI) */
+      submittedAt: string;
     }
   | { ok: false; message: string };
 
@@ -159,10 +161,20 @@ export async function submitApplication(
     }
 
     revalidatePath("/admin/applications");
+
+    const created = inserted.createdAt;
+    const submittedAt =
+      created instanceof Date
+        ? created.toISOString()
+        : created
+          ? new Date(created).toISOString()
+          : new Date().toISOString();
+
     return {
       ok: true,
       message: SUCCESS_BASE + extra,
       emailSimulated,
+      submittedAt,
     };
   } catch (err) {
     console.error("[apply] submitApplication failed:", err);

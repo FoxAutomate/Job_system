@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { ApplicationForm } from "@/components/ApplicationForm";
 import { StickyCTA } from "@/components/StickyCTA";
@@ -13,13 +13,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { Job } from "@/db/schema";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { resolveJobForLocale } from "@/lib/jobs/resolve-job-locale";
 import type { ApplyFormValues } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 
 type ApplySectionProps = {
   variant: "general" | "job";
   jobId?: string | null;
+  /** When set, mailto subject and contact line use locale-specific job copy */
+  job?: Job | null;
   mailtoEmail?: string;
   mailtoSubject?: string;
   sectionId?: string;
@@ -30,13 +34,26 @@ type ApplySectionProps = {
 export function ApplySection({
   variant,
   jobId,
+  job = null,
   mailtoEmail = "Birgit@cannery.eu",
   mailtoSubject = "Cannery Careers",
   sectionId = "apply",
   prefill,
 }: ApplySectionProps) {
   const [success, setSuccess] = useState(false);
+  const [submittedAtIso, setSubmittedAtIso] = useState<string | null>(null);
   const { locale, t } = useLocale();
+
+  const dismissSuccess = useCallback(() => {
+    setSuccess(false);
+    setSubmittedAtIso(null);
+  }, []);
+
+  useEffect(() => {
+    if (!success) return;
+    const id = window.setTimeout(() => dismissSuccess(), 10_000);
+    return () => window.clearTimeout(id);
+  }, [success, dismissSuccess]);
 
   const title =
     variant === "general"
@@ -50,6 +67,14 @@ export function ApplySection({
 
   const stickyLabel =
     variant === "job" ? t.stickyApplyJob : t.stickyApply;
+
+  const resolved = job ? resolveJobForLocale(job, locale) : null;
+  const mailtoResolved =
+    resolved?.content.footerEmail?.trim() ?? job?.emailTo ?? mailtoEmail;
+  const subjectResolved =
+    variant === "job" && resolved
+      ? `Cannery — ${resolved.title}`
+      : mailtoSubject;
 
   return (
     <>
@@ -66,8 +91,10 @@ export function ApplySection({
         <div className="mx-auto max-w-xl">
           {success ? (
             <SuccessScreen
-              contactEmail={mailtoEmail}
+              contactEmail={mailtoResolved}
               variant={variant}
+              submittedAtIso={submittedAtIso ?? undefined}
+              onDismiss={dismissSuccess}
             />
           ) : (
             <Card className="border-neutral-200 shadow-md">
@@ -85,7 +112,10 @@ export function ApplySection({
               <CardContent>
                 <ApplicationForm
                   key={locale}
-                  onSuccess={() => setSuccess(true)}
+                  onSuccess={({ submittedAt }) => {
+                    setSubmittedAtIso(submittedAt);
+                    setSuccess(true);
+                  }}
                   jobId={jobId}
                   defaultValues={prefill}
                 />
@@ -96,13 +126,13 @@ export function ApplySection({
           {!success ? (
             <div className="mt-8 hidden sm:block">
               <a
-                href={`mailto:${mailtoEmail}?subject=${encodeURIComponent(mailtoSubject)}`}
+                href={`mailto:${mailtoResolved}?subject=${encodeURIComponent(subjectResolved)}`}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "lg" }),
                   "flex min-h-12 w-full items-center justify-center text-center"
                 )}
               >
-                {t.applySectionEmailCta} {mailtoEmail}
+                {t.applySectionEmailCta} {mailtoResolved}
               </a>
             </div>
           ) : null}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { upsertJob } from "@/actions/jobs";
 import { Button } from "@/components/ui/button";
@@ -16,8 +16,13 @@ type Props = {
 
 export function JobOfferForm({ job }: Props) {
   const c = job?.content;
+  const en = c?.en;
+  const [secondLang, setSecondLang] = useState(
+    Boolean(c?.secondLanguageEnabled && en)
+  );
   const [state, formAction] = useActionState(upsertJob, null);
   const { t } = useLocale();
+  const sx = t.adminFormEnSuffix;
 
   return (
     <form action={formAction} className="space-y-8">
@@ -201,7 +206,208 @@ export function JobOfferForm({ job }: Props) {
             defaultValue={c?.footerEmail ?? ""}
           />
         </div>
+
+        <input
+          type="hidden"
+          name="secondLanguageEnabled"
+          value={secondLang ? "true" : "false"}
+        />
+        <div className="space-y-2 sm:col-span-2">
+          <label className="flex cursor-pointer items-start gap-3 text-sm font-medium">
+            <input
+              type="checkbox"
+              checked={secondLang}
+              onChange={(e) => setSecondLang(e.target.checked)}
+              className="mt-0.5 size-4 rounded border-neutral-300"
+            />
+            <span>
+              {t.adminFormSecondLanguage}
+              <span className="mt-1 block font-normal text-neutral-600">
+                {t.adminFormSecondLanguageHelp}
+              </span>
+            </span>
+          </label>
+        </div>
       </div>
+
+      {secondLang ? (
+        <div className="space-y-4 border-t border-amber-200/80 bg-amber-50/40 px-3 py-6 sm:px-4">
+          <h3 className="text-lg font-semibold text-neutral-900">
+            {t.adminFormSectionEnglish}
+          </h3>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="enTitle">
+                {t.adminFormTitleLabel}
+                {sx}
+              </Label>
+              <Input
+                id="enTitle"
+                name="enTitle"
+                required={secondLang}
+                defaultValue={en?.title ?? ""}
+                className="min-h-10"
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="enShortDescription">
+                {t.adminFormShortDesc}
+                {sx}
+              </Label>
+              <Textarea
+                id="enShortDescription"
+                name="enShortDescription"
+                required={secondLang}
+                rows={2}
+                defaultValue={en?.shortDescription ?? ""}
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="enTagline">
+                {t.adminFormTagline}
+                {sx}
+              </Label>
+              <Input
+                id="enTagline"
+                name="enTagline"
+                required={secondLang}
+                defaultValue={en?.tagline ?? ""}
+                placeholder={t.adminFormTaglinePh}
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="enHeroIntro">
+                {t.adminFormHeroIntro}
+                {sx}
+              </Label>
+              <Textarea
+                id="enHeroIntro"
+                name="enHeroIntro"
+                required={secondLang}
+                rows={4}
+                defaultValue={en?.heroIntro ?? ""}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="enLocation">
+                {t.adminFormLocation}
+                {sx}
+              </Label>
+              <Input
+                id="enLocation"
+                name="enLocation"
+                required={secondLang}
+                defaultValue={en?.location ?? ""}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="enDeadlineDisplay">
+                {t.adminFormDeadlineText}
+                {sx}
+              </Label>
+              <Input
+                id="enDeadlineDisplay"
+                name="enDeadlineDisplay"
+                required={secondLang}
+                defaultValue={en?.deadlineDisplay ?? ""}
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="enDeadlineIso">
+                {t.adminFormDeadlineIsoOptional}
+                {sx}
+              </Label>
+              <Input
+                id="enDeadlineIso"
+                name="enDeadlineIso"
+                defaultValue={en?.deadlineIso ?? ""}
+                placeholder="2026-06-30"
+                className="font-mono text-sm"
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="enResponsibilities">
+                {t.adminFormResp}
+                {sx}
+              </Label>
+              <p className="text-xs text-neutral-500">{t.adminFormListLineHint}</p>
+              <Textarea
+                id="enResponsibilities"
+                name="enResponsibilities"
+                required={secondLang}
+                rows={8}
+                defaultValue={en?.responsibilities?.join("\n") ?? ""}
+                className="font-mono text-sm"
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="enRequirements">
+                {t.adminFormReq}
+                {sx}
+              </Label>
+              <Textarea
+                id="enRequirements"
+                name="enRequirements"
+                required={secondLang}
+                rows={8}
+                defaultValue={en?.requirements?.join("\n") ?? ""}
+                className="font-mono text-sm"
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="enNiceToHave">
+                {t.adminFormNice}
+                {sx}
+              </Label>
+              <Textarea
+                id="enNiceToHave"
+                name="enNiceToHave"
+                required={secondLang}
+                rows={6}
+                defaultValue={en?.niceToHave?.join("\n") ?? ""}
+                className="font-mono text-sm"
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="enWeOffer">
+                {t.adminFormWeOffer}
+                {sx}
+              </Label>
+              <Textarea
+                id="enWeOffer"
+                name="enWeOffer"
+                required={secondLang}
+                rows={6}
+                defaultValue={en?.weOffer?.join("\n") ?? ""}
+                className="font-mono text-sm"
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="enSalaryCardLine">
+                {t.adminFormSalaryCardLine}
+                {sx}
+              </Label>
+              <Input
+                id="enSalaryCardLine"
+                name="enSalaryCardLine"
+                defaultValue={en?.salaryCardLine ?? ""}
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="enFooterEmail">
+                {t.adminFormFooterEmail}
+                {sx}
+              </Label>
+              <Input
+                id="enFooterEmail"
+                name="enFooterEmail"
+                type="email"
+                defaultValue={en?.footerEmail ?? ""}
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {state && !state.ok ? (
         <p className="text-sm text-destructive">{state.message}</p>

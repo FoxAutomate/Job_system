@@ -1,12 +1,19 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { ApplySection } from "@/components/ApplySection";
 import { JobContentSections } from "@/components/jobs/JobContentSections";
 import { JobHero } from "@/components/jobs/JobHero";
 import { JobPageFooter } from "@/components/jobs/JobPageFooter";
+import { resolveJobForLocale } from "@/lib/jobs/resolve-job-locale";
+import type { Locale } from "@/lib/i18n/messages";
 import { getJobBySlug } from "@/lib/queries";
 import type { ApplyFormValues } from "@/lib/validation";
+
+function localeFromCookie(val: string | undefined): Locale {
+  return val === "en" ? "en" : "et";
+}
 
 export const dynamic = "force-dynamic";
 
@@ -20,9 +27,12 @@ export async function generateMetadata({
   if (!job || !job.active) {
     return { title: "Kuulutus | Cannery Careers" };
   }
+  const cookieStore = await cookies();
+  const loc = localeFromCookie(cookieStore.get("cannery_locale")?.value);
+  const resolved = resolveJobForLocale(job, loc);
   return {
-    title: `${job.title} | Cannery Careers`,
-    description: job.shortDescription,
+    title: `${resolved.title} | Cannery Careers`,
+    description: resolved.shortDescription,
   };
 }
 
@@ -44,25 +54,18 @@ export default async function JobDetailPage({ params, searchParams }: Props) {
     phone: sp.phone,
   };
 
-  const mail = job.content.footerEmail ?? job.emailTo;
-
   return (
     <div className="min-h-dvh bg-neutral-50">
       <JobHero job={job} applyHref="#apply-job" />
-      <JobContentSections job={job} content={job.content} />
+      <JobContentSections job={job} />
       <ApplySection
         variant="job"
         jobId={job.id}
+        job={job}
         sectionId="apply-job"
-        mailtoEmail={mail}
-        mailtoSubject={`Cannery — ${job.title}`}
         prefill={prefill}
       />
-      <JobPageFooter
-        deadlineDisplay={job.content.deadlineDisplay}
-        deadlineIso={job.content.deadlineIso}
-        mail={mail}
-      />
+      <JobPageFooter job={job} />
     </div>
   );
 }

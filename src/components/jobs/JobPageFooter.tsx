@@ -1,22 +1,26 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 
 import { SiteFooterCredits } from "@/components/SiteFooterCredits";
+import type { Job } from "@/db/schema";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { resolveJobForLocale } from "@/lib/jobs/resolve-job-locale";
 
 type JobPageFooterProps = {
-  deadlineDisplay: string;
-  deadlineIso?: string;
-  mail: string;
+  job: Job;
 };
 
-export function JobPageFooter({
-  deadlineDisplay,
-  deadlineIso,
-  mail,
-}: JobPageFooterProps) {
-  const { t } = useLocale();
+export function JobPageFooter({ job }: JobPageFooterProps) {
+  const { locale, t } = useLocale();
+  const { content } = useMemo(
+    () => resolveJobForLocale(job, locale),
+    [job, locale]
+  );
+  const mail = content.footerEmail ?? job.emailTo;
+  const deadlineDisplay = content.deadlineDisplay;
+  const deadlineIso = content.deadlineIso;
 
   return (
     <footer className="border-t border-neutral-200 bg-neutral-100 px-4 py-8 text-center text-sm text-neutral-600 sm:px-6">

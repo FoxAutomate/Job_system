@@ -11,8 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Application, ApplicationStatus } from "@/db/schema";
+import { applicationStatusEnum } from "@/db/schema";
+import { applicationStatusLabel } from "@/lib/i18n/crm-status";
 import { useLocale } from "@/lib/i18n/locale-context";
-import type { Application } from "@/db/schema";
 
 type Row = Application & { jobTitle: string | null };
 
@@ -29,16 +31,26 @@ export function AdminApplicationsView({
   jobOptions,
   highlightId,
 }: Props) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [jobFilter, setJobFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | ApplicationStatus>(
+    "all"
+  );
 
   const filteredRows = useMemo(() => {
-    if (jobFilter === "all") return rows;
-    if (jobFilter === "general") {
-      return rows.filter((r) => r.jobId == null);
+    let list = rows;
+    if (jobFilter !== "all") {
+      if (jobFilter === "general") {
+        list = list.filter((r) => r.jobId == null);
+      } else {
+        list = list.filter((r) => r.jobId === jobFilter);
+      }
     }
-    return rows.filter((r) => r.jobId === jobFilter);
-  }, [rows, jobFilter]);
+    if (statusFilter !== "all") {
+      list = list.filter((r) => r.status === statusFilter);
+    }
+    return list;
+  }, [rows, jobFilter, statusFilter]);
 
   return (
     <div className="space-y-6">
@@ -65,6 +77,29 @@ export function AdminApplicationsView({
               {jobOptions.map((j) => (
                 <SelectItem key={j.id} value={j.id}>
                   {j.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="status-filter" className="text-neutral-700">
+            {t.adminAppStatusFilterLabel}
+          </Label>
+          <Select
+            value={statusFilter}
+            onValueChange={(v) =>
+              setStatusFilter((v ?? "all") as "all" | ApplicationStatus)
+            }
+          >
+            <SelectTrigger id="status-filter" className="w-[min(100%,320px)]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t.adminAppStatusFilterAll}</SelectItem>
+              {applicationStatusEnum.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {applicationStatusLabel(locale, s)}
                 </SelectItem>
               ))}
             </SelectContent>

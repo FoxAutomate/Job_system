@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { resolveJobForLocale } from "@/lib/jobs/resolve-job-locale";
 import { cn } from "@/lib/utils";
 import type { Job } from "@/db/schema";
 
@@ -27,7 +28,7 @@ const cardVariants = {
 };
 
 export function JobList({ jobs }: Props) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
 
   if (jobs.length === 0) {
     return (
@@ -46,6 +47,10 @@ export function JobList({ jobs }: Props) {
     >
       {jobs.map((job) => {
         const salaryVisible = Boolean(job.showSalary && job.salaryRange);
+        const { title, shortDescription, content } = resolveJobForLocale(
+          job,
+          locale
+        );
         return (
           <motion.li key={job.id} variants={cardVariants} className="h-full">
             <Link
@@ -85,10 +90,10 @@ export function JobList({ jobs }: Props) {
 
                 <div>
                   <h3 className="font-heading text-lg font-bold leading-snug text-neutral-950 group-hover:text-neutral-800 sm:text-xl">
-                    {job.title}
+                    {title}
                   </h3>
                   <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-neutral-600 sm:text-[15px]">
-                    {job.shortDescription}
+                    {shortDescription}
                   </p>
                 </div>
 
@@ -98,16 +103,16 @@ export function JobList({ jobs }: Props) {
                       className="mt-0.5 size-4 shrink-0 text-neutral-400"
                       aria-hidden
                     />
-                    <span className="leading-snug">{job.content.location}</span>
+                    <span className="leading-snug">{content.location}</span>
                   </p>
-                  {job.content.deadlineDisplay ? (
+                  {content.deadlineDisplay ? (
                     <p className="flex items-center gap-2">
                       <Calendar
                         className="size-4 shrink-0 text-neutral-400"
                         aria-hidden
                       />
                       <span>
-                        {t.jobListDeadline} {job.content.deadlineDisplay}
+                        {t.jobListDeadline} {content.deadlineDisplay}
                       </span>
                     </p>
                   ) : null}

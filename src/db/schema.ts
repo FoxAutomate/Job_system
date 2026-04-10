@@ -8,7 +8,27 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-/** Structured job page content (Estonian UI strings + lists) */
+/**
+ * Manual English (UK) copy for a job offer, stored inside `JobContent.en`.
+ * Shown when the visitor selects EN (UK) and `secondLanguageEnabled` is true.
+ */
+export type JobOfferLocaleBlock = {
+  title: string;
+  shortDescription: string;
+  tagline: string;
+  heroIntro: string;
+  location: string;
+  deadlineDisplay: string;
+  deadlineIso?: string;
+  responsibilities: string[];
+  requirements: string[];
+  niceToHave: string[];
+  weOffer: string[];
+  salaryCardLine?: string;
+  footerEmail?: string;
+};
+
+/** Structured job page content (primary language: Estonian) */
 export type JobContent = {
   tagline: string;
   heroIntro: string;
@@ -22,6 +42,9 @@ export type JobContent = {
   /** Shown in offer card when showSalary + salaryRange */
   salaryCardLine?: string;
   footerEmail?: string;
+  /** Admin: offer English copy; used when locale is `en` */
+  secondLanguageEnabled?: boolean;
+  en?: JobOfferLocaleBlock | null;
 };
 
 export const siteSettings = pgTable("site_settings", {

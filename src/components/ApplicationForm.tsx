@@ -20,7 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 
 type ApplicationFormProps = {
-  onSuccess: () => void;
+  onSuccess: (payload: { submittedAt: string }) => void;
   jobId?: string | null;
   defaultValues?: Partial<ApplyFormValues>;
 };
@@ -108,7 +108,7 @@ export function ApplicationForm({
       });
       form.reset();
       setCvFile(null);
-      onSuccess();
+      onSuccess({ submittedAt: result.submittedAt });
     } else {
       const msg = result.message ?? "Error";
       setRootError(msg);

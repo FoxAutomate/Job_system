@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -8,6 +9,7 @@ import { SmoothScrollAnchor } from "@/components/SmoothScrollAnchor";
 import { buttonVariants } from "@/components/ui/button";
 import type { Job } from "@/db/schema";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { resolveJobForLocale } from "@/lib/jobs/resolve-job-locale";
 import { cn } from "@/lib/utils";
 
 type JobHeroProps = {
@@ -16,9 +18,12 @@ type JobHeroProps = {
 };
 
 export function JobHero({ job, applyHref = "#apply-job" }: JobHeroProps) {
-  const { content } = job;
   const showSalary = job.showSalary && job.salaryRange;
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
+  const { title, content } = useMemo(
+    () => resolveJobForLocale(job, locale),
+    [job, locale]
+  );
 
   return (
     <section className="relative isolate overflow-hidden bg-neutral-100">
@@ -60,7 +65,7 @@ export function JobHero({ job, applyHref = "#apply-job" }: JobHeroProps) {
 
         <div className="space-y-4">
           <h1 className="font-heading text-balance text-3xl font-bold leading-tight tracking-tight text-neutral-950 sm:text-4xl">
-            {job.title}
+            {title}
           </h1>
           <p className="text-pretty text-base leading-relaxed text-neutral-800 sm:text-lg">
             {content.heroIntro}

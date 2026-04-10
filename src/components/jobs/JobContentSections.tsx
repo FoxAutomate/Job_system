@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   BadgeEuro,
@@ -18,12 +19,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { Job } from "@/db/schema";
 import { useLocale } from "@/lib/i18n/locale-context";
-import type { Job, JobContent } from "@/db/schema";
+import { resolveJobForLocale } from "@/lib/jobs/resolve-job-locale";
 
 type Props = {
   job: Job;
-  content: JobContent;
 };
 
 const container = {
@@ -39,8 +40,12 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-export function JobContentSections({ job, content }: Props) {
-  const { t } = useLocale();
+export function JobContentSections({ job }: Props) {
+  const { locale, t } = useLocale();
+  const content = useMemo(
+    () => resolveJobForLocale(job, locale).content,
+    [job, locale]
+  );
 
   const blocks = [
     {

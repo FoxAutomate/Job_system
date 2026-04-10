@@ -58,6 +58,8 @@ export type Messages = {
   successHome: string;
   successJobsJob: string;
   successJobsGeneral: string;
+  /** Caption above submitted date/time on success card */
+  successSubmittedLabel: string;
   stickyApply: string;
   stickyApplyJob: string;
   adminNavPublic: string;
@@ -126,6 +128,8 @@ export type Messages = {
   adminFormHeroIntro: string;
   adminFormLocation: string;
   adminFormDeadlineText: string;
+  /** Optional ISO date (EN block); used for semantic deadline */
+  adminFormDeadlineIsoOptional: string;
   adminFormResp: string;
   adminFormReq: string;
   adminFormNice: string;
@@ -133,6 +137,12 @@ export type Messages = {
   adminFormListLineHint: string;
   adminFormSalaryCardLine: string;
   adminFormFooterEmail: string;
+  /** Optional manual EN (UK) copy for this job listing */
+  adminFormSecondLanguage: string;
+  adminFormSecondLanguageHelp: string;
+  adminFormSectionEnglish: string;
+  /** Appended to field labels in the English block */
+  adminFormEnSuffix: string;
   adminFormSaved: string;
   adminFormSubmitOffer: string;
   adminSettingsEmailLabel: string;
@@ -170,6 +180,8 @@ export type Messages = {
   jobDetailBadge3: string;
   adminAppFilterLabel: string;
   adminAppFilterAll: string;
+  adminAppStatusFilterLabel: string;
+  adminAppStatusFilterAll: string;
   adminCvRatingClear: string;
   footerMadeByPrefix: string;
 };
@@ -243,6 +255,7 @@ const et: Messages = {
   successHome: "Tagasi avalehele",
   successJobsJob: "Vaata teisi pakkumisi",
   successJobsGeneral: "Kõik ametikohad",
+  successSubmittedLabel: "Esitatud",
   stickyApply: "Kandideeri",
   stickyApplyJob: "Kandideeri kohe",
   adminNavPublic: "Avalik leht",
@@ -314,6 +327,7 @@ const et: Messages = {
   adminFormHeroIntro: "Sissejuhatus *",
   adminFormLocation: "Asukoht *",
   adminFormDeadlineText: "Tähtaeg (tekst) *",
+  adminFormDeadlineIsoOptional: "Tähtaeg ISO (valikuline, nt 2026-06-30)",
   adminFormResp: "Tööülesanded (üks rida = üks punkt) *",
   adminFormReq: "Ootused (üks rida = üks punkt) *",
   adminFormNice: "Kasuks tuleb *",
@@ -321,6 +335,11 @@ const et: Messages = {
   adminFormListLineHint: "Üks rida = üks loendipunkt",
   adminFormSalaryCardLine: "Palga rida (kaardi all)",
   adminFormFooterEmail: "Jalus / kontakt e-post (valikuline)",
+  adminFormSecondLanguage: "Lisa teine keel (inglise, käsitsi tõlkega)",
+  adminFormSecondLanguageHelp:
+    "Kui lubatud, kuvatakse kuulutust inglise keeles, kui külastaja valib EN (UK). Täida kõik inglise väljad.",
+  adminFormSectionEnglish: "Inglise (Ühendkuningriik)",
+  adminFormEnSuffix: " — EN",
   adminFormSaved: "Salvestatud.",
   adminFormSubmitOffer: "Salvesta kuulutus",
   adminSettingsEmailLabel: "Vaikimisi e-post üldiste kandideerimiste jaoks",
@@ -359,6 +378,8 @@ const et: Messages = {
   jobDetailBadge3: "Reisivalmidus",
   adminAppFilterLabel: "Filtreeri kuulutuse järgi",
   adminAppFilterAll: "Kõik kuulutused",
+  adminAppStatusFilterLabel: "Filtreeri oleku järgi",
+  adminAppStatusFilterAll: "Kõik olekud",
   adminCvRatingClear: "Tühista hinne",
   footerMadeByPrefix: "Teostas",
 };
@@ -431,6 +452,7 @@ const en: Messages = {
   successHome: "Back to home",
   successJobsJob: "Browse other roles",
   successJobsGeneral: "All open positions",
+  successSubmittedLabel: "Submitted",
   stickyApply: "Apply",
   stickyApplyJob: "Apply now",
   adminNavPublic: "Public site",
@@ -502,6 +524,7 @@ const en: Messages = {
   adminFormHeroIntro: "Introduction *",
   adminFormLocation: "Location *",
   adminFormDeadlineText: "Deadline (display text) *",
+  adminFormDeadlineIsoOptional: "Deadline ISO (optional, e.g. 2026-06-30)",
   adminFormResp: "Responsibilities (one line = one bullet) *",
   adminFormReq: "Requirements (one line = one bullet) *",
   adminFormNice: "Nice to have *",
@@ -509,6 +532,11 @@ const en: Messages = {
   adminFormListLineHint: "One line = one bullet",
   adminFormSalaryCardLine: "Salary line (under card)",
   adminFormFooterEmail: "Footer / contact email (optional)",
+  adminFormSecondLanguage: "Add second language (English — manual translation)",
+  adminFormSecondLanguageHelp:
+    "When enabled, visitors who choose EN (UK) see this English copy. Fill in every English field below.",
+  adminFormSectionEnglish: "English (United Kingdom)",
+  adminFormEnSuffix: " — EN",
   adminFormSaved: "Saved.",
   adminFormSubmitOffer: "Save job post",
   adminSettingsEmailLabel: "Default email for general applications",
@@ -547,6 +575,8 @@ const en: Messages = {
   jobDetailBadge3: "Willingness to travel",
   adminAppFilterLabel: "Filter by job post",
   adminAppFilterAll: "All job posts",
+  adminAppStatusFilterLabel: "Filter by status",
+  adminAppStatusFilterAll: "All statuses",
   adminCvRatingClear: "Clear score",
   footerMadeByPrefix: "Made by",
 };
