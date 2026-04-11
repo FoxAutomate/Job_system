@@ -40,3 +40,36 @@ export const ALLOWED_CV_MIME = new Set([
 
 /** Vercel Blob server upload limit is 4.5 MB — keep client/server max at 4 MB */
 export const MAX_CV_BYTES = 4 * 1024 * 1024;
+
+const EXT_TO_MIME: Record<string, string> = {
+  ".pdf": "application/pdf",
+  ".doc": "application/msword",
+  ".docx":
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+};
+
+/**
+ * Resolves an allowed MIME type for CV upload.
+ * Browsers often send PDF as `application/octet-stream` or an empty type — use file extension then.
+ */
+export function resolveCvMimeType(file: File): string | null {
+  const reported = (file.type || "").trim().toLowerCase();
+  if (reported && ALLOWED_CV_MIME.has(reported)) return reported;
+
+  const name = file.name || "";
+  const dot = name.lastIndexOf(".");
+  const ext = dot >= 0 ? name.slice(dot).toLowerCase() : "";
+  const fromExt = ext ? EXT_TO_MIME[ext] : undefined;
+  if (!fromExt || !ALLOWED_CV_MIME.has(fromExt)) return null;
+
+  const looseMime =
+    !reported ||
+    reported === "application/octet-stream" ||
+    reported === "binary/octet-stream";
+  if (looseMime) return fromExt;
+
+  // Browser sent a non-standard type; trust extension for known CV suffixes
+  if (!ALLOWED_CV_MIME.has(reported)) return fromExt;
+
+  return null;
+}

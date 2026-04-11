@@ -303,7 +303,7 @@ const et: Messages = {
   serverApplyUnexpected:
     "Salvestamine ebaõnnestus. Proovi uuesti või kirjuta otse e-postiga. Kui probleem püsib, kontrolli andmebaasi migratsiooni (cv_rating). / Save failed. Please try again or email us directly.",
   serverCvUploadFailed:
-    "CV üleslaadimine ebaõnnestus. Proovi uuesti ilma failita või väiksema PDF-iga. / CV upload failed. Try again without a file or with a smaller PDF.",
+    "CV üleslaadimine salvestusserverisse ebaõnnestus (see ei ole tavaliselt faili suurus). Proovi uuesti, saada kandideerimine ilma manuseta või saada CV e-postiga. / CV storage upload failed (usually not file size). Retry, apply without attachment, or email your CV.",
   adminDashTitle: "Haldus",
   adminDashSubtitle: "Cannery Careers — kuulutused ja kandidaadid",
   adminDashJobsCard: "Kuulutused",
@@ -510,7 +510,7 @@ const en: Messages = {
   serverApplyUnexpected:
     "Save failed. Please try again or email us. If this persists, ensure the database migration was applied (e.g. cv_rating column). / Salvestamine ebaõnnestus.",
   serverCvUploadFailed:
-    "CV upload failed. Try again without a file or with a smaller PDF. / CV üleslaadimine ebaõnnestus.",
+    "CV storage upload failed (usually not file size). Retry, apply without attachment, or email your CV. / CV üleslaadimine salvestusserverisse ebaõnnestus.",
   adminDashTitle: "Admin",
   adminDashSubtitle: "Cannery Careers — job posts and candidates",
   adminDashJobsCard: "Job posts",

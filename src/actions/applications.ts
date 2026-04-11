@@ -1,5 +1,7 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
+
 import { put } from "@vercel/blob";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -16,8 +18,8 @@ import { requireAdmin } from "@/lib/auth-guard";
 import { type Locale, messages } from "@/lib/i18n/messages";
 import {
   getApplyFormSchema,
-  ALLOWED_CV_MIME,
   MAX_CV_BYTES,
+  resolveCvMimeType,
 } from "@/lib/validation";
 
 export type SubmitState =
@@ -75,8 +77,8 @@ export async function submitApplication(
           message: msg.serverCvTooLarge,
         };
       }
-      const type = cv.type || "application/octet-stream";
-      if (!ALLOWED_CV_MIME.has(type)) {
+           const mime = resolveCvMimeType(cv);
+      if (!mime) {
         return {
           ok: false,
           message: msg.serverCvType,
@@ -88,14 +90,25 @@ export async function submitApplication(
         console.warn("[apply] BLOB_READ_WRITE_TOKEN missing — CV not stored");
       } else {
         try {
-          const blob = await put(cv.name || "cv.pdf", cv, {
+          const ext =
+            mime === "application/pdf"
+              ? ".pdf"
+              : mime.includes("wordprocessingml")
+                ? ".docx"
+                : ".doc";
+          const pathname = `applications/cv-${randomUUID()}${ext}`;
+          const buf = Buffer.from(await cv.arrayBuffer());
+          const blob = await put(pathname, buf, {
             access: "public",
             token,
+            contentType: mime,
           });
           cvUrl = blob.url;
-          cvFileName = cv.name;
+          cvFileName = cv.name || `cv${ext}`;
         } catch (blobErr) {
-          console.error("[apply] Vercel Blob upload failed:", blobErr);
+          const detail =
+            blobErr instanceof Error ? blobErr.message : String(blobErr);
+          console.error("[apply] Vercel Blob upload failed:", detail, blobErr);
           return { ok: false, message: msg.serverCvUploadFailed };
         }
       }

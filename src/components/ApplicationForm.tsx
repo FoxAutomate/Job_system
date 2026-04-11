@@ -15,6 +15,7 @@ import { useLocale } from "@/lib/i18n/locale-context";
 import {
   MAX_CV_BYTES,
   getApplyFormSchema,
+  resolveCvMimeType,
   type ApplyFormValues,
 } from "@/lib/validation";
 import { cn } from "@/lib/utils";
@@ -61,6 +62,13 @@ export function ApplicationForm({
         toast.error(t.toastCvTooLargeTitle, {
           description: t.toastCvTooLargeDesc,
         });
+        event.target.value = "";
+        return;
+      }
+      if (!resolveCvMimeType(file)) {
+        setCvFile(null);
+        setCvHint(t.serverCvType);
+        toast.error(t.toastErrorTitle, { description: t.serverCvType });
         event.target.value = "";
         return;
       }
