@@ -13,6 +13,7 @@ import {
   type ApplicationStatus,
   type Job,
 } from "@/db/schema";
+import { isTrustedCvBlobUrl } from "@/lib/blob-trust";
 import { sendApplicationNotification } from "@/lib/email";
 import { requireAdmin } from "@/lib/auth-guard";
 import { type Locale, messages } from "@/lib/i18n/messages";
@@ -37,6 +38,27 @@ const SUCCESS_BASE =
 
 function parseLocale(raw: unknown): Locale {
   return raw === "en" ? "en" : "et";
+}
+
+function parseTrustedCvFromForm(formData: FormData): {
+  cvUrl: string;
+  cvFileName: string;
+} | null {
+  const urlRaw = formData.get("cvUrl");
+  const nameRaw = formData.get("cvFileName");
+  if (typeof urlRaw !== "string" || typeof nameRaw !== "string") return null;
+  const cvUrl = urlRaw.trim();
+  const cvFileName = nameRaw.trim();
+  if (
+    !cvUrl ||
+    !cvFileName ||
+    cvFileName.length > 255 ||
+    /[/\\]/.test(cvFileName)
+  ) {
+    return null;
+  }
+  if (!isTrustedCvBlobUrl(cvUrl)) return null;
+  return { cvUrl, cvFileName };
 }
 
 export async function submitApplication(
@@ -70,14 +92,18 @@ export async function submitApplication(
     let cvUrl: string | null = null;
     let cvFileName: string | null = null;
 
-    if (cv instanceof File && cv.size > 0) {
+    const trusted = parseTrustedCvFromForm(formData);
+    if (trusted) {
+      cvUrl = trusted.cvUrl;
+      cvFileName = trusted.cvFileName;
+    } else if (cv instanceof File && cv.size > 0) {
       if (cv.size > MAX_CV_BYTES) {
         return {
           ok: false,
           message: msg.serverCvTooLarge,
         };
       }
-           const mime = resolveCvMimeType(cv);
+      const mime = resolveCvMimeType(cv);
       if (!mime) {
         return {
           ok: false,

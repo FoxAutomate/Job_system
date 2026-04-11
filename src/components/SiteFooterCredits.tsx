@@ -1,6 +1,6 @@
 "use client";
 
-import { APP_VERSION } from "@/lib/app-version";
+import { DEPLOYMENT_COMMIT_REF } from "@/lib/deployment-ref";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { cn } from "@/lib/utils";
 
@@ -27,9 +27,9 @@ export function SiteFooterCredits({ className }: { className?: string }) {
         <span className="text-neutral-400"> · </span>
         <span
           className="tabular-nums font-medium text-neutral-600"
-          title={`v${APP_VERSION}`}
+          title={t.footerCommitRefTitle}
         >
-          v{APP_VERSION}
+          {DEPLOYMENT_COMMIT_REF}
         </span>
       </p>
     </div>

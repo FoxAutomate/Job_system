@@ -195,6 +195,8 @@ export type Messages = {
   adminAppCvRatingFilterNone: string;
   adminCvRatingClear: string;
   footerMadeByPrefix: string;
+  /** Tooltip: deployment Git short SHA */
+  footerCommitRefTitle: string;
 };
 
 const et: Messages = {
@@ -403,6 +405,8 @@ const et: Messages = {
   adminAppCvRatingFilterNone: "Hindamata",
   adminCvRatingClear: "Tühista hinne",
   footerMadeByPrefix: "Teostas",
+  footerCommitRefTitle:
+    "Paigutuse Git commit (lühike SHA) — deployment short commit",
 };
 
 const en: Messages = {
@@ -610,6 +614,7 @@ const en: Messages = {
   adminAppCvRatingFilterNone: "Not rated",
   adminCvRatingClear: "Clear score",
   footerMadeByPrefix: "Made by",
+  footerCommitRefTitle: "Deployment Git short SHA (build commit)",
 };
 
 export const messages: Record<Locale, Messages> = { et, en };

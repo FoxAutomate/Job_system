@@ -6,6 +6,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { createCvUploadClientToken } from "@/actions/blob-upload";
 import { submitApplication } from "@/actions/applications";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,7 +95,43 @@ export function ApplicationForm({
     body.append("message", values.message ?? "");
     body.append("locale", locale);
     if (jobId) body.append("jobId", jobId);
-    if (cvFile) body.append("cv", cvFile);
+
+    if (cvFile) {
+      const mime = resolveCvMimeType(cvFile);
+      if (!mime) {
+        setRootError(t.serverCvType);
+        toast.error(t.toastErrorTitle, { description: t.serverCvType });
+        return;
+      }
+      const ext =
+        mime === "application/pdf"
+          ? ".pdf"
+          : mime.includes("wordprocessingml")
+            ? ".docx"
+            : ".doc";
+      const pathname = `applications/cv-${crypto.randomUUID()}${ext}`;
+      const tokenRes = await createCvUploadClientToken(pathname, mime);
+      if (tokenRes.ok) {
+        try {
+          const { put } = await import("@vercel/blob/client");
+          const blob = await put(pathname, cvFile, {
+            access: "public",
+            token: tokenRes.clientToken,
+            contentType: mime,
+          });
+          body.append("cvUrl", blob.url);
+          body.append("cvFileName", cvFile.name || `cv${ext}`);
+        } catch (err) {
+          console.error(
+            "[ApplicationForm] client Blob put failed, falling back to server:",
+            err
+          );
+          body.append("cv", cvFile);
+        }
+      } else {
+        body.append("cv", cvFile);
+      }
+    }
 
     let result: Awaited<ReturnType<typeof submitApplication>>;
     try {
