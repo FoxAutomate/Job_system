@@ -257,7 +257,7 @@ const et: Messages = {
   toastSuccessDescReal:
     "Võtame peagi ühendust. / Application submitted successfully. We will contact you soon.",
   toastSuccessDescSim:
-    "Teavitus simuleeritud (seadista RESEND_API_KEY). / Application submitted — we will contact you soon.",
+    "Teavitus simuleeritud (seadista SMTP_PASS). / Application submitted — we will contact you soon.",
   toastErrorTitle: "Saatmine ebaõnnestus",
   successTitle: "Aitäh — saime sinu andmed kätte",
   successBody:
@@ -464,7 +464,7 @@ const en: Messages = {
   toastSuccessDescReal:
     "We will contact you soon. / Võtame peagi ühendust.",
   toastSuccessDescSim:
-    "Email simulation — set RESEND_API_KEY. / Teavitus simuleeritud.",
+    "Email simulation — set SMTP_PASS. / Teavitus simuleeritud.",
   toastErrorTitle: "Submission failed",
   successTitle: "Thank you — we have received your details",
   successBody:

@@ -8,7 +8,6 @@ import { getDb } from "@/db";
 import {
   applications,
   jobs,
-  siteSettings,
   type ApplicationStatus,
   type Job,
 } from "@/db/schema";
@@ -102,7 +101,6 @@ export async function submitApplication(
       }
     }
 
-    let notifyTo: string;
     let jobRow: Job | null = null;
 
     if (jobId) {
@@ -114,15 +112,7 @@ export async function submitApplication(
       if (!job || !job.active) {
         return { ok: false, message: msg.serverJobInactive };
       }
-      notifyTo = job.emailTo;
       jobRow = job;
-    } else {
-      const [settings] = await db
-        .select()
-        .from(siteSettings)
-        .where(eq(siteSettings.id, "default"))
-        .limit(1);
-      notifyTo = settings?.defaultApplicationEmail ?? "Birgit@cannery.eu";
     }
 
     const [inserted] = await db
@@ -144,15 +134,11 @@ export async function submitApplication(
     let extra = "";
 
     try {
-      const result = await sendApplicationNotification(
-        inserted,
-        jobRow,
-        notifyTo
-      );
+      const result = await sendApplicationNotification(inserted, jobRow);
       if (result.via === "simulated") {
         emailSimulated = true;
         extra =
-          " (Email simulation — set RESEND_API_KEY on the server for real delivery.)";
+          " (Email simulation — set SMTP_PASS on the server for real delivery.)";
       }
     } catch (err) {
       console.error("[apply] sendApplicationNotification failed:", err);

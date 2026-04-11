@@ -1,10 +1,13 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
 import type { Application, Job } from "@/db/schema";
 
+/** All application notifications go here unless `APPLICATION_NOTIFY_EMAIL` is set. */
+const DEFAULT_APPLICATION_INBOX = "brigit@cannery.eu";
+
 export type EmailSendResult =
-  | { ok: true; via: "resend" }
-  | { ok: true; via: "simulated"; reason: "missing_resend_key" };
+  | { ok: true; via: "smtp" }
+  | { ok: true; via: "simulated"; reason: "missing_smtp_pass" };
 
 /** Canonical public URL for links in emails (admin, etc.) */
 export function getPublicSiteUrl(): string {
@@ -33,23 +36,47 @@ function formatDate(iso: Date | string | null | undefined): string {
   });
 }
 
-/**
- * Sends a professional HTML notification to HR about a new application.
- * @param application — persisted row (must include `id`)
- * @param job — concrete job when application is tied to an offer; `null` for general applications
- * @param notifyTo — recipient (job `emailTo` or `site_settings.defaultApplicationEmail`)
- */
-export async function sendApplicationNotification(
+function getSmtpPass(): string | undefined {
+  const p = process.env.SMTP_PASS?.trim();
+  return p && p.length > 0 ? p : undefined;
+}
+
+function getNotifyRecipient(): string {
+  const v = process.env.APPLICATION_NOTIFY_EMAIL?.trim();
+  return v && v.length > 0 ? v : DEFAULT_APPLICATION_INBOX;
+}
+
+function getFromHeader(): string {
+  const email =
+    process.env.SMTP_FROM_EMAIL?.trim() || "noreply@job.canneryandco.com";
+  const name = process.env.SMTP_FROM_NAME?.trim() || "Cannery Careers";
+  const safeName = name.replace(/"/g, "\\");
+  return `"${safeName}" <${email}>`;
+}
+
+function createSmtpTransport() {
+  const pass = getSmtpPass();
+  if (!pass) return null;
+
+  const host = process.env.SMTP_HOST?.trim() || "s188.cyber-folks.pl";
+  const portRaw = process.env.SMTP_PORT?.trim();
+  const port = portRaw ? Number(portRaw) : 465;
+  const user =
+    process.env.SMTP_USER?.trim() || "noreply@job.canneryandco.com";
+
+  return nodemailer.createTransport({
+    host,
+    port: Number.isFinite(port) ? port : 465,
+    secure: port === 465,
+    auth: { user, pass },
+  });
+}
+
+function buildNotificationHtml(
   application: Application,
   job: Job | null | undefined,
-  notifyTo: string
-): Promise<EmailSendResult> {
-  const key = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
-
-  const base = getPublicSiteUrl();
-  const adminAppUrl = `${base}/admin/applications?id=${encodeURIComponent(application.id)}`;
-
+  adminAppUrl: string
+): { html: string; subject: string } {
   const jobLabel = job
     ? escapeHtml(job.title)
     : "Üldine kandideerimine (pole seotud konkreetse kuulutusega)";
@@ -84,7 +111,7 @@ export async function sendApplicationNotification(
   <p style="margin-top:24px;">
     <a href="${escapeHtml(adminAppUrl)}" style="display:inline-block;background:#171717;color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:14px;font-weight:600;">Ava adminis</a>
   </p>
-  <p style="font-size:12px;color:#a3a3a3;margin-top:24px;">Cannery Careers · see kiri saadeti automaatselt</p>
+  <p style="font-size:12px;color:#a3a3a3;margin-top:24px;">Cannery Careers · see kiri saadeti automaatselt (SMTP)</p>
 </body>
 </html>
 `;
@@ -92,6 +119,28 @@ export async function sendApplicationNotification(
   const subject = job
     ? `Uus kandideerimine: ${job.title} — ${application.name}`
     : `Uus üldine kandideerimine — ${application.name}`;
+
+  return { html, subject };
+}
+
+/**
+ * Sends an HTML notification to the application inbox (Cyberfolks SMTP).
+ * Requires `SMTP_PASS` for real delivery; otherwise logs payload and returns simulated.
+ *
+ * Recipient: `APPLICATION_NOTIFY_EMAIL` or {@link DEFAULT_APPLICATION_INBOX}.
+ */
+export async function sendApplicationNotification(
+  application: Application,
+  job?: Job | null
+): Promise<EmailSendResult> {
+  const base = getPublicSiteUrl();
+  const adminAppUrl = `${base}/admin/applications?id=${encodeURIComponent(application.id)}`;
+  const notifyTo = getNotifyRecipient();
+  const { html, subject } = buildNotificationHtml(
+    application,
+    job ?? null,
+    adminAppUrl
+  );
 
   const logPayload = {
     to: notifyTo,
@@ -102,34 +151,48 @@ export async function sendApplicationNotification(
       email: application.email,
       phone: application.phone,
     },
-    job: job ? { id: job.id, title: job.title, slug: job.slug } : null,
+    job: job
+      ? { id: job.id, title: job.title, slug: job.slug }
+      : null,
     hasCv: Boolean(application.cvUrl),
     cvUrl: application.cvUrl,
     adminAppUrl,
     sentAt: formatDate(application.createdAt),
   };
 
-  if (!key) {
-    console.log(
-      "[email] RESEND_API_KEY missing — simulated notification (copy template below)"
+  if (!getSmtpPass()) {
+    console.warn(
+      "[email] SMTP_PASS is not set — simulated notification (set SMTP_PASS on the server for real delivery)"
     );
     console.log(JSON.stringify(logPayload, null, 2));
-    return { ok: true, via: "simulated", reason: "missing_resend_key" };
+    return { ok: true, via: "simulated", reason: "missing_smtp_pass" };
   }
 
-  const resend = new Resend(key);
-  const { error } = await resend.emails.send({
-    from,
-    to: notifyTo,
-    subject,
-    html,
-  });
-
-  if (error) {
-    console.error("[email] Resend error:", error);
-    console.log("[email] Fallback log:", logPayload);
-    throw new Error(error.message ?? "Email send failed");
+  const transport = createSmtpTransport();
+  if (!transport) {
+    console.warn("[email] SMTP transport could not be created — simulated");
+    console.log(JSON.stringify(logPayload, null, 2));
+    return { ok: true, via: "simulated", reason: "missing_smtp_pass" };
   }
 
-  return { ok: true, via: "resend" };
+  try {
+    await transport.sendMail({
+      from: getFromHeader(),
+      to: notifyTo,
+      subject,
+      html,
+    });
+  } catch (err) {
+    const msg =
+      err instanceof Error
+        ? err.message
+        : typeof err === "object" && err !== null && "message" in err
+          ? String((err as { message: unknown }).message)
+          : "Unknown SMTP error";
+    console.error("[email] SMTP send failed:", err);
+    console.log("[email] Payload log:", logPayload);
+    throw new Error(`SMTP: ${msg}`);
+  }
+
+  return { ok: true, via: "smtp" };
 }
