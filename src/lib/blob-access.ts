@@ -1,13 +1,13 @@
 /**
  * Must match the Vercel Blob **store** access mode (Storage → store settings).
- * New Vercel Blob stores are often **private**; using `public` in `put()` then fails.
- * - Default here: **private** (matches typical store).
- * - If your store is **public**, set env `BLOB_ACCESS=public`.
+ * - **Public** store (typical after switching store to Public): default `public` here.
+ * - **Private** store: set env `BLOB_ACCESS=private` or `put()` fails with
+ *   "Cannot use public access on a private store".
  */
 export function getBlobPutAccess(): "public" | "private" {
   const v = process.env.BLOB_ACCESS?.trim().toLowerCase();
-  if (v === "public") return "public";
-  return "private";
+  if (v === "private") return "private";
+  return "public";
 }
 
 /** URL we persist and send to the form — private blobs need `downloadUrl` for browser access. */

@@ -41,6 +41,35 @@ export const ALLOWED_CV_MIME = new Set([
 /** Vercel Blob server upload limit is 4.5 MB — keep client/server max at 4 MB */
 export const MAX_CV_BYTES = 4 * 1024 * 1024;
 
+/** Reject obvious garbage (e.g. broken Server-Action File fallback ~10 B) */
+export const MIN_CV_BYTES = 64;
+
+/**
+ * True if buffer looks like the declared MIME (magic bytes).
+ * Prevents storing empty/error payloads as "CV".
+ */
+export function isCvBufferPlausible(buf: Buffer, mime: string): boolean {
+  if (buf.length < MIN_CV_BYTES) return false;
+  if (mime === "application/pdf") {
+    return buf.subarray(0, 4).toString("ascii") === "%PDF";
+  }
+  if (
+    mime ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    return buf[0] === 0x50 && buf[1] === 0x4b;
+  }
+  if (mime === "application/msword") {
+    return (
+      buf[0] === 0xd0 &&
+      buf[1] === 0xcf &&
+      buf[2] === 0x11 &&
+      buf[3] === 0xe0
+    );
+  }
+  return false;
+}
+
 const EXT_TO_MIME: Record<string, string> = {
   ".pdf": "application/pdf",
   ".doc": "application/msword",

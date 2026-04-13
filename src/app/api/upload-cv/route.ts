@@ -5,7 +5,11 @@ import { NextResponse } from "next/server";
 
 import { cvUrlFromPutResult, getBlobPutAccess } from "@/lib/blob-access";
 import { getBlobReadWriteToken } from "@/lib/blob-token";
-import { MAX_CV_BYTES, resolveCvMimeType } from "@/lib/validation";
+import {
+  MAX_CV_BYTES,
+  isCvBufferPlausible,
+  resolveCvMimeType,
+} from "@/lib/validation";
 import {
   blobRwTokenShapeOk,
   formatErrorForLog,
@@ -105,6 +109,17 @@ export async function POST(request: Request) {
     let buf: Buffer;
     try {
       buf = Buffer.from(await file.arrayBuffer());
+      if (!isCvBufferPlausible(buf, mime)) {
+        console.warn("[upload-cv] buffer failed magic-byte check", {
+          requestId,
+          mime,
+          bytes: buf.length,
+        });
+        return NextResponse.json(
+          { ok: false, error: "invalid_file_content", requestId },
+          { status: 400 }
+        );
+      }
     } catch (err) {
       console.error(
         "[upload-cv] read file into buffer failed",

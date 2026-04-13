@@ -147,8 +147,14 @@ export function ApplicationForm({
       if (uploaded) {
         body.append("cvUrl", uploaded.url);
         body.append("cvFileName", uploaded.fileName);
-      } else {
-        body.append("cv", cvFile);
+      } else if (cvFile) {
+        // Never send File via Server Action as CV fallback — it often arrives
+        // corrupted (~few bytes). User can retry or apply without attachment.
+        setRootError(t.serverCvUploadFailed);
+        toast.error(t.toastErrorTitle, {
+          description: t.serverCvUploadFailed,
+        });
+        return;
       }
     }
 

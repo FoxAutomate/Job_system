@@ -23,6 +23,7 @@ import { type Locale, messages } from "@/lib/i18n/messages";
 import {
   getApplyFormSchema,
   MAX_CV_BYTES,
+  isCvBufferPlausible,
   resolveCvMimeType,
 } from "@/lib/validation";
 
@@ -130,6 +131,13 @@ export async function submitApplication(
           uploadPathname = `applications/cv-${randomUUID()}${ext}`;
           const buf = Buffer.from(await cv.arrayBuffer());
           uploadBytes = buf.length;
+          if (!isCvBufferPlausible(buf, mime)) {
+            console.error("[apply] CV buffer failed validation", {
+              bytes: buf.length,
+              mime,
+            });
+            return { ok: false, message: msg.serverCvUploadFailed };
+          }
           const blobAccess = getBlobPutAccess();
           const blob = await put(uploadPathname, buf, {
             access: blobAccess,
