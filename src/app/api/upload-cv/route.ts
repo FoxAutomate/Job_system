@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
+import { cvUrlFromPutResult, getBlobPutAccess } from "@/lib/blob-access";
 import { getBlobReadWriteToken } from "@/lib/blob-token";
 import { MAX_CV_BYTES, resolveCvMimeType } from "@/lib/validation";
 import {
@@ -116,26 +117,29 @@ export async function POST(request: Request) {
     }
 
     try {
+      const blobAccess = getBlobPutAccess();
       console.info("[upload-cv] blob put start", {
         requestId,
         pathname,
         bytes: buf.length,
         mime,
         multipart: true,
+        blobAccess,
         vercelRegion: process.env.VERCEL_REGION,
       });
       const blob = await put(pathname, buf, {
-        access: "public",
+        access: blobAccess,
         token,
         contentType: mime,
         multipart: true,
       });
+      const storedUrl = cvUrlFromPutResult(blob, blobAccess);
       console.info("[upload-cv] blob put ok", {
         requestId,
         pathname: blob.pathname,
         host: (() => {
           try {
-            return new URL(blob.url).hostname;
+            return new URL(storedUrl).hostname;
           } catch {
             return "invalid_url";
           }
@@ -143,7 +147,7 @@ export async function POST(request: Request) {
       });
       return NextResponse.json({
         ok: true,
-        url: blob.url,
+        url: storedUrl,
         fileName: displayName,
       });
     } catch (err) {
@@ -155,6 +159,7 @@ export async function POST(request: Request) {
           bytes: buf.length,
           mime,
           multipart: true,
+          blobAccess: getBlobPutAccess(),
           tokenShapeOk: blobRwTokenShapeOk(token),
           vercelRegion: process.env.VERCEL_REGION,
           ...formatErrorForLog(err),

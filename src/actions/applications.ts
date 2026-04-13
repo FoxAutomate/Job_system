@@ -13,6 +13,7 @@ import {
   type ApplicationStatus,
   type Job,
 } from "@/db/schema";
+import { cvUrlFromPutResult, getBlobPutAccess } from "@/lib/blob-access";
 import { isTrustedCvBlobUrl } from "@/lib/blob-trust";
 import { getBlobReadWriteToken } from "@/lib/blob-token";
 import { blobRwTokenShapeOk, formatErrorForLog } from "@/lib/upload-error-log";
@@ -129,13 +130,14 @@ export async function submitApplication(
           uploadPathname = `applications/cv-${randomUUID()}${ext}`;
           const buf = Buffer.from(await cv.arrayBuffer());
           uploadBytes = buf.length;
+          const blobAccess = getBlobPutAccess();
           const blob = await put(uploadPathname, buf, {
-            access: "public",
+            access: blobAccess,
             token,
             contentType: mime,
             multipart: true,
           });
-          cvUrl = blob.url;
+          cvUrl = cvUrlFromPutResult(blob, blobAccess);
           cvFileName = cv.name || `cv${ext}`;
         } catch (blobErr) {
           const logId = randomUUID().slice(0, 8);
@@ -147,6 +149,7 @@ export async function submitApplication(
               bytes: uploadBytes,
               mime,
               multipart: true,
+              blobAccess: getBlobPutAccess(),
               tokenShapeOk: blobRwTokenShapeOk(token),
               vercelRegion: process.env.VERCEL_REGION,
               ...formatErrorForLog(blobErr),
