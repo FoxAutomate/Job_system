@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 
 import type { Application, Job } from "@/db/schema";
 import type { Locale } from "@/lib/i18n/messages";
+import { resolveFreshCvDownloadUrl } from "@/lib/blob-cv-download";
 import {
   DEFAULT_PUBLIC_CONTACT_EMAIL,
   DEFAULT_SMTP_FROM_EMAIL,
@@ -79,15 +80,21 @@ function createSmtpTransport() {
 function buildNotificationHtml(
   application: Application,
   job: Job | null | undefined,
-  adminAppUrl: string
+  adminAppUrl: string,
+  /** Fresh Blob download URL when private store (DB URL may be expired). */
+  cvHrefForEmail?: string | null
 ): { html: string; subject: string } {
   const jobLabel = job
     ? escapeHtml(job.title)
     : "Üldine kandideerimine (pole seotud konkreetse kuulutusega)";
 
+  const cvHref =
+    (cvHrefForEmail && cvHrefForEmail.length > 0
+      ? cvHrefForEmail
+      : application.cvUrl) ?? "";
   const cvBlock =
-    application.cvUrl && application.cvUrl.length > 0
-      ? `<p><strong>CV:</strong> <a href="${escapeHtml(application.cvUrl)}">${escapeHtml(application.cvFileName ?? "Fail")}</a></p>`
+    cvHref.length > 0
+      ? `<p><strong>CV:</strong> <a href="${escapeHtml(cvHref)}">${escapeHtml(application.cvFileName ?? "Fail")}</a></p>`
       : "<p><strong>CV:</strong> ei lisatud</p>";
 
   const messageBlock =
@@ -350,10 +357,17 @@ export async function sendApplicationNotification(
   const base = getPublicSiteUrl();
   const adminAppUrl = `${base}/admin/applications?id=${encodeURIComponent(application.id)}`;
   const notifyTo = getNotifyRecipient();
+  let cvHrefForEmail: string | null | undefined;
+  if (application.cvUrl?.trim()) {
+    cvHrefForEmail =
+      (await resolveFreshCvDownloadUrl(application.cvUrl)) ??
+      application.cvUrl;
+  }
   const { html, subject } = buildNotificationHtml(
     application,
     job ?? null,
-    adminAppUrl
+    adminAppUrl,
+    cvHrefForEmail
   );
 
   const logPayload = {

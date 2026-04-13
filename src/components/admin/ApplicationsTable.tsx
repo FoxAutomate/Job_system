@@ -201,7 +201,7 @@ export function ApplicationsTable({
               <TableCell>
                 {a.cvUrl ? (
                   <a
-                    href={a.cvUrl}
+                    href={`/api/admin/cv-download?id=${encodeURIComponent(a.id)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm font-medium text-amber-900 underline"

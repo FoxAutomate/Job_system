@@ -1,4 +1,8 @@
 import { AdminDashboardView } from "@/components/admin/AdminDashboardView";
+import {
+  DEFAULT_APPLICANT_EMAIL_BODY_EN,
+  DEFAULT_APPLICANT_EMAIL_BODY_ET,
+} from "@/lib/applicant-email-defaults";
 import { getAllApplications, getAllJobs, getSiteSettings } from "@/lib/queries";
 import { DEFAULT_PUBLIC_CONTACT_EMAIL } from "@/lib/site-email-defaults";
 import { requireAdmin } from "@/lib/auth-guard";
@@ -20,8 +24,12 @@ export default async function AdminDashboardPage() {
       initialEmail={
         settings?.defaultApplicationEmail ?? DEFAULT_PUBLIC_CONTACT_EMAIL
       }
-      initialApplicantBodyEt={settings?.applicantEmailBodyEt ?? ""}
-      initialApplicantBodyEn={settings?.applicantEmailBodyEn ?? ""}
+      initialApplicantBodyEt={
+        settings?.applicantEmailBodyEt ?? DEFAULT_APPLICANT_EMAIL_BODY_ET
+      }
+      initialApplicantBodyEn={
+        settings?.applicantEmailBodyEn ?? DEFAULT_APPLICANT_EMAIL_BODY_EN
+      }
     />
   );
 }

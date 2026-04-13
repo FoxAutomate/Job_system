@@ -6,6 +6,11 @@ import { z } from "zod";
 import { getDb } from "@/db";
 import { siteSettings } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth-guard";
+import {
+  DEFAULT_APPLICANT_EMAIL_BODY_EN,
+  DEFAULT_APPLICANT_EMAIL_BODY_ET,
+  normalizeApplicantEmailBody,
+} from "@/lib/applicant-email-defaults";
 
 const MAX_APPLICANT_BODY_CHARS = 12000;
 
@@ -33,8 +38,27 @@ export async function updateSiteEmailSettings(
     };
   }
 
-  const applicantEmailBodyEt = bodyEtRaw.trim() || null;
-  const applicantEmailBodyEn = bodyEnRaw.trim() || null;
+  const trimmedEt = normalizeApplicantEmailBody(bodyEtRaw);
+  const trimmedEn = normalizeApplicantEmailBody(bodyEnRaw);
+  const defaultEtNorm = normalizeApplicantEmailBody(
+    DEFAULT_APPLICANT_EMAIL_BODY_ET
+  );
+  const defaultEnNorm = normalizeApplicantEmailBody(
+    DEFAULT_APPLICANT_EMAIL_BODY_EN
+  );
+
+  const applicantEmailBodyEt =
+    !trimmedEt
+      ? null
+      : trimmedEt === defaultEtNorm
+        ? null
+        : trimmedEt;
+  const applicantEmailBodyEn =
+    !trimmedEn
+      ? null
+      : trimmedEn === defaultEnNorm
+        ? null
+        : trimmedEn;
 
   const db = getDb();
   await db

@@ -381,7 +381,7 @@ const et: Messages = {
   adminSettingsApplicantBodyEt: "Eesti keele tekst",
   adminSettingsApplicantBodyEn: "Inglise (UK) tekst",
   adminSettingsApplicantPlaceholderHint:
-    "Jäta tühjaks, et kasutada vaikimisi sõnumit. Tühja rida teise lõigu jaoks. Kohad: {{name}}, {{hrEmail}}, {{jobTitle}}, {{jobLabel}}, {{cvHint}}.",
+    "Väljad on eeltäidetud vaikimisi sõnumiga (muuda ja salvesta). Tühjenda väli ja salvesta, et kasutada sisseehitatud HTML-kujundust. Tühi rida alustab uut lõiku. Kohad: {{name}}, {{hrEmail}}, {{jobTitle}}, {{jobLabel}}, {{cvHint}}.",
   adminJobRowActive: "Aktiivne",
   adminJobRowSalary: "Palk",
   adminJobDeleteConfirm:
@@ -599,7 +599,7 @@ const en: Messages = {
   adminSettingsApplicantBodyEt: "Estonian body",
   adminSettingsApplicantBodyEn: "English (UK) body",
   adminSettingsApplicantPlaceholderHint:
-    "Leave blank for the built-in message. Blank line starts a new paragraph. Placeholders: {{name}}, {{hrEmail}}, {{jobTitle}}, {{jobLabel}}, {{cvHint}}.",
+    "Fields start filled with the default wording (edit and save). Clear a field and save to use the built-in HTML layout instead. Blank line starts a new paragraph. Placeholders: {{name}}, {{hrEmail}}, {{jobTitle}}, {{jobLabel}}, {{cvHint}}.",
   adminJobRowActive: "Active",
   adminJobRowSalary: "Salary",
   adminJobDeleteConfirm:
