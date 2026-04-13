@@ -2,7 +2,6 @@
 
 import { randomUUID } from "node:crypto";
 
-import { put } from "@vercel/blob";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -13,7 +12,8 @@ import {
   type ApplicationStatus,
   type Job,
 } from "@/db/schema";
-import { cvUrlFromPutResult, getBlobPutAccess } from "@/lib/blob-access";
+import { getBlobPutAccess } from "@/lib/blob-access";
+import { putCvBlobWithAccessFallback } from "@/lib/blob-put-cv";
 import { isTrustedCvBlobUrl } from "@/lib/blob-trust";
 import { getBlobReadWriteToken } from "@/lib/blob-token";
 import { blobRwTokenShapeOk, formatErrorForLog } from "@/lib/upload-error-log";
@@ -141,14 +141,13 @@ export async function submitApplication(
             });
             return { ok: false, message: msg.serverCvUploadFailed };
           }
-          const blobAccess = getBlobPutAccess();
-          const blob = await put(uploadPathname, buf, {
-            access: blobAccess,
+          const { storedUrl } = await putCvBlobWithAccessFallback({
+            pathname: uploadPathname,
+            body: buf,
             token,
             contentType: mime,
-            multipart: true,
           });
-          cvUrl = cvUrlFromPutResult(blob, blobAccess);
+          cvUrl = storedUrl;
           cvFileName = cv.name || `cv${ext}`;
         } catch (blobErr) {
           const logId = randomUUID().slice(0, 8);

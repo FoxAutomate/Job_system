@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 
-import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
-import { cvUrlFromPutResult, getBlobPutAccess } from "@/lib/blob-access";
+import { getBlobPutAccess } from "@/lib/blob-access";
+import { putCvBlobWithAccessFallback } from "@/lib/blob-put-cv";
 import { getBlobReadWriteToken } from "@/lib/blob-token";
 import {
   MAX_CV_BYTES,
@@ -142,16 +142,22 @@ export async function POST(request: Request) {
         blobAccess,
         vercelRegion: process.env.VERCEL_REGION,
       });
-      const blob = await put(pathname, buf, {
-        access: blobAccess,
+      const { storedUrl, accessUsed } = await putCvBlobWithAccessFallback({
+        pathname,
+        body: buf,
         token,
         contentType: mime,
-        multipart: true,
       });
-      const storedUrl = cvUrlFromPutResult(blob, blobAccess);
+      if (accessUsed !== blobAccess) {
+        console.warn("[upload-cv] used corrected blob access", {
+          requestId,
+          envWas: blobAccess,
+          accessUsed,
+        });
+      }
       console.info("[upload-cv] blob put ok", {
         requestId,
-        pathname: blob.pathname,
+        accessUsed,
         host: (() => {
           try {
             return new URL(storedUrl).hostname;

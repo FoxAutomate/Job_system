@@ -1,8 +1,8 @@
 /**
- * Must match the Vercel Blob **store** access mode (Storage → store settings).
- * - **Public** store (typical after switching store to Public): default `public` here.
- * - **Private** store: set env `BLOB_ACCESS=private` or `put()` fails with
- *   "Cannot use public access on a private store".
+ * Preferred `put()` access; should match the Blob **store** in Vercel.
+ * If `BLOB_ACCESS` is wrong, {@link putCvBlobWithAccessFallback} retries with the other mode.
+ * - Unset or `public`: try public first.
+ * - `private`: try private first.
  */
 export function getBlobPutAccess(): "public" | "private" {
   const v = process.env.BLOB_ACCESS?.trim().toLowerCase();
