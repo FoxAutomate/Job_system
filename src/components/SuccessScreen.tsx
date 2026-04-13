@@ -7,7 +7,7 @@ import { useMemo } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { useLocale } from "@/lib/i18n/locale-context";
-import { DEFAULT_CANNERY_CAREERS_EMAIL } from "@/lib/site-email-defaults";
+import { DEFAULT_PUBLIC_CONTACT_EMAIL } from "@/lib/site-email-defaults";
 import { cn } from "@/lib/utils";
 
 type SuccessScreenProps = {
@@ -19,7 +19,7 @@ type SuccessScreenProps = {
 };
 
 export function SuccessScreen({
-  contactEmail = DEFAULT_CANNERY_CAREERS_EMAIL,
+  contactEmail = DEFAULT_PUBLIC_CONTACT_EMAIL,
   variant = "general",
   submittedAtIso,
   onDismiss,

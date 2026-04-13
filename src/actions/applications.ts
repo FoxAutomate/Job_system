@@ -17,7 +17,10 @@ import { cvUrlFromPutResult, getBlobPutAccess } from "@/lib/blob-access";
 import { isTrustedCvBlobUrl } from "@/lib/blob-trust";
 import { getBlobReadWriteToken } from "@/lib/blob-token";
 import { blobRwTokenShapeOk, formatErrorForLog } from "@/lib/upload-error-log";
-import { sendApplicationNotification } from "@/lib/email";
+import {
+  sendApplicantConfirmationEmail,
+  sendApplicationNotification,
+} from "@/lib/email";
 import { requireAdmin } from "@/lib/auth-guard";
 import { type Locale, messages } from "@/lib/i18n/messages";
 import {
@@ -211,6 +214,30 @@ export async function submitApplication(
       console.error("[apply] sendApplicationNotification failed:", err);
       extra =
         " Teavituskirja saatmine ebaõnnestus; kandideerimine on salvestatud. / Email notification failed; your application was still saved.";
+    }
+
+    try {
+      const ac = await sendApplicantConfirmationEmail(
+        inserted,
+        jobRow,
+        locale
+      );
+      if (ac.via === "simulated") {
+        emailSimulated = true;
+      }
+    } catch (err) {
+      console.error("[apply] sendApplicantConfirmationEmail failed:", err);
+      extra +=
+        " Kinnituskirja kandidaadile ei saadetud. / Applicant confirmation email was not sent.";
+    }
+
+    if (
+      emailSimulated &&
+      !extra.includes("Email simulation") &&
+      !extra.includes("Email notification failed")
+    ) {
+      extra +=
+        " (Email simulation — set SMTP_PASS on the server for real delivery.)";
     }
 
     revalidatePath("/admin/applications");

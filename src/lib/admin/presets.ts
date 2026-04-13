@@ -3,9 +3,10 @@
 export type AdminPreset = { value: string; label: string };
 
 export const PRESET_INBOX_EMAILS: AdminPreset[] = [
+  { value: "birgit@cannery.eu", label: "birgit@cannery.eu (HR / site contact)" },
   {
     value: "noreply@canneryandco.com",
-    label: "noreply@canneryandco.com",
+    label: "noreply@canneryandco.com (SMTP From only — not for site mailto)",
   },
   { value: "careers@cannery.eu", label: "careers@cannery.eu" },
 ];

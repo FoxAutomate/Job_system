@@ -1,5 +1,8 @@
 /**
- * Default contact / notification address when DB or env overrides are absent.
- * SMTP defaults in `email.ts` use the same value unless env vars are set.
+ * HR / public contact: mailto on the site, footer, and default internal inbox
+ * (`APPLICATION_NOTIFY_EMAIL`) when unset.
  */
-export const DEFAULT_CANNERY_CAREERS_EMAIL = "noreply@canneryandco.com";
+export const DEFAULT_PUBLIC_CONTACT_EMAIL = "birgit@cannery.eu";
+
+/** Outgoing transactional From (confirmations, etc.) when `SMTP_FROM_EMAIL` unset. */
+export const DEFAULT_SMTP_FROM_EMAIL = "noreply@canneryandco.com";

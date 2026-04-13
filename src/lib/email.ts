@@ -1,10 +1,14 @@
 import nodemailer from "nodemailer";
 
 import type { Application, Job } from "@/db/schema";
-import { DEFAULT_CANNERY_CAREERS_EMAIL } from "@/lib/site-email-defaults";
+import type { Locale } from "@/lib/i18n/messages";
+import {
+  DEFAULT_PUBLIC_CONTACT_EMAIL,
+  DEFAULT_SMTP_FROM_EMAIL,
+} from "@/lib/site-email-defaults";
 
-/** All application notifications go here unless `APPLICATION_NOTIFY_EMAIL` is set. */
-const DEFAULT_APPLICATION_INBOX = DEFAULT_CANNERY_CAREERS_EMAIL;
+/** HR inbox — new application alerts unless `APPLICATION_NOTIFY_EMAIL` is set. */
+const DEFAULT_APPLICATION_INBOX = DEFAULT_PUBLIC_CONTACT_EMAIL;
 
 export type EmailSendResult =
   | { ok: true; via: "smtp" }
@@ -49,7 +53,7 @@ function getNotifyRecipient(): string {
 
 function getFromHeader(): string {
   const email =
-    process.env.SMTP_FROM_EMAIL?.trim() || DEFAULT_CANNERY_CAREERS_EMAIL;
+    process.env.SMTP_FROM_EMAIL?.trim() || DEFAULT_SMTP_FROM_EMAIL;
   const name = process.env.SMTP_FROM_NAME?.trim() || "Cannery Careers";
   const safeName = name.replace(/"/g, "\\");
   return `"${safeName}" <${email}>`;
@@ -62,8 +66,7 @@ function createSmtpTransport() {
   const host = process.env.SMTP_HOST?.trim() || "s188.cyber-folks.pl";
   const portRaw = process.env.SMTP_PORT?.trim();
   const port = portRaw ? Number(portRaw) : 465;
-  const user =
-    process.env.SMTP_USER?.trim() || DEFAULT_CANNERY_CAREERS_EMAIL;
+  const user = process.env.SMTP_USER?.trim() || DEFAULT_SMTP_FROM_EMAIL;
 
   return nodemailer.createTransport({
     host,
@@ -124,6 +127,102 @@ function buildNotificationHtml(
   return { html, subject };
 }
 
+function buildApplicantConfirmationHtml(
+  application: Application,
+  job: Job | null | undefined,
+  locale: Locale
+): { html: string; subject: string } {
+  const name = escapeHtml(application.name);
+  const hrMail = escapeHtml(DEFAULT_PUBLIC_CONTACT_EMAIL);
+  const jobTitle = job ? escapeHtml(job.title) : null;
+
+  const blockEt = job
+    ? `<p>Tere, ${name}!</p><p>Võtsime vastu Sinu kandideerimise ametikohale <strong>${jobTitle}</strong>.</p>`
+    : `<p>Tere, ${name}!</p><p>Võtsime vastu Sinu üldise kandideerimise.</p>`;
+  const blockEn = job
+    ? `<p>Hello ${name},</p><p>We have received your application for <strong>${jobTitle}</strong>.</p>`
+    : `<p>Hello ${name},</p><p>We have received your general application.</p>`;
+
+  const cvEt = application.cvUrl
+    ? "<p>Sinu CV on salvestatud.</p>"
+    : `<p>Kui Sa ei lisanud veel CV-d, saada see palun aadressil <a href="mailto:${hrMail}">${hrMail}</a>.</p>`;
+  const cvEn = application.cvUrl
+    ? "<p>Your CV was saved.</p>"
+    : `<p>If you have not attached a CV yet, please send it to <a href="mailto:${hrMail}">${hrMail}</a>.</p>`;
+
+  const closingEt = "<p>Võtame peagi ühendust.</p><p style=\"margin-top:16px;color:#737373;font-size:13px;\">Cannery Careers · Cannery OÜ</p>";
+  const closingEn = "<p>We will be in touch soon.</p><p style=\"margin-top:16px;color:#737373;font-size:13px;\">Cannery Careers · Cannery OÜ</p>";
+
+  const primary = locale === "en" ? blockEn + cvEn + closingEn : blockEt + cvEt + closingEt;
+  const secondary = locale === "en" ? blockEt + cvEt + closingEt : blockEn + cvEn + closingEn;
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:system-ui,-apple-system,sans-serif;line-height:1.55;color:#171717;max-width:560px;margin:0;padding:24px;">
+  ${primary}
+  <hr style="border:none;border-top:1px solid #e5e5e5;margin:28px 0" />
+  <div style="font-size:14px;color:#525252;">${secondary}</div>
+</body>
+</html>`;
+
+  const subject =
+    locale === "en"
+      ? "Cannery Careers — application received"
+      : "Cannery Careers — kandideerimine vastu võetud";
+
+  return { html, subject };
+}
+
+/**
+ * Confirmation e-mail to the applicant (From: noreply / SMTP_FROM_EMAIL).
+ */
+export async function sendApplicantConfirmationEmail(
+  application: Application,
+  job: Job | null | undefined,
+  locale: Locale
+): Promise<EmailSendResult> {
+  const { html, subject } = buildApplicantConfirmationHtml(
+    application,
+    job ?? null,
+    locale
+  );
+
+  if (!getSmtpPass()) {
+    console.warn(
+      "[email] applicant confirmation simulated (SMTP_PASS not set)"
+    );
+    return { ok: true, via: "simulated", reason: "missing_smtp_pass" };
+  }
+
+  const transport = createSmtpTransport();
+  if (!transport) {
+    return { ok: true, via: "simulated", reason: "missing_smtp_pass" };
+  }
+
+  try {
+    await transport.sendMail({
+      from: getFromHeader(),
+      to: application.email,
+      replyTo: DEFAULT_PUBLIC_CONTACT_EMAIL,
+      subject,
+      html,
+    });
+  } catch (err) {
+    const msg =
+      err instanceof Error
+        ? err.message
+        : typeof err === "object" && err !== null && "message" in err
+          ? String((err as { message: unknown }).message)
+          : "Unknown SMTP error";
+    console.error("[email] applicant confirmation send failed:", err);
+    throw new Error(`SMTP (applicant): ${msg}`);
+  }
+
+  return { ok: true, via: "smtp" };
+}
+
 /**
  * Sends an HTML notification to the application inbox (Cyberfolks SMTP).
  * Requires `SMTP_PASS` for real delivery; otherwise logs payload and returns simulated.
@@ -180,6 +279,7 @@ export async function sendApplicationNotification(
     await transport.sendMail({
       from: getFromHeader(),
       to: notifyTo,
+      replyTo: application.email,
       subject,
       html,
     });

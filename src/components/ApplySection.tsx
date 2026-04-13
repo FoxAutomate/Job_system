@@ -17,7 +17,7 @@ import type { Job } from "@/db/schema";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { resolveJobForLocale } from "@/lib/jobs/resolve-job-locale";
 import type { ApplyFormValues } from "@/lib/validation";
-import { DEFAULT_CANNERY_CAREERS_EMAIL } from "@/lib/site-email-defaults";
+import { DEFAULT_PUBLIC_CONTACT_EMAIL } from "@/lib/site-email-defaults";
 import { cn } from "@/lib/utils";
 
 type ApplySectionProps = {
@@ -36,7 +36,7 @@ export function ApplySection({
   variant,
   jobId,
   job = null,
-  mailtoEmail = DEFAULT_CANNERY_CAREERS_EMAIL,
+  mailtoEmail = DEFAULT_PUBLIC_CONTACT_EMAIL,
   mailtoSubject = "Cannery Careers",
   sectionId = "apply",
   prefill,
