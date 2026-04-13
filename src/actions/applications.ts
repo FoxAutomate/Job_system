@@ -15,6 +15,7 @@ import {
 } from "@/db/schema";
 import { isTrustedCvBlobUrl } from "@/lib/blob-trust";
 import { getBlobReadWriteToken } from "@/lib/blob-token";
+import { blobRwTokenShapeOk, formatErrorForLog } from "@/lib/upload-error-log";
 import { sendApplicationNotification } from "@/lib/email";
 import { requireAdmin } from "@/lib/auth-guard";
 import { type Locale, messages } from "@/lib/i18n/messages";
@@ -116,6 +117,8 @@ export async function submitApplication(
       if (!token) {
         console.warn("[apply] BLOB_READ_WRITE_TOKEN missing — CV not stored");
       } else {
+        let uploadPathname = "";
+        let uploadBytes = 0;
         try {
           const ext =
             mime === "application/pdf"
@@ -123,9 +126,10 @@ export async function submitApplication(
               : mime.includes("wordprocessingml")
                 ? ".docx"
                 : ".doc";
-          const pathname = `applications/cv-${randomUUID()}${ext}`;
+          uploadPathname = `applications/cv-${randomUUID()}${ext}`;
           const buf = Buffer.from(await cv.arrayBuffer());
-          const blob = await put(pathname, buf, {
+          uploadBytes = buf.length;
+          const blob = await put(uploadPathname, buf, {
             access: "public",
             token,
             contentType: mime,
@@ -134,9 +138,20 @@ export async function submitApplication(
           cvUrl = blob.url;
           cvFileName = cv.name || `cv${ext}`;
         } catch (blobErr) {
-          const detail =
-            blobErr instanceof Error ? blobErr.message : String(blobErr);
-          console.error("[apply] Vercel Blob upload failed:", detail, blobErr);
+          const logId = randomUUID().slice(0, 8);
+          console.error(
+            "[apply] Vercel Blob upload failed",
+            JSON.stringify({
+              logId,
+              pathname: uploadPathname || undefined,
+              bytes: uploadBytes,
+              mime,
+              multipart: true,
+              tokenShapeOk: blobRwTokenShapeOk(token),
+              vercelRegion: process.env.VERCEL_REGION,
+              ...formatErrorForLog(blobErr),
+            })
+          );
           return { ok: false, message: msg.serverCvUploadFailed };
         }
       }

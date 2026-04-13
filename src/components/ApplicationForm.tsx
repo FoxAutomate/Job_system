@@ -128,6 +128,17 @@ export function ApplicationForm({
             url: (data as { url: string }).url,
             fileName: (data as { fileName: string }).fileName,
           };
+        } else if (!uploadRes.ok && data && typeof data === "object") {
+          const rid =
+            "requestId" in data &&
+            typeof (data as { requestId: unknown }).requestId === "string"
+              ? (data as { requestId: string }).requestId
+              : undefined;
+          console.error("[ApplicationForm] /api/upload-cv HTTP error", {
+            status: uploadRes.status,
+            requestId: rid,
+            body: data,
+          });
         }
       } catch (err) {
         console.error("[ApplicationForm] /api/upload-cv failed:", err);

@@ -5,6 +5,10 @@ import { NextResponse } from "next/server";
 
 import { getBlobReadWriteToken } from "@/lib/blob-token";
 import { MAX_CV_BYTES, resolveCvMimeType } from "@/lib/validation";
+import {
+  blobRwTokenShapeOk,
+  formatErrorForLog,
+} from "@/lib/upload-error-log";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,22 +19,37 @@ export const maxDuration = 60;
  * Avoids browser calls to vercel.com/api/blob (CORS / allowed origins on the Blob store).
  */
 export async function POST(request: Request) {
+  const requestId = randomUUID().slice(0, 8);
   try {
     const token = getBlobReadWriteToken();
     if (!token) {
+      console.error("[upload-cv] missing token", {
+        requestId,
+        hint: "Set BLOB_READ_WRITE_TOKEN (e.g. connect Blob store to project)",
+      });
       return NextResponse.json(
-        { ok: false, error: "storage_unconfigured" },
+        { ok: false, error: "storage_unconfigured", requestId },
         { status: 503 }
       );
+    }
+
+    if (!blobRwTokenShapeOk(token)) {
+      console.error("[upload-cv] token shape unexpected (expect vercel_blob_rw_…)", {
+        requestId,
+        length: token.length,
+      });
     }
 
     let formData: FormData;
     try {
       formData = await request.formData();
     } catch (parseErr) {
-      console.error("[upload-cv] formData parse failed:", parseErr);
+      console.error(
+        "[upload-cv] formData parse failed",
+        { requestId, ...formatErrorForLog(parseErr) }
+      );
       return NextResponse.json(
-        { ok: false, error: "invalid_form" },
+        { ok: false, error: "invalid_form", requestId },
         { status: 400 }
       );
     }
@@ -38,16 +57,36 @@ export async function POST(request: Request) {
     const file = formData.get("file");
     // Node/undici may not satisfy `instanceof File`; Blob covers upload parts.
     if (typeof file === "string" || !(file instanceof Blob) || file.size === 0) {
-      return NextResponse.json({ ok: false, error: "no_file" }, { status: 400 });
+      console.warn("[upload-cv] no usable file", {
+        requestId,
+        fieldType: typeof file,
+        isBlob: file instanceof Blob,
+        size: file instanceof Blob ? file.size : undefined,
+      });
+      return NextResponse.json(
+        { ok: false, error: "no_file", requestId },
+        { status: 400 }
+      );
     }
 
     if (file.size > MAX_CV_BYTES) {
-      return NextResponse.json({ ok: false, error: "too_large" }, { status: 413 });
+      return NextResponse.json(
+        { ok: false, error: "too_large", requestId },
+        { status: 413 }
+      );
     }
 
     const mime = resolveCvMimeType(file as File);
     if (!mime) {
-      return NextResponse.json({ ok: false, error: "invalid_type" }, { status: 400 });
+      console.warn("[upload-cv] MIME not allowed", {
+        requestId,
+        reportedType: (file as File).type,
+        size: file.size,
+      });
+      return NextResponse.json(
+        { ok: false, error: "invalid_type", requestId },
+        { status: 400 }
+      );
     }
 
     const ext =
@@ -62,13 +101,45 @@ export async function POST(request: Request) {
         ? file.name
         : `cv${ext}`;
 
+    let buf: Buffer;
     try {
-      const buf = Buffer.from(await file.arrayBuffer());
+      buf = Buffer.from(await file.arrayBuffer());
+    } catch (err) {
+      console.error(
+        "[upload-cv] read file into buffer failed",
+        JSON.stringify({ requestId, pathname, ...formatErrorForLog(err) })
+      );
+      return NextResponse.json(
+        { ok: false, error: "read_failed", requestId },
+        { status: 500 }
+      );
+    }
+
+    try {
+      console.info("[upload-cv] blob put start", {
+        requestId,
+        pathname,
+        bytes: buf.length,
+        mime,
+        multipart: true,
+        vercelRegion: process.env.VERCEL_REGION,
+      });
       const blob = await put(pathname, buf, {
         access: "public",
         token,
         contentType: mime,
         multipart: true,
+      });
+      console.info("[upload-cv] blob put ok", {
+        requestId,
+        pathname: blob.pathname,
+        host: (() => {
+          try {
+            return new URL(blob.url).hostname;
+          } catch {
+            return "invalid_url";
+          }
+        })(),
       });
       return NextResponse.json({
         ok: true,
@@ -76,17 +147,36 @@ export async function POST(request: Request) {
         fileName: displayName,
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      console.error("[upload-cv] Blob put failed:", message, err);
+      console.error(
+        "[upload-cv] Blob put failed",
+        JSON.stringify({
+          requestId,
+          pathname,
+          bytes: buf.length,
+          mime,
+          multipart: true,
+          tokenShapeOk: blobRwTokenShapeOk(token),
+          vercelRegion: process.env.VERCEL_REGION,
+          ...formatErrorForLog(err),
+        })
+      );
       return NextResponse.json(
-        { ok: false, error: "upload_failed" },
+        {
+          ok: false,
+          error: "upload_failed",
+          requestId,
+          hint: "Search Vercel logs for this requestId",
+        },
         { status: 502 }
       );
     }
   } catch (err) {
-    console.error("[upload-cv] Unhandled error:", err);
+    console.error(
+      "[upload-cv] Unhandled error",
+      JSON.stringify({ requestId, ...formatErrorForLog(err) })
+    );
     return NextResponse.json(
-      { ok: false, error: "internal_error" },
+      { ok: false, error: "internal_error", requestId },
       { status: 500 }
     );
   }
