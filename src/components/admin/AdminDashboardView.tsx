@@ -10,12 +10,16 @@ type Props = {
   jobCount: number;
   appCount: number;
   initialEmail: string;
+  initialApplicantBodyEt: string;
+  initialApplicantBodyEn: string;
 };
 
 export function AdminDashboardView({
   jobCount,
   appCount,
   initialEmail,
+  initialApplicantBodyEt,
+  initialApplicantBodyEn,
 }: Props) {
   const { t } = useLocale();
 
@@ -41,7 +45,11 @@ export function AdminDashboardView({
         </Card>
       </div>
 
-      <SettingsEmailForm initialEmail={initialEmail} />
+      <SettingsEmailForm
+        initialEmail={initialEmail}
+        initialApplicantBodyEt={initialApplicantBodyEt}
+        initialApplicantBodyEn={initialApplicantBodyEn}
+      />
 
       <div className="flex flex-wrap gap-3">
         <Link

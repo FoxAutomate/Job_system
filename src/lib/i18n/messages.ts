@@ -110,6 +110,10 @@ export type Messages = {
   adminOffersEmptyLink: string;
   adminAppsTitle: string;
   adminAppsSub: string;
+  /** Link label → /admin */
+  adminAppsGoDashboard: string;
+  /** Shown next to link: where thank-you templates live */
+  adminAppsEmailTemplatesHint: string;
   adminBackToOffers: string;
   adminOfferNewTitle: string;
   adminOfferEditTitle: string;
@@ -156,6 +160,10 @@ export type Messages = {
   adminSettingsPresetHint: string;
   adminSettingsSave: string;
   adminSettingsSaved: string;
+  adminSettingsApplicantTemplatesTitle: string;
+  adminSettingsApplicantBodyEt: string;
+  adminSettingsApplicantBodyEn: string;
+  adminSettingsApplicantPlaceholderHint: string;
   adminJobRowActive: string;
   adminJobRowSalary: string;
   adminJobDeleteConfirm: string;
@@ -322,6 +330,9 @@ const et: Messages = {
   adminOffersEmptyLink: "Loo esimene",
   adminAppsTitle: "Kandidaadid",
   adminAppsSub: "CRM: staatus ja märkmed",
+  adminAppsGoDashboard: "Admini avaleht",
+  adminAppsEmailTemplatesHint:
+    "Kinnituskirja tekstid (ET/EN) ja üldise taotluse e-post — seaded on avalehel, mitte siin tabelis.",
   adminBackToOffers: "← Kuulutused",
   adminOfferNewTitle: "Uus kuulutus",
   adminOfferEditTitle: "Muuda kuulutust",
@@ -365,6 +376,12 @@ const et: Messages = {
   adminSettingsPresetHint: "Vali sageli kasutatav aadress või kirjuta käsitsi.",
   adminSettingsSave: "Salvesta",
   adminSettingsSaved: "Salvestatud.",
+  adminSettingsApplicantTemplatesTitle:
+    "Kinnituskirja tekst kandidaadile (valikuline)",
+  adminSettingsApplicantBodyEt: "Eesti keele tekst",
+  adminSettingsApplicantBodyEn: "Inglise (UK) tekst",
+  adminSettingsApplicantPlaceholderHint:
+    "Jäta tühjaks, et kasutada vaikimisi sõnumit. Tühja rida teise lõigu jaoks. Kohad: {{name}}, {{hrEmail}}, {{jobTitle}}, {{jobLabel}}, {{cvHint}}.",
   adminJobRowActive: "Aktiivne",
   adminJobRowSalary: "Palk",
   adminJobDeleteConfirm:
@@ -531,6 +548,9 @@ const en: Messages = {
   adminOffersEmptyLink: "Create the first one",
   adminAppsTitle: "Candidates",
   adminAppsSub: "CRM: status and notes",
+  adminAppsGoDashboard: "Admin home",
+  adminAppsEmailTemplatesHint:
+    "Applicant thank-you copy (ET/EN) and general-application inbox — those settings are on the dashboard, not this table.",
   adminBackToOffers: "← Job posts",
   adminOfferNewTitle: "New job post",
   adminOfferEditTitle: "Edit job post",
@@ -574,6 +594,12 @@ const en: Messages = {
   adminSettingsPresetHint: "Pick a common inbox or type your own.",
   adminSettingsSave: "Save",
   adminSettingsSaved: "Saved.",
+  adminSettingsApplicantTemplatesTitle:
+    "Applicant confirmation email (optional)",
+  adminSettingsApplicantBodyEt: "Estonian body",
+  adminSettingsApplicantBodyEn: "English (UK) body",
+  adminSettingsApplicantPlaceholderHint:
+    "Leave blank for the built-in message. Blank line starts a new paragraph. Placeholders: {{name}}, {{hrEmail}}, {{jobTitle}}, {{jobLabel}}, {{cvHint}}.",
   adminJobRowActive: "Active",
   adminJobRowSalary: "Salary",
   adminJobDeleteConfirm:

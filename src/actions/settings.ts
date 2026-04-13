@@ -7,32 +7,50 @@ import { getDb } from "@/db";
 import { siteSettings } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth-guard";
 
-const schema = z.object({
-  defaultApplicationEmail: z.string().email(),
-});
+const MAX_APPLICANT_BODY_CHARS = 12000;
 
-export async function updateDefaultApplicationEmail(
+export async function updateSiteEmailSettings(
   _prev: unknown,
   formData: FormData
 ): Promise<{ ok: boolean; message?: string }> {
   await requireAdmin();
-  const raw = String(formData.get("defaultApplicationEmail") ?? "");
-  const parsed = schema.safeParse({ defaultApplicationEmail: raw });
-  if (!parsed.success) {
+  const rawEmail = String(formData.get("defaultApplicationEmail") ?? "");
+  const parsedEmail = z.string().email().safeParse(rawEmail);
+  if (!parsedEmail.success) {
     return { ok: false, message: "Kehtiv e-posti aadress on vajalik." };
   }
+
+  const bodyEtRaw = String(formData.get("applicantEmailBodyEt") ?? "");
+  const bodyEnRaw = String(formData.get("applicantEmailBodyEn") ?? "");
+  if (
+    bodyEtRaw.length > MAX_APPLICANT_BODY_CHARS ||
+    bodyEnRaw.length > MAX_APPLICANT_BODY_CHARS
+  ) {
+    return {
+      ok: false,
+      message:
+        "Kinnituskiri: tekst on liiga pikk (max 12000 märki keele kohta).",
+    };
+  }
+
+  const applicantEmailBodyEt = bodyEtRaw.trim() || null;
+  const applicantEmailBodyEn = bodyEnRaw.trim() || null;
+
   const db = getDb();
-  const email = parsed.data.defaultApplicationEmail;
   await db
     .insert(siteSettings)
     .values({
       id: "default",
-      defaultApplicationEmail: email,
+      defaultApplicationEmail: parsedEmail.data,
+      applicantEmailBodyEt,
+      applicantEmailBodyEn,
     })
     .onConflictDoUpdate({
       target: siteSettings.id,
       set: {
-        defaultApplicationEmail: email,
+        defaultApplicationEmail: parsedEmail.data,
+        applicantEmailBodyEt,
+        applicantEmailBodyEn,
         updatedAt: new Date(),
       },
     });

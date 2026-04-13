@@ -2,15 +2,26 @@
 
 import { useRef, useState, useTransition } from "react";
 
-import { updateDefaultApplicationEmail } from "@/actions/settings";
+import { updateSiteEmailSettings } from "@/actions/settings";
 import { AdminPresetPicker } from "@/components/admin/AdminPresetPicker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { PRESET_INBOX_EMAILS } from "@/lib/admin/presets";
 import { useLocale } from "@/lib/i18n/locale-context";
 
-export function SettingsEmailForm({ initialEmail }: { initialEmail: string }) {
+type SettingsEmailFormProps = {
+  initialEmail: string;
+  initialApplicantBodyEt: string;
+  initialApplicantBodyEn: string;
+};
+
+export function SettingsEmailForm({
+  initialEmail,
+  initialApplicantBodyEt,
+  initialApplicantBodyEn,
+}: SettingsEmailFormProps) {
   const [state, setState] = useState<{ ok: boolean; message?: string } | null>(
     null
   );
@@ -22,7 +33,7 @@ export function SettingsEmailForm({ initialEmail }: { initialEmail: string }) {
     e.preventDefault();
     const form = e.currentTarget;
     startTransition(async () => {
-      const result = await updateDefaultApplicationEmail(null, new FormData(form));
+      const result = await updateSiteEmailSettings(null, new FormData(form));
       setState(result);
     });
   }
@@ -72,6 +83,43 @@ export function SettingsEmailForm({ initialEmail }: { initialEmail: string }) {
       {state && !state.ok ? (
         <p className="text-sm text-destructive">{state.message}</p>
       ) : null}
+
+      <div className="border-t border-neutral-200 pt-4">
+        <h3 className="text-sm font-semibold text-neutral-900">
+          {t.adminSettingsApplicantTemplatesTitle}
+        </h3>
+        <p className="mt-1 text-xs text-neutral-600">
+          {t.adminSettingsApplicantPlaceholderHint}
+        </p>
+        <div className="mt-3 space-y-3">
+          <div>
+            <Label htmlFor="applicantEmailBodyEt">
+              {t.adminSettingsApplicantBodyEt}
+            </Label>
+            <Textarea
+              id="applicantEmailBodyEt"
+              name="applicantEmailBodyEt"
+              defaultValue={initialApplicantBodyEt}
+              rows={6}
+              className="mt-1.5 min-h-[140px] font-mono text-xs sm:text-sm"
+              placeholder=""
+            />
+          </div>
+          <div>
+            <Label htmlFor="applicantEmailBodyEn">
+              {t.adminSettingsApplicantBodyEn}
+            </Label>
+            <Textarea
+              id="applicantEmailBodyEn"
+              name="applicantEmailBodyEn"
+              defaultValue={initialApplicantBodyEn}
+              rows={6}
+              className="mt-1.5 min-h-[140px] font-mono text-xs sm:text-sm"
+              placeholder=""
+            />
+          </div>
+        </div>
+      </div>
     </form>
   );
 }

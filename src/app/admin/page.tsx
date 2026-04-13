@@ -20,6 +20,8 @@ export default async function AdminDashboardPage() {
       initialEmail={
         settings?.defaultApplicationEmail ?? DEFAULT_PUBLIC_CONTACT_EMAIL
       }
+      initialApplicantBodyEt={settings?.applicantEmailBodyEt ?? ""}
+      initialApplicantBodyEn={settings?.applicantEmailBodyEn ?? ""}
     />
   );
 }

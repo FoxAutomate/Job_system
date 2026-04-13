@@ -50,6 +50,9 @@ export type JobContent = {
 export const siteSettings = pgTable("site_settings", {
   id: text("id").primaryKey(),
   defaultApplicationEmail: text("default_application_email").notNull(),
+  /** Plain text; placeholders: {{name}} {{hrEmail}} {{jobTitle}} {{jobLabel}} {{cvHint}} */
+  applicantEmailBodyEt: text("applicant_email_body_et"),
+  applicantEmailBodyEn: text("applicant_email_body_en"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 

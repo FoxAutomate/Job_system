@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { ApplicationsTable } from "@/components/admin/ApplicationsTable";
@@ -65,6 +66,16 @@ export function AdminApplicationsView({
       <div>
         <h1 className="font-heading text-2xl font-bold">{t.adminAppsTitle}</h1>
         <p className="text-sm text-neutral-600">{t.adminAppsSub}</p>
+        <p className="mt-2 text-sm text-neutral-600">
+          <Link
+            href="/admin"
+            className="font-medium text-neutral-900 underline underline-offset-2 hover:text-neutral-700"
+          >
+            {t.adminAppsGoDashboard}
+          </Link>
+          {" — "}
+          {t.adminAppsEmailTemplatesHint}
+        </p>
       </div>
 
       <div className="flex flex-wrap items-end gap-4">

@@ -23,6 +23,7 @@ import {
 } from "@/lib/email";
 import { requireAdmin } from "@/lib/auth-guard";
 import { type Locale, messages } from "@/lib/i18n/messages";
+import { getSiteSettings } from "@/lib/queries";
 import {
   getApplyFormSchema,
   MAX_CV_BYTES,
@@ -216,10 +217,15 @@ export async function submitApplication(
     }
 
     try {
+      const siteMail = await getSiteSettings();
       const ac = await sendApplicantConfirmationEmail(
         inserted,
         jobRow,
-        locale
+        locale,
+        {
+          applicantBodyEt: siteMail?.applicantEmailBodyEt,
+          applicantBodyEn: siteMail?.applicantEmailBodyEn,
+        }
       );
       if (ac.via === "simulated") {
         emailSimulated = true;

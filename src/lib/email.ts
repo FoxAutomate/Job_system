@@ -127,34 +127,146 @@ function buildNotificationHtml(
   return { html, subject };
 }
 
-function buildApplicantConfirmationHtml(
+/** Optional plain-text bodies from Admin settings (per language). */
+export type ApplicantConfirmationTemplates = {
+  applicantBodyEt?: string | null;
+  applicantBodyEn?: string | null;
+};
+
+function applicantTemplateVarsEt(
   application: Application,
-  job: Job | null | undefined,
-  locale: Locale
-): { html: string; subject: string } {
+  job: Job | null | undefined
+): Record<string, string> {
+  const hr = getNotifyRecipient();
+  return {
+    name: application.name,
+    hrEmail: hr,
+    jobTitle: job?.title ?? "",
+    jobLabel: job ? job.title : "üldine kandideerimine",
+    cvHint: application.cvUrl
+      ? "Sinu CV on salvestatud."
+      : `Kui Sa ei lisanud veel CV-d, saada see palun aadressil ${hr}.`,
+  };
+}
+
+function applicantTemplateVarsEn(
+  application: Application,
+  job: Job | null | undefined
+): Record<string, string> {
+  const hr = getNotifyRecipient();
+  return {
+    name: application.name,
+    hrEmail: hr,
+    jobTitle: job?.title ?? "",
+    jobLabel: job ? job.title : "general application",
+    cvHint: application.cvUrl
+      ? "Your CV was saved."
+      : `If you have not attached a CV yet, please send it to ${hr}.`,
+  };
+}
+
+function replaceApplicantPlaceholders(
+  line: string,
+  vars: Record<string, string>
+): string {
+  let out = line;
+  for (const [key, value] of Object.entries(vars)) {
+    out = out.split(`{{${key}}}`).join(escapeHtml(value));
+  }
+  return out;
+}
+
+/**
+ * Plain text → paragraphs; double newline = new paragraph, single newline = line break.
+ * Placeholders: {{name}}, {{hrEmail}}, {{jobTitle}}, {{jobLabel}}, {{cvHint}}
+ */
+function applyApplicantTextTemplate(
+  template: string,
+  vars: Record<string, string>
+): string {
+  return template
+    .split(/\n\s*\n/)
+    .filter((b) => b.trim().length > 0)
+    .map((block) => {
+      const inner = block
+        .split("\n")
+        .map((line) => replaceApplicantPlaceholders(line, vars))
+        .join("<br/>");
+      return `<p style="margin:0 0 12px;line-height:1.55;">${inner}</p>`;
+    })
+    .join("");
+}
+
+function applicantDefaultInnerHtmlEt(
+  application: Application,
+  job: Job | null | undefined
+): string {
   const name = escapeHtml(application.name);
-  const hrMail = escapeHtml(DEFAULT_PUBLIC_CONTACT_EMAIL);
+  const hrMail = escapeHtml(getNotifyRecipient());
   const jobTitle = job ? escapeHtml(job.title) : null;
 
   const blockEt = job
     ? `<p>Tere, ${name}!</p><p>Võtsime vastu Sinu kandideerimise ametikohale <strong>${jobTitle}</strong>.</p>`
     : `<p>Tere, ${name}!</p><p>Võtsime vastu Sinu üldise kandideerimise.</p>`;
-  const blockEn = job
-    ? `<p>Hello ${name},</p><p>We have received your application for <strong>${jobTitle}</strong>.</p>`
-    : `<p>Hello ${name},</p><p>We have received your general application.</p>`;
 
   const cvEt = application.cvUrl
     ? "<p>Sinu CV on salvestatud.</p>"
     : `<p>Kui Sa ei lisanud veel CV-d, saada see palun aadressil <a href="mailto:${hrMail}">${hrMail}</a>.</p>`;
+
+  const closingEt =
+    '<p>Võtame peagi ühendust.</p><p style="margin-top:16px;color:#737373;font-size:13px;">Cannery Careers · Cannery OÜ</p>';
+
+  return blockEt + cvEt + closingEt;
+}
+
+function applicantDefaultInnerHtmlEn(
+  application: Application,
+  job: Job | null | undefined
+): string {
+  const name = escapeHtml(application.name);
+  const hrMail = escapeHtml(getNotifyRecipient());
+  const jobTitle = job ? escapeHtml(job.title) : null;
+
+  const blockEn = job
+    ? `<p>Hello ${name},</p><p>We have received your application for <strong>${jobTitle}</strong>.</p>`
+    : `<p>Hello ${name},</p><p>We have received your general application.</p>`;
+
   const cvEn = application.cvUrl
     ? "<p>Your CV was saved.</p>"
     : `<p>If you have not attached a CV yet, please send it to <a href="mailto:${hrMail}">${hrMail}</a>.</p>`;
 
-  const closingEt = "<p>Võtame peagi ühendust.</p><p style=\"margin-top:16px;color:#737373;font-size:13px;\">Cannery Careers · Cannery OÜ</p>";
-  const closingEn = "<p>We will be in touch soon.</p><p style=\"margin-top:16px;color:#737373;font-size:13px;\">Cannery Careers · Cannery OÜ</p>";
+  const closingEn =
+    '<p>We will be in touch soon.</p><p style="margin-top:16px;color:#737373;font-size:13px;">Cannery Careers · Cannery OÜ</p>';
 
-  const primary = locale === "en" ? blockEn + cvEn + closingEn : blockEt + cvEt + closingEt;
-  const secondary = locale === "en" ? blockEt + cvEt + closingEt : blockEn + cvEn + closingEn;
+  return blockEn + cvEn + closingEn;
+}
+
+function buildApplicantConfirmationHtml(
+  application: Application,
+  job: Job | null | undefined,
+  locale: Locale,
+  templates?: ApplicantConfirmationTemplates | null
+): { html: string; subject: string } {
+  const te = templates?.applicantBodyEt?.trim();
+  const tn = templates?.applicantBodyEn?.trim();
+
+  const innerEt =
+    te && te.length > 0
+      ? applyApplicantTextTemplate(
+          te,
+          applicantTemplateVarsEt(application, job)
+        )
+      : applicantDefaultInnerHtmlEt(application, job);
+  const innerEn =
+    tn && tn.length > 0
+      ? applyApplicantTextTemplate(
+          tn,
+          applicantTemplateVarsEn(application, job)
+        )
+      : applicantDefaultInnerHtmlEn(application, job);
+
+  const primary = locale === "en" ? innerEn : innerEt;
+  const secondary = locale === "en" ? innerEt : innerEn;
 
   const html = `
 <!DOCTYPE html>
@@ -181,12 +293,14 @@ function buildApplicantConfirmationHtml(
 export async function sendApplicantConfirmationEmail(
   application: Application,
   job: Job | null | undefined,
-  locale: Locale
+  locale: Locale,
+  templates?: ApplicantConfirmationTemplates | null
 ): Promise<EmailSendResult> {
   const { html, subject } = buildApplicantConfirmationHtml(
     application,
     job ?? null,
-    locale
+    locale,
+    templates
   );
 
   if (!getSmtpPass()) {
@@ -205,7 +319,7 @@ export async function sendApplicantConfirmationEmail(
     await transport.sendMail({
       from: getFromHeader(),
       to: application.email,
-      replyTo: DEFAULT_PUBLIC_CONTACT_EMAIL,
+      replyTo: getNotifyRecipient(),
       subject,
       html,
     });
