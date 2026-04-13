@@ -6,7 +6,6 @@ import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { createCvUploadClientToken } from "@/actions/blob-upload";
 import { submitApplication } from "@/actions/applications";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,37 +96,45 @@ export function ApplicationForm({
     if (jobId) body.append("jobId", jobId);
 
     if (cvFile) {
-      const mime = resolveCvMimeType(cvFile);
-      if (!mime) {
+      if (!resolveCvMimeType(cvFile)) {
         setRootError(t.serverCvType);
         toast.error(t.toastErrorTitle, { description: t.serverCvType });
         return;
       }
-      const ext =
-        mime === "application/pdf"
-          ? ".pdf"
-          : mime.includes("wordprocessingml")
-            ? ".docx"
-            : ".doc";
-      const pathname = `applications/cv-${crypto.randomUUID()}${ext}`;
-      const tokenRes = await createCvUploadClientToken(pathname, mime);
-      if (tokenRes.ok) {
-        try {
-          const { put } = await import("@vercel/blob/client");
-          const blob = await put(pathname, cvFile, {
-            access: "public",
-            token: tokenRes.clientToken,
-            contentType: mime,
-          });
-          body.append("cvUrl", blob.url);
-          body.append("cvFileName", cvFile.name || `cv${ext}`);
-        } catch (err) {
-          console.error(
-            "[ApplicationForm] client Blob put failed, falling back to server:",
-            err
-          );
-          body.append("cv", cvFile);
+
+      const uploadForm = new FormData();
+      uploadForm.append("file", cvFile);
+
+      let uploaded: { url: string; fileName: string } | null = null;
+      try {
+        const uploadRes = await fetch("/api/upload-cv", {
+          method: "POST",
+          body: uploadForm,
+        });
+        const data: unknown = await uploadRes.json().catch(() => null);
+        if (
+          uploadRes.ok &&
+          data &&
+          typeof data === "object" &&
+          "ok" in data &&
+          data.ok === true &&
+          "url" in data &&
+          typeof (data as { url: unknown }).url === "string" &&
+          "fileName" in data &&
+          typeof (data as { fileName: unknown }).fileName === "string"
+        ) {
+          uploaded = {
+            url: (data as { url: string }).url,
+            fileName: (data as { fileName: string }).fileName,
+          };
         }
+      } catch (err) {
+        console.error("[ApplicationForm] /api/upload-cv failed:", err);
+      }
+
+      if (uploaded) {
+        body.append("cvUrl", uploaded.url);
+        body.append("cvFileName", uploaded.fileName);
       } else {
         body.append("cv", cvFile);
       }
