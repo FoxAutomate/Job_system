@@ -1,9 +1,10 @@
 import nodemailer from "nodemailer";
 
 import type { Application, Job } from "@/db/schema";
+import { DEFAULT_CANNERY_CAREERS_EMAIL } from "@/lib/site-email-defaults";
 
 /** All application notifications go here unless `APPLICATION_NOTIFY_EMAIL` is set. */
-const DEFAULT_APPLICATION_INBOX = "brigit@cannery.eu";
+const DEFAULT_APPLICATION_INBOX = DEFAULT_CANNERY_CAREERS_EMAIL;
 
 export type EmailSendResult =
   | { ok: true; via: "smtp" }
@@ -48,7 +49,7 @@ function getNotifyRecipient(): string {
 
 function getFromHeader(): string {
   const email =
-    process.env.SMTP_FROM_EMAIL?.trim() || "noreply@job.canneryandco.com";
+    process.env.SMTP_FROM_EMAIL?.trim() || DEFAULT_CANNERY_CAREERS_EMAIL;
   const name = process.env.SMTP_FROM_NAME?.trim() || "Cannery Careers";
   const safeName = name.replace(/"/g, "\\");
   return `"${safeName}" <${email}>`;
@@ -62,7 +63,7 @@ function createSmtpTransport() {
   const portRaw = process.env.SMTP_PORT?.trim();
   const port = portRaw ? Number(portRaw) : 465;
   const user =
-    process.env.SMTP_USER?.trim() || "noreply@job.canneryandco.com";
+    process.env.SMTP_USER?.trim() || DEFAULT_CANNERY_CAREERS_EMAIL;
 
   return nodemailer.createTransport({
     host,

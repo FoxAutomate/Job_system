@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "../src/db";
 import { jobs, siteSettings } from "../src/db/schema";
 import { seedJob } from "../src/data/seed-job";
+import { DEFAULT_CANNERY_CAREERS_EMAIL } from "../src/lib/site-email-defaults";
 
 async function main() {
   const db = getDb();
@@ -16,7 +17,7 @@ async function main() {
   if (settingsRow.length === 0) {
     await db.insert(siteSettings).values({
       id: "default",
-      defaultApplicationEmail: "Birgit@cannery.eu",
+      defaultApplicationEmail: DEFAULT_CANNERY_CAREERS_EMAIL,
     });
     console.log("Seeded site_settings");
   }

@@ -3,7 +3,10 @@
 export type AdminPreset = { value: string; label: string };
 
 export const PRESET_INBOX_EMAILS: AdminPreset[] = [
-  { value: "Birgit@cannery.eu", label: "Birgit@cannery.eu" },
+  {
+    value: "noreply@canneryandco.com",
+    label: "noreply@canneryandco.com",
+  },
   { value: "careers@cannery.eu", label: "careers@cannery.eu" },
 ];
 

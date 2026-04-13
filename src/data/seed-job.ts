@@ -1,4 +1,5 @@
 import type { JobContent } from "@/db/schema";
+import { DEFAULT_CANNERY_CAREERS_EMAIL } from "@/lib/site-email-defaults";
 
 export const defaultJobSlug = "villimismasinate-koostaja-tehnik";
 
@@ -10,7 +11,7 @@ export const seedJob = {
   active: true,
   showSalary: true,
   salaryRange: "1400–1700 € / kuu",
-  emailTo: "Birgit@cannery.eu",
+  emailTo: DEFAULT_CANNERY_CAREERS_EMAIL,
   content: {
     tagline: "Cannery OÜ · Harjumaa",
     heroIntro:
@@ -48,6 +49,6 @@ export const seedJob = {
       "Arenguvõimalusi",
     ],
     salaryCardLine: "Brutopalk 1400–1700 € kuus",
-    footerEmail: "Birgit@cannery.eu",
+    footerEmail: DEFAULT_CANNERY_CAREERS_EMAIL,
   } satisfies JobContent,
 };
