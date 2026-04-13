@@ -14,6 +14,7 @@ import {
   type Job,
 } from "@/db/schema";
 import { isTrustedCvBlobUrl } from "@/lib/blob-trust";
+import { getBlobReadWriteToken } from "@/lib/blob-token";
 import { sendApplicationNotification } from "@/lib/email";
 import { requireAdmin } from "@/lib/auth-guard";
 import { type Locale, messages } from "@/lib/i18n/messages";
@@ -111,7 +112,7 @@ export async function submitApplication(
         };
       }
 
-      const token = process.env.BLOB_READ_WRITE_TOKEN;
+      const token = getBlobReadWriteToken();
       if (!token) {
         console.warn("[apply] BLOB_READ_WRITE_TOKEN missing — CV not stored");
       } else {
@@ -128,6 +129,7 @@ export async function submitApplication(
             access: "public",
             token,
             contentType: mime,
+            multipart: true,
           });
           cvUrl = blob.url;
           cvFileName = cv.name || `cv${ext}`;

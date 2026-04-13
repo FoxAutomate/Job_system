@@ -107,7 +107,8 @@ export function ApplicationForm({
 
       let uploaded: { url: string; fileName: string } | null = null;
       try {
-        const uploadRes = await fetch("/api/upload-cv", {
+        const uploadUrl = new URL("/api/upload-cv", window.location.origin).href;
+        const uploadRes = await fetch(uploadUrl, {
           method: "POST",
           body: uploadForm,
         });
