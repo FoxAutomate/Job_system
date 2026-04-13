@@ -1,4 +1,4 @@
-import { head } from "@vercel/blob";
+import { get, head } from "@vercel/blob";
 
 import { getBlobReadWriteToken } from "@/lib/blob-token";
 
@@ -7,9 +7,54 @@ export function cvBlobPathnameFromUrl(storedUrl: string): string {
   return new URL(storedUrl).pathname.replace(/^\/+/, "");
 }
 
+type GetOk = Awaited<ReturnType<typeof get>>;
+
 /**
- * Private blobs: persisted `downloadUrl` expires. Use `head` + token for a fresh URL.
- * Returns null if token missing or lookup fails.
+ * Stream blob bytes through our server (avoids broken302 → CDN downloads on Vercel).
+ * Tries private store first, then public.
+ */
+export async function fetchCvBlobForDownload(
+  storedCvUrl: string
+): Promise<Extract<GetOk, { statusCode: 200 }> | null> {
+  const token = getBlobReadWriteToken();
+  if (!token) return null;
+  let pathname: string;
+  try {
+    pathname = cvBlobPathnameFromUrl(storedCvUrl);
+  } catch {
+    return null;
+  }
+
+  const privateResult = await get(pathname, {
+    access: "private",
+    token,
+    useCache: false,
+  });
+  if (
+    privateResult &&
+    privateResult.statusCode === 200 &&
+    privateResult.stream
+  ) {
+    return privateResult;
+  }
+
+  const publicResult = await get(pathname, {
+    access: "public",
+    token,
+  });
+  if (
+    publicResult &&
+    publicResult.statusCode === 200 &&
+    publicResult.stream
+  ) {
+    return publicResult;
+  }
+
+  return null;
+}
+
+/**
+ * For e-mail links only: short-lived signed `downloadUrl` (no session).
  */
 export async function resolveFreshCvDownloadUrl(
   storedCvUrl: string
