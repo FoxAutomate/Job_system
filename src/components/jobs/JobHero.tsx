@@ -34,9 +34,9 @@ export function JobHero({ job, applyHref = "#apply-job" }: JobHeroProps) {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center opacity-25"
+          className="object-cover object-center opacity-55"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/95 via-neutral-50/90 to-neutral-100" />
+        <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/70 via-neutral-50/55 to-neutral-100/85" />
       </div>
 
       <div className="relative mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8">

@@ -183,10 +183,7 @@ export type Messages = {
   adminCrmInteresting: string;
   adminCrmRejected: string;
   adminCrmHired: string;
-  jobDetailEyebrow: string;
-  jobDetailOnePager: string;
   jobDetailLocLabel: string;
-  jobDetailDeadLabel: string;
   jobDetailTasks: string;
   jobDetailExpectations: string;
   jobDetailNice: string;
@@ -402,10 +399,7 @@ const et: Messages = {
   adminCrmInteresting: "Huvitav",
   adminCrmRejected: "Tagasi lükatud",
   adminCrmHired: "Tööle võetud",
-  jobDetailEyebrow: "Ametikoht",
-  jobDetailOnePager: "Üks leht — kõik oluline",
   jobDetailLocLabel: "Töökoht:",
-  jobDetailDeadLabel: "Kandideerimise tähtaeg:",
   jobDetailTasks: "Tööülesanded",
   jobDetailExpectations: "Ootused",
   jobDetailNice: "Kasuks tuleb",
@@ -620,10 +614,7 @@ const en: Messages = {
   adminCrmInteresting: "Interesting",
   adminCrmRejected: "Rejected",
   adminCrmHired: "Hired",
-  jobDetailEyebrow: "Role",
-  jobDetailOnePager: "One page — everything that matters",
   jobDetailLocLabel: "Location:",
-  jobDetailDeadLabel: "Application deadline:",
   jobDetailTasks: "Responsibilities",
   jobDetailExpectations: "Requirements",
   jobDetailNice: "Nice to have",

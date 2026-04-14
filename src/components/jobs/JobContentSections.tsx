@@ -79,25 +79,10 @@ export function JobContentSections({ job }: Props) {
   return (
     <section className="border-t border-neutral-200 bg-neutral-50/80 px-4 py-10 sm:px-6 sm:py-14">
       <div className="mx-auto max-w-3xl space-y-8">
-        <div className="space-y-2 text-center sm:text-left">
-          <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-            {t.jobDetailEyebrow}
-          </p>
-          <h2 className="font-heading text-2xl font-bold text-neutral-950 sm:text-3xl">
-            {t.jobDetailOnePager}
-          </h2>
-          <p className="text-pretty text-neutral-700">
-            {t.jobDetailLocLabel}{" "}
-            <span className="font-medium text-neutral-900">
-              {content.location}
-            </span>
-            . {t.jobDetailDeadLabel}{" "}
-            <span className="font-medium text-neutral-900">
-              {content.deadlineDisplay}
-            </span>
-            .
-          </p>
-        </div>
+        <p className="text-center text-pretty text-neutral-700 sm:text-left">
+          {t.jobDetailLocLabel}{" "}
+          <span className="font-medium text-neutral-900">{content.location}</span>
+        </p>
 
         <motion.div
           variants={container}
