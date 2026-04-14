@@ -6,11 +6,8 @@ import {
   BadgeEuro,
   Briefcase,
   ClipboardList,
-  Cpu,
   HeartHandshake,
   Sparkles,
-  Truck,
-  Wrench,
 } from "lucide-react";
 
 import {
@@ -123,26 +120,6 @@ export function JobContentSections({ job }: Props) {
               </motion.div>
             );
           })}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap items-center justify-center gap-4 rounded-xl border border-dashed border-neutral-300 bg-white/60 px-4 py-4 text-sm text-neutral-700 sm:justify-start"
-        >
-          <span className="inline-flex items-center gap-2">
-            <Wrench className="size-4 text-neutral-600" aria-hidden />
-            {t.jobDetailBadge1}
-          </span>
-          <span className="inline-flex items-center gap-2">
-            <Cpu className="size-4 text-neutral-600" aria-hidden />
-            {t.jobDetailBadge2}
-          </span>
-          <span className="inline-flex items-center gap-2">
-            <Truck className="size-4 text-neutral-600" aria-hidden />
-            {t.jobDetailBadge3}
-          </span>
         </motion.div>
       </div>
     </section>

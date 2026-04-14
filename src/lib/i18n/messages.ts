@@ -188,9 +188,6 @@ export type Messages = {
   jobDetailExpectations: string;
   jobDetailNice: string;
   jobDetailWeOffer: string;
-  jobDetailBadge1: string;
-  jobDetailBadge2: string;
-  jobDetailBadge3: string;
   adminAppFilterLabel: string;
   adminAppFilterAll: string;
   adminAppStatusFilterLabel: string;
@@ -404,9 +401,6 @@ const et: Messages = {
   jobDetailExpectations: "Ootused",
   jobDetailNice: "Kasuks tuleb",
   jobDetailWeOffer: "Omalt poolt pakume",
-  jobDetailBadge1: "Masinaehitus & testimine",
-  jobDetailBadge2: "CAD & automaatika keskkond",
-  jobDetailBadge3: "Reisivalmidus",
   adminAppFilterLabel: "Filtreeri kuulutuse järgi",
   adminAppFilterAll: "Kõik kuulutused",
   adminAppStatusFilterLabel: "Filtreeri oleku järgi",
@@ -619,9 +613,6 @@ const en: Messages = {
   jobDetailExpectations: "Requirements",
   jobDetailNice: "Nice to have",
   jobDetailWeOffer: "What we offer",
-  jobDetailBadge1: "Machine build & testing",
-  jobDetailBadge2: "CAD & automation environment",
-  jobDetailBadge3: "Willingness to travel",
   adminAppFilterLabel: "Filter by job post",
   adminAppFilterAll: "All job posts",
   adminAppStatusFilterLabel: "Filter by status",

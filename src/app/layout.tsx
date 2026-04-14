@@ -23,6 +23,9 @@ const siteTitle = "Cannery Careers — Cannery OÜ tööpakkumised";
 const description =
   "Cannery OÜ ametikohad: villimisliinid, masinaehitus, Laagri. Kandideeri veebis või saada CV.";
 
+/** Same hero visual as the site — avoids link previews picking a doc-like asset. */
+const defaultOgImage = "/cannery/full_machine_cannery_line.png";
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: siteTitle,
@@ -34,10 +37,10 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/cannery/Job_proposal.jpeg",
-        width: 1200,
-        height: 630,
-        alt: "Cannery tööpakkumine",
+        url: defaultOgImage,
+        width: 1920,
+        height: 1080,
+        alt: "Cannery — villimisliin",
       },
     ],
   },
@@ -45,6 +48,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteTitle,
     description,
+    images: [defaultOgImage],
   },
   robots: { index: true, follow: true },
 };
