@@ -3,11 +3,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { submitApplication } from "@/actions/applications";
+import { GDPRConsentModal } from "@/components/GDPRConsentModal";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,6 +37,7 @@ export function ApplicationForm({
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvHint, setCvHint] = useState<string | null>(null);
   const [rootError, setRootError] = useState<string | null>(null);
+  const [gdprModalOpen, setGdprModalOpen] = useState(false);
 
   const schema = useMemo(() => getApplyFormSchema(locale), [locale]);
 
@@ -45,6 +48,7 @@ export function ApplicationForm({
       email: defaultValues?.email ?? "",
       phone: defaultValues?.phone ?? "",
       message: defaultValues?.message ?? "",
+      gdprConsent: false,
     },
   });
 
@@ -92,6 +96,7 @@ export function ApplicationForm({
     body.append("email", values.email);
     body.append("phone", values.phone);
     body.append("message", values.message ?? "");
+    body.append("gdprConsent", values.gdprConsent ? "true" : "false");
     body.append("locale", locale);
     if (jobId) body.append("jobId", jobId);
 
@@ -188,6 +193,7 @@ export function ApplicationForm({
 
   const {
     register,
+    control,
     formState: { errors, isSubmitting },
   } = form;
 
@@ -286,7 +292,50 @@ export function ApplicationForm({
             </p>
           ) : null}
         </div>
+
+        <div className="space-y-2 rounded-lg border border-neutral-200 bg-white/80 px-3 py-3">
+          <div className="flex gap-3">
+            <Controller
+              name="gdprConsent"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  id="gdpr-consent"
+                  checked={field.value}
+                  onCheckedChange={(c) => field.onChange(c === true)}
+                  aria-invalid={Boolean(errors.gdprConsent)}
+                  className="mt-0.5"
+                />
+              )}
+            />
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <Label
+                htmlFor="gdpr-consent"
+                className="cursor-pointer text-sm font-normal leading-snug text-neutral-800"
+              >
+                {t.formGdprConsentLabel}
+              </Label>
+              <button
+                type="button"
+                className="text-left text-sm font-medium text-amber-900 underline underline-offset-2 hover:text-amber-950"
+                onClick={() => setGdprModalOpen(true)}
+              >
+                {t.formGdprMoreInfo}
+              </button>
+            </div>
+          </div>
+          {errors.gdprConsent ? (
+            <p className="text-sm text-destructive" role="alert">
+              {errors.gdprConsent.message}
+            </p>
+          ) : null}
+        </div>
       </div>
+
+      <GDPRConsentModal
+        open={gdprModalOpen}
+        onOpenChange={setGdprModalOpen}
+      />
 
       {rootError ? (
         <p className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">

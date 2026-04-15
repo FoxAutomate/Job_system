@@ -24,6 +24,11 @@ export function getApplyFormSchema(locale: Locale) {
     message: z
       .string()
       .max(2000, { message: v.validationMessageMax }),
+    gdprConsent: z
+      .boolean()
+      .refine((val) => val === true, {
+        message: v.validationGdprRequired,
+      }),
   });
 }
 

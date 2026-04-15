@@ -45,6 +45,10 @@ export type Messages = {
   formMessagePh: string;
   formSubmit: string;
   formSubmitting: string;
+  /** GDPR recruitment consent (checkbox label) */
+  formGdprConsentLabel: string;
+  /** Opens privacy notice modal */
+  formGdprMoreInfo: string;
   formCvTooLargeInline: string;
   toastCvTooLargeTitle: string;
   toastCvTooLargeDesc: string;
@@ -87,6 +91,7 @@ export type Messages = {
   validationPhoneMin: string;
   validationPhoneMax: string;
   validationMessageMax: string;
+  validationGdprRequired: string;
   serverCvTooLarge: string;
   serverCvType: string;
   serverJobInactive: string;
@@ -252,6 +257,9 @@ const et: Messages = {
   formMessagePh: "Miks see töö sind huvitab? (2–3 lauset piisab)",
   formSubmit: "Saada kandideerimine",
   formSubmitting: "Saadan…",
+  formGdprConsentLabel:
+    "Nõustun oma isikuandmete töötlemisega Cannery OÜ poolt värbamisprotsessi läbiviimiseks valitud ametikohale ja tulevasteks värbamisprotsessideks. Võin nõusoleku igal ajal tagasi võtta.",
+  formGdprMoreInfo: "Lisainfo / More information",
   formCvTooLargeInline:
     "Fail on liiga suur (max 4 MB). / File is too large (max 4 MB).",
   toastCvTooLargeTitle: "CV on liiga suur",
@@ -298,6 +306,8 @@ const et: Messages = {
   validationPhoneMin: "Palun sisesta telefoninumber.",
   validationPhoneMax: "Telefoninumber on liiga pikk.",
   validationMessageMax: "Sõnum on liiga pikk (max 2000 tähemärki).",
+  validationGdprRequired:
+    "Palun märgi nõusolek isikuandmete töötlemiseks.",
   serverCvTooLarge:
     "CV fail on liiga suur (max 4 MB). / CV file is too large (max 4 MB). Try a smaller PDF or skip the attachment for now.",
   serverCvType:
@@ -464,6 +474,9 @@ const en: Messages = {
   formMessagePh: "Why does this role interest you? (2–3 sentences is enough)",
   formSubmit: "Submit application",
   formSubmitting: "Sending…",
+  formGdprConsentLabel:
+    "I consent to the processing of my personal data by Cannery OÜ for the purpose of carrying out the recruitment process for the selected position and for future recruitment processes. I may withdraw my consent at any time.",
+  formGdprMoreInfo: "Lisainfo / More information",
   formCvTooLargeInline:
     "File is too large (max 4 MB). / Fail on liiga suur (max 4 MB).",
   toastCvTooLargeTitle: "CV file too large",
@@ -510,6 +523,8 @@ const en: Messages = {
   validationPhoneMin: "Please enter a phone number.",
   validationPhoneMax: "Phone number is too long.",
   validationMessageMax: "Message is too long (max 2000 characters).",
+  validationGdprRequired:
+    "Please accept the processing of your personal data to submit your application.",
   serverCvTooLarge:
     "CV file is too large (max 4 MB). / CV fail on liiga suur (max 4 MB). Try a smaller PDF or skip the attachment for now.",
   serverCvType:
