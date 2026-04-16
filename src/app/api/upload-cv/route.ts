@@ -10,6 +10,7 @@ import {
   isCvBufferPlausible,
   resolveCvMimeType,
 } from "@/lib/validation";
+import { isDemoMode } from "@/lib/demo-mode";
 import {
   blobRwTokenShapeOk,
   formatErrorForLog,
@@ -25,6 +26,12 @@ export const maxDuration = 60;
  */
 export async function POST(request: Request) {
   const requestId = randomUUID().slice(0, 8);
+  if (isDemoMode()) {
+    return NextResponse.json(
+      { ok: false, error: "demo_no_upload", requestId },
+      { status: 403 }
+    );
+  }
   try {
     const token = getBlobReadWriteToken();
     if (!token) {

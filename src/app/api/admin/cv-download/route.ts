@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
 import { getDb } from "@/db";
+import { isDemoMode } from "@/lib/demo-mode";
 import { applications } from "@/db/schema";
 import { fetchCvBlobForDownload } from "@/lib/blob-cv-download";
 import { eq } from "drizzle-orm";
@@ -31,6 +32,10 @@ export async function GET(request: Request) {
   const id = new URL(request.url).searchParams.get("id");
   if (!id?.trim()) {
     return NextResponse.json({ error: "Missing id" }, { status: 400 });
+  }
+
+  if (isDemoMode()) {
+    return NextResponse.json({ error: "Not available in demo" }, { status: 404 });
   }
 
   const db = getDb();

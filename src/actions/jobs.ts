@@ -7,6 +7,7 @@ import { z } from "zod";
 import { getDb } from "@/db";
 import { jobs, type JobContent, type JobOfferLocaleBlock } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth-guard";
+import { DEMO_ADMIN_READ_ONLY_MSG, isDemoMode } from "@/lib/demo-mode";
 
 function linesToArray(s: string) {
   return s
@@ -169,6 +170,9 @@ export async function upsertJob(
   formData: FormData
 ): Promise<{ ok: boolean; message?: string }> {
   await requireAdmin();
+  if (isDemoMode()) {
+    return { ok: false, message: DEMO_ADMIN_READ_ONLY_MSG };
+  }
   const db = getDb();
 
   const idRaw = formData.get("id");
@@ -291,6 +295,7 @@ export async function upsertJob(
 
 export async function setJobActive(jobId: string, active: boolean) {
   await requireAdmin();
+  if (isDemoMode()) return;
   const db = getDb();
   await db.update(jobs).set({ active, updatedAt: new Date() }).where(eq(jobs.id, jobId));
   revalidatePath("/");
@@ -299,6 +304,7 @@ export async function setJobActive(jobId: string, active: boolean) {
 
 export async function setJobShowSalary(jobId: string, showSalary: boolean) {
   await requireAdmin();
+  if (isDemoMode()) return;
   const db = getDb();
   await db
     .update(jobs)
@@ -310,6 +316,7 @@ export async function setJobShowSalary(jobId: string, showSalary: boolean) {
 
 export async function deleteJob(jobId: string) {
   await requireAdmin();
+  if (isDemoMode()) return;
   const db = getDb();
   await db.delete(jobs).where(eq(jobs.id, jobId));
   revalidatePath("/");

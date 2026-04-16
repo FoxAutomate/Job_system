@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { isPublicDemo } from "@/lib/demo-mode";
 import { useLocale } from "@/lib/i18n/locale-context";
 import {
   MAX_CV_BYTES,
@@ -34,6 +35,7 @@ export function ApplicationForm({
   defaultValues,
 }: ApplicationFormProps) {
   const { locale, t } = useLocale();
+  const publicDemo = isPublicDemo();
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvHint, setCvHint] = useState<string | null>(null);
   const [rootError, setRootError] = useState<string | null>(null);
@@ -100,7 +102,7 @@ export function ApplicationForm({
     body.append("locale", locale);
     if (jobId) body.append("jobId", jobId);
 
-    if (cvFile) {
+    if (cvFile && !publicDemo) {
       if (!resolveCvMimeType(cvFile)) {
         setRootError(t.serverCvType);
         toast.error(t.toastErrorTitle, { description: t.serverCvType });
@@ -256,25 +258,27 @@ export function ApplicationForm({
           ) : null}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="cv">{t.formCvLabel}</Label>
-          <Input
-            id="cv"
-            type="file"
-            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            className={cn(
-              "min-h-12 cursor-pointer text-base file:mr-3 file:rounded-md file:border-0 file:bg-neutral-200 file:px-3 file:py-1.5 file:text-sm file:font-medium"
-            )}
-            onChange={onFileChange}
-            disabled={isSubmitting}
-          />
-          <p className="text-sm text-neutral-600">{t.formCvHint}</p>
-          {cvHint ? (
-            <p className="text-sm text-amber-800" role="status">
-              {cvHint}
-            </p>
-          ) : null}
-        </div>
+        {!publicDemo ? (
+          <div className="space-y-2">
+            <Label htmlFor="cv">{t.formCvLabel}</Label>
+            <Input
+              id="cv"
+              type="file"
+              accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              className={cn(
+                "min-h-12 cursor-pointer text-base file:mr-3 file:rounded-md file:border-0 file:bg-neutral-200 file:px-3 file:py-1.5 file:text-sm file:font-medium"
+              )}
+              onChange={onFileChange}
+              disabled={isSubmitting}
+            />
+            <p className="text-sm text-neutral-600">{t.formCvHint}</p>
+            {cvHint ? (
+              <p className="text-sm text-amber-800" role="status">
+                {cvHint}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
 
         <div className="space-y-2">
           <Label htmlFor="message">{t.formMessage}</Label>

@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getDb } from "@/db";
 import { siteSettings } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth-guard";
+import { DEMO_ADMIN_READ_ONLY_MSG, isDemoMode } from "@/lib/demo-mode";
 import {
   DEFAULT_APPLICANT_EMAIL_BODY_EN,
   DEFAULT_APPLICANT_EMAIL_BODY_ET,
@@ -19,6 +20,9 @@ export async function updateSiteEmailSettings(
   formData: FormData
 ): Promise<{ ok: boolean; message?: string }> {
   await requireAdmin();
+  if (isDemoMode()) {
+    return { ok: false, message: DEMO_ADMIN_READ_ONLY_MSG };
+  }
   const rawEmail = String(formData.get("defaultApplicationEmail") ?? "");
   const parsedEmail = z.string().email().safeParse(rawEmail);
   if (!parsedEmail.success) {

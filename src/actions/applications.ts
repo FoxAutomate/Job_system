@@ -5,6 +5,7 @@ import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
+import { getDemoJobById } from "@/data/demo-fixtures";
 import { getDb } from "@/db";
 import {
   applications,
@@ -12,6 +13,7 @@ import {
   type ApplicationStatus,
   type Job,
 } from "@/db/schema";
+import { DEMO_ADMIN_READ_ONLY_MSG, isDemoMode } from "@/lib/demo-mode";
 import { getBlobPutAccess } from "@/lib/blob-access";
 import { putCvBlobWithAccessFallback } from "@/lib/blob-put-cv";
 import { isTrustedCvBlobUrl } from "@/lib/blob-trust";
@@ -93,6 +95,21 @@ export async function submitApplication(
       Object.values(parsed.error.flatten().fieldErrors).flat()[0] ??
       msg.serverFieldsHint;
     return { ok: false, message: fieldMsg };
+  }
+
+  if (isDemoMode()) {
+    if (jobId) {
+      const demoJob = getDemoJobById(jobId);
+      if (!demoJob || !demoJob.active) {
+        return { ok: false, message: msg.serverJobInactive };
+      }
+    }
+    return {
+      ok: true,
+      message: `${SUCCESS_BASE} ${msg.demoApplyFootnote}`,
+      emailSimulated: true,
+      submittedAt: new Date().toISOString(),
+    };
   }
 
   try {
@@ -277,6 +294,9 @@ export async function updateApplicationStatus(
 ): Promise<{ ok: true } | { ok: false; message: string }> {
   try {
     await requireAdmin();
+    if (isDemoMode()) {
+      return { ok: false, message: DEMO_ADMIN_READ_ONLY_MSG };
+    }
     const db = getDb();
     await db
       .update(applications)
@@ -295,6 +315,9 @@ export async function updateApplicationNotes(
 ): Promise<{ ok: true } | { ok: false; message: string }> {
   try {
     await requireAdmin();
+    if (isDemoMode()) {
+      return { ok: false, message: DEMO_ADMIN_READ_ONLY_MSG };
+    }
     const db = getDb();
     await db
       .update(applications)
@@ -313,6 +336,9 @@ export async function updateApplicationCvRating(
 ): Promise<{ ok: true } | { ok: false; message: string }> {
   try {
     await requireAdmin();
+    if (isDemoMode()) {
+      return { ok: false, message: DEMO_ADMIN_READ_ONLY_MSG };
+    }
     if (
       rating !== null &&
       (!Number.isInteger(rating) || rating < 1 || rating > 5)

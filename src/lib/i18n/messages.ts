@@ -64,6 +64,10 @@ export type Messages = {
   successJobsGeneral: string;
   /** Caption above submitted date/time on success card */
   successSubmittedLabel: string;
+  /** Appended to success message in demo apply (no persistence) */
+  demoApplyFootnote: string;
+  /** Top banner when logged into admin in demo deploy */
+  adminDemoBanner: string;
   stickyApply: string;
   stickyApplyJob: string;
   adminNavPublic: string;
@@ -279,6 +283,10 @@ const et: Messages = {
   successJobsJob: "Vaata teisi pakkumisi",
   successJobsGeneral: "Kõik ametikohad",
   successSubmittedLabel: "Esitatud",
+  demoApplyFootnote:
+    "(Demo: andmeid ei salvestata ega edastata.) / (Demo: no data is stored or forwarded.)",
+  adminDemoBanner:
+    "Demo režiim: kuulutused ja CRM on näidis; muudatusi ei salvestata. / Demo: listings and CRM are sample data; changes are not saved.",
   stickyApply: "Kandideeri",
   stickyApplyJob: "Kandideeri kohe",
   adminNavPublic: "Avalik leht",
@@ -496,6 +504,10 @@ const en: Messages = {
   successJobsJob: "Browse other roles",
   successJobsGeneral: "All open positions",
   successSubmittedLabel: "Submitted",
+  demoApplyFootnote:
+    "(Demo: no data is stored or forwarded.) / (Demo: andmeid ei salvestata ega edastata.)",
+  adminDemoBanner:
+    "Demo: listings and CRM are sample data; changes are not saved. / Demo režiim: kuulutused ja CRM on näidis; muudatusi ei salvestata.",
   stickyApply: "Apply",
   stickyApplyJob: "Apply now",
   adminNavPublic: "Public site",
