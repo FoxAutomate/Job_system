@@ -2,6 +2,14 @@
 
 Ten dokument jest **lokalnym podsumowaniem** dla zespołu pracującego nad **[foxautomate.com](https://foxautomate.com)** (główna strona firmy). **Job System** to osobna aplikacja Next.js — element portfolio / demonstracja procesu rekrutacji i obsługi ofert; docelowo linkowana z głównej witryny (np. sekcja „Kariera”, osobna poddomena lub strona docelowa).
 
+### Ważne: jeden właściwy remote (Job System)
+
+Do pracy nad modułem pod **FOX Automate** i do linkowania z **foxautomate.com** używaj **wyłącznie** repozytorium **Job System** (w Git zwykle remote `job_system` → [FoxAutomate/Job_system](https://github.com/FoxAutomate/Job_system)).
+
+**Nie** traktuj jako źródła wdrożenia ani nie podpinaj pod stronę firmową projektów powiązanych z innymi remote’ami w lokalnym klonie, np. **`Hans_job_page`** ani **`Cannery_Job`** — to osobne ścieżki/repo; linkowanie tam grozi prowadzeniem użytkowników na **zły** build lub **przestarzały** kod. Przed `git push` sprawdź: `git remote -v` i upewnij się, że wypychasz na **`job_system`**, nie na `origin` / `hans_job_page`, jeśli te wskazują na Cannery_Job lub Hans_job_page.
+
+**Publiczny URL demo (Vercel):** [https://project-nk69r.vercel.app](https://project-nk69r.vercel.app)
+
 ---
 
 ## Co to robi (krótko)
@@ -12,17 +20,22 @@ Ten dokument jest **lokalnym podsumowaniem** dla zespołu pracującego nad **[fo
 
 ---
 
-## Repozytoria Git (stan w klonie roboczym)
+## Repozytoria Git
 
-W jednym katalogu mogą być skonfigurowane **kilka remote’ów** — przed linkowaniem w dokumentacji firmowej **potwierdź**, które repo jest „kanoniczne” dla tego wdrożenia:
+**Kanoniczne repo modułu (jedyny cel push i integracji z foxautomate.com):**
 
-| Remote        | Przykładowy URL (do weryfikacji w `git remote -v`)        |
-|---------------|-------------------------------------------------------------|
-| `origin`      | `https://github.com/FoxAutomate/Cannery_Job.git`           |
-| `hans_job_page` | `https://github.com/FoxAutomate/Hans_job_page.git`      |
-| `job_system`  | `https://github.com/FoxAutomate/Job_system.git`             |
+| Remote (typowo) | URL |
+|-----------------|-----|
+| **`job_system`** | `https://github.com/FoxAutomate/Job_system.git` |
 
-**Źródło kodu w tym workspace:** ścieżka lokalna projektu to katalog z tym plikiem (np. `Hans_job_page`). Nowy zespół powinien sklonować właściwe repo i ustawić Vercel na ten sam branch co używacie do demo/produkcji modułu.
+Inne remote’y mogą istnieć lokalnie wyłącznie ze względu na historię klonów — **nie** używaj ich do wdrożenia ani nie podawaj ich URL w materiałach pod link do „Job System”:
+
+| Remote (unikać jako źródła modułu) | Przykład URL |
+|-----------------------------------|--------------|
+| `origin` (często) | `https://github.com/FoxAutomate/Cannery_Job.git` |
+| `hans_job_page` | `https://github.com/FoxAutomate/Hans_job_page.git` |
+
+**Nowy zespół:** `git clone https://github.com/FoxAutomate/Job_system.git` — potem Vercel podłączony do **tego** repozytorium i brancha uzgodnionego z zespołem.
 
 ---
 
@@ -30,9 +43,7 @@ W jednym katalogu mogą być skonfigurowane **kilka remote’ów** — przed lin
 
 - Projekt jest przygotowany pod **Next.js 15** i typowy deploy na **Vercel**.
 - **Demo:** warto trzymać **osobny projekt Vercel** (np. branch `demo`), żeby nie mieszać z produkcyjnym deployem głównej strony foxautomate.com — patrz komentarze w `env.demo.example`.
-- **URL demo:** wpisz tutaj po deployu faktyczny adres (np. `https://<projekt>.vercel.app` lub domena custom), np.:
-
-  `DEMO_URL=` _uzupełnij z dashboardu Vercel_
+- **Aktualny URL demo (linkuj z foxautomate.com tutaj):** [https://project-nk69r.vercel.app](https://project-nk69r.vercel.app) — [Canning Brothers Careers — tööpakkumised](https://project-nk69r.vercel.app).
 
 - Zmienne środowiskowe: produkcja z bazą (Neon itd.) vs. demo bez `DATABASE_URL` — szczegóły w `env.demo.example` i w kodzie `src/lib/demo-mode.ts`, `src/lib/queries.ts`.
 
@@ -55,7 +66,7 @@ W jednym katalogu mogą być skonfigurowane **kilka remote’ów** — przed lin
 
 ## Jak podlinkować demo pod foxautomate.com
 
-1. **Link prosty (zalecane na start):** przycisk lub baner „Kariera / Oferty” → otwiera **nową kartę** z URL demo na Vercel (lub z custom domeną, np. `kariera.foxautomate.com` wskazującą na ten projekt).
+1. **Link prosty (zalecane na start):** przycisk lub baner „Kariera / Oferty” → otwiera **nową kartę** z **`https://project-nk69r.vercel.app`** (lub z custom domeną, np. `kariera.foxautomate.com` wskazującą na **ten sam** projekt Vercel co Job System — nie inny fork/repo).
 2. **Subdomena:** w DNS ustaw CNAME subdomeny na Vercel; w projekcie Vercel dodaj domenę — użytkownik pozostaje w „strefie” FOX Automate, a hosting nadal na Vercel.
 3. **Iframe:** technicznie możliwe, ale **niezalecane** (SEO, cookies, UX, responsywność). Jeśli kiedyś potrzebne — uzgodnij z zespołem frontu głównej strony i sprawdź `X-Frame-Options` / CSP.
 
@@ -69,4 +80,4 @@ Na tym etapie zakłada się **zamknięcie prac** nad tym projektem jako samodzie
 
 ---
 
-*Plik: `JobSystem.md` (root repozytorium). Aktualizuj `DEMO_URL` i tabelę remote’ów po zmianach infrastruktury.*
+*Plik: `JobSystem.md` (root repozytorium). Po zmianie domeny Vercel zaktualizuj URL demo powyżej; remote kanoniczny pozostaje **Job_system**.*
