@@ -8,6 +8,8 @@ Do pracy nad modułem pod **FOX Automate** i do linkowania z **foxautomate.com**
 
 **Nie** traktuj jako źródła wdrożenia ani nie podpinaj pod stronę firmową projektów powiązanych z innymi remote’ami w lokalnym klonie, np. **`Hans_job_page`** ani **`Cannery_Job`** — to osobne ścieżki/repo; linkowanie tam grozi prowadzeniem użytkowników na **zły** build lub **przestarzały** kod. Przed `git push` sprawdź: `git remote -v` i upewnij się, że wypychasz na **`job_system`**, nie na `origin` / `hans_job_page`, jeśli te wskazują na Cannery_Job lub Hans_job_page.
 
+**Cannery_Job (`origin` → produkcja klienta, np. job.canneryandco.com):** to repozytorium jest **poza zakresem** rozwoju Job System. **Nie wypychaj** na nie zmian z tego modułu (`git push origin …`), chyba że jest to **osobna, świadoma** decyzja klienta — nowszy kod Job System wymagałby wtedy **migracji bazy** na Neon; w przeciwnym razie produkcja może zwracać 500. Rozwój i push: **wyłącznie** `git push job_system main` (lub uzgodniona gałąź).
+
 **Publiczny URL demo (Vercel):** [https://project-nk69r.vercel.app](https://project-nk69r.vercel.app)
 
 ---
