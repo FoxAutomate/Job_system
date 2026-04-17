@@ -95,6 +95,7 @@ export default async function JobDetailPage({ params, searchParams }: Props) {
         job={job}
         applyHref="#apply-job"
         logoSrc={branding.logoSrc}
+        logoSrcMobile={branding.logoSrcMobile}
         heroBgSrc={branding.jobHeroBgSrc}
         illustrationSrc={branding.jobIllustrationSrc}
       />

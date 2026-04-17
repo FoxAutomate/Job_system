@@ -11,13 +11,15 @@ import { cn } from "@/lib/utils";
 
 type HomeHeroProps = {
   logoSrc: string;
+  logoSrcMobile: string;
   heroBgSrc: string;
 };
 
-export function HomeHero({ logoSrc, heroBgSrc }: HomeHeroProps) {
+export function HomeHero({ logoSrc, logoSrcMobile, heroBgSrc }: HomeHeroProps) {
   const { t } = useLocale();
   const bgRemote = heroBgSrc.startsWith("http");
   const logoRemote = logoSrc.startsWith("http");
+  const logoMobileRemote = logoSrcMobile.startsWith("http");
   return (
     <section className="relative isolate overflow-hidden bg-neutral-100">
       <div className="pointer-events-none absolute inset-0">
@@ -50,16 +52,25 @@ export function HomeHero({ logoSrc, heroBgSrc }: HomeHeroProps) {
             <LanguageSwitcher />
             <Link
               href="/"
-              className="relative h-16 w-64 max-w-[min(100%,22rem)] shrink-0 sm:h-[4.75rem] sm:w-80 md:h-20 md:w-[22rem]"
+              className="relative h-28 w-40 max-w-[min(100%,16rem)] shrink-0 sm:h-[4.75rem] sm:w-80 sm:max-w-none md:h-20 md:w-[22rem]"
               aria-label="Canning Brothers"
             >
+              <Image
+                src={logoSrcMobile}
+                alt="Canning Brothers"
+                fill
+                priority
+                className="object-contain object-right sm:hidden"
+                sizes="160px"
+                unoptimized={logoMobileRemote}
+              />
               <Image
                 src={logoSrc}
                 alt="Canning Brothers"
                 fill
                 priority
-                className="object-contain object-right"
-                sizes="(max-width: 640px) 256px, (max-width: 768px) 320px, 352px"
+                className="hidden object-contain object-right sm:block"
+                sizes="(max-width: 768px) 320px, 352px"
                 unoptimized={logoRemote}
               />
             </Link>

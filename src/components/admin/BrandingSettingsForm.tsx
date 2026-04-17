@@ -33,7 +33,7 @@ const DEFAULT_BY_FIELD: Record<
   keyof BrandingFormInitial,
   (typeof BRANDING_DEFAULTS)[keyof typeof BRANDING_DEFAULTS]
 > = {
-  siteLogoUrl: BRANDING_DEFAULTS.logo,
+  siteLogoUrl: BRANDING_DEFAULTS.logoWeb,
   homeHeroBackgroundUrl: BRANDING_DEFAULTS.homeHeroBg,
   jobHeroBackgroundUrl: BRANDING_DEFAULTS.jobHeroBg,
   homeOpenGraphImageUrl: BRANDING_DEFAULTS.homeOg,

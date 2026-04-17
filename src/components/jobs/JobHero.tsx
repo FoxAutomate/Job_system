@@ -16,6 +16,7 @@ type JobHeroProps = {
   job: Job;
   applyHref?: string;
   logoSrc: string;
+  logoSrcMobile: string;
   heroBgSrc: string;
   illustrationSrc: string;
 };
@@ -24,6 +25,7 @@ export function JobHero({
   job,
   applyHref = "#apply-job",
   logoSrc,
+  logoSrcMobile,
   heroBgSrc,
   illustrationSrc,
 }: JobHeroProps) {
@@ -35,6 +37,7 @@ export function JobHero({
   );
   const bgRemote = heroBgSrc.startsWith("http");
   const logoRemote = logoSrc.startsWith("http");
+  const logoMobileRemote = logoSrcMobile.startsWith("http");
   const illRemote = illustrationSrc.startsWith("http");
 
   return (
@@ -63,15 +66,24 @@ export function JobHero({
           </div>
           <Link
             href="/"
-            className="relative h-16 w-64 max-w-[min(100%,22rem)] shrink-0 sm:h-[4.75rem] sm:w-80 md:h-20 md:w-[22rem]"
+            className="relative h-28 w-40 max-w-[min(100%,16rem)] shrink-0 sm:h-[4.75rem] sm:w-80 sm:max-w-none md:h-20 md:w-[22rem]"
             aria-label="Canning Brothers Careers"
           >
+            <Image
+              src={logoSrcMobile}
+              alt="Canning Brothers"
+              fill
+              className="object-contain object-right sm:hidden"
+              sizes="160px"
+              priority
+              unoptimized={logoMobileRemote}
+            />
             <Image
               src={logoSrc}
               alt="Canning Brothers"
               fill
-              className="object-contain object-right"
-              sizes="(max-width: 640px) 256px, (max-width: 768px) 320px, 352px"
+              className="hidden object-contain object-right sm:block"
+              sizes="(max-width: 768px) 320px, 352px"
               priority
               unoptimized={logoRemote}
             />

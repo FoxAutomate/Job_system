@@ -1,6 +1,9 @@
 /** Built-in paths under /public when DB URL is null */
 export const BRANDING_DEFAULTS = {
-  logo: "/canning-brothers/logo-wide.png",
+  /** Horizontal / web header */
+  logoWeb: "/canning-brothers/logo-web.png",
+  /** Narrower or stacked variant for small viewports */
+  logoMobile: "/canning-brothers/logo-mobile.png",
   homeHeroBg: "/cannery/full_machine_cannery_line.png",
   jobHeroBg: "/cannery/full_machine_cannery_line.png",
   homeOg: "/cannery/full_machine_cannery_line.png",
@@ -9,7 +12,10 @@ export const BRANDING_DEFAULTS = {
 } as const;
 
 export type SiteBrandingResolved = {
+  /** Desktop / `sm+` hero logo */
   logoSrc: string;
+  /** Below `sm` — falls back to {@link logoSrc} when admin set a single Blob URL */
+  logoSrcMobile: string;
   homeHeroBgSrc: string;
   jobHeroBgSrc: string;
   homeOgSrc: string;
@@ -27,8 +33,10 @@ type BrandingRow = {
 };
 
 export function resolveSiteBranding(row: BrandingRow | null): SiteBrandingResolved {
+  const custom = row?.siteLogoUrl?.trim();
   return {
-    logoSrc: row?.siteLogoUrl?.trim() || BRANDING_DEFAULTS.logo,
+    logoSrc: custom || BRANDING_DEFAULTS.logoWeb,
+    logoSrcMobile: custom || BRANDING_DEFAULTS.logoMobile,
     homeHeroBgSrc:
       row?.homeHeroBackgroundUrl?.trim() || BRANDING_DEFAULTS.homeHeroBg,
     jobHeroBgSrc:

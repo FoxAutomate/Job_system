@@ -431,7 +431,8 @@ const et: Messages = {
   adminBrandingHomeOg: "Open Graph — avaleht (sotsiaalmeedia jagamine)",
   adminBrandingJobOg: "Open Graph — kuulutuste leht",
   adminBrandingJobIllustration: "Pilt kuulutuse all (purk / toode)",
-  adminBrandingHintLogo: "PNG, WebP või JPEG. Max ~1,5 MB.",
+  adminBrandingHintLogo:
+    "Vaikimisi: kaks PNG-faili (mobiil + lai veeb). Üleslaaditud logo asendab mõlemad. Eelistatud: PNG läbipaistva taustaga. Max ~1,5 MB (PNG/WebP/JPEG).",
   adminBrandingHintBg: "PNG, WebP või JPEG. Max ~4 MB. Lai horisontaal sobib taustaks.",
   adminBrandingHintOg: "PNG, WebP või JPEG. Max ~2,5 MB. Soovitus ~1200×630 px.",
   adminBrandingHintIllustration:
@@ -674,7 +675,8 @@ const en: Messages = {
   adminBrandingHomeOg: "Open Graph — home (social share)",
   adminBrandingJobOg: "Open Graph — job listings",
   adminBrandingJobIllustration: "Image under job title (product / can)",
-  adminBrandingHintLogo: "PNG, WebP, or JPEG. Max ~1.5 MB.",
+  adminBrandingHintLogo:
+    "Default: two PNGs (mobile + wide web). One upload replaces both. Prefer transparent PNG. Max ~1.5 MB (PNG/WebP/JPEG).",
   adminBrandingHintBg: "PNG, WebP, or JPEG. Max ~4 MB. Wide landscape works best.",
   adminBrandingHintOg: "PNG, WebP, or JPEG. Max ~2.5 MB. Recommended ~1200×630 px.",
   adminBrandingHintIllustration:

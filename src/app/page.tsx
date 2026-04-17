@@ -55,7 +55,11 @@ export default async function HomePage({
 
   return (
     <div className="min-h-dvh bg-neutral-50">
-      <HomeHero logoSrc={branding.logoSrc} heroBgSrc={branding.homeHeroBgSrc} />
+      <HomeHero
+        logoSrc={branding.logoSrc}
+        logoSrcMobile={branding.logoSrcMobile}
+        heroBgSrc={branding.homeHeroBgSrc}
+      />
 
       <HomeJobsSection>
         <JobList jobs={jobs} />
