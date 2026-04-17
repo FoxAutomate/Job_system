@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
-import { BrandLogoLink } from "@/components/BrandLogoLink";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SmoothScrollAnchor } from "@/components/SmoothScrollAnchor";
 import { buttonVariants } from "@/components/ui/button";
@@ -17,6 +17,7 @@ type HomeHeroProps = {
 export function HomeHero({ logoSrc, heroBgSrc }: HomeHeroProps) {
   const { t } = useLocale();
   const bgRemote = heroBgSrc.startsWith("http");
+  const logoRemote = logoSrc.startsWith("http");
   return (
     <section className="relative isolate overflow-hidden bg-neutral-100">
       <div className="pointer-events-none absolute inset-0">
@@ -45,13 +46,23 @@ export function HomeHero({ logoSrc, heroBgSrc }: HomeHeroProps) {
               {t.homeHeroBody}
             </p>
           </div>
-          <div className="flex shrink-0 flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-2.5">
+          <div className="flex shrink-0 flex-col items-end gap-3">
             <LanguageSwitcher />
-            <BrandLogoLink
-              logoSrc={logoSrc}
-              ariaLabel="Canning Brothers"
-              priority
-            />
+            <Link
+              href="/"
+              className="relative h-16 w-64 max-w-[min(100%,22rem)] shrink-0 sm:h-[4.75rem] sm:w-80 md:h-20 md:w-[22rem]"
+              aria-label="Canning Brothers"
+            >
+              <Image
+                src={logoSrc}
+                alt="Canning Brothers"
+                fill
+                priority
+                className="object-contain object-right"
+                sizes="(max-width: 640px) 256px, (max-width: 768px) 320px, 352px"
+                unoptimized={logoRemote}
+              />
+            </Link>
           </div>
         </div>
 

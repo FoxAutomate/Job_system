@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { BrandLogoLink } from "@/components/BrandLogoLink";
 import { JobBackNav } from "@/components/jobs/JobBackNav";
 import { SmoothScrollAnchor } from "@/components/SmoothScrollAnchor";
 import { buttonVariants } from "@/components/ui/button";
@@ -35,6 +34,7 @@ export function JobHero({
     [job, locale]
   );
   const bgRemote = heroBgSrc.startsWith("http");
+  const logoRemote = logoSrc.startsWith("http");
   const illRemote = illustrationSrc.startsWith("http");
 
   return (
@@ -61,10 +61,21 @@ export function JobHero({
               {content.tagline}
             </p>
           </div>
-          <BrandLogoLink
-            logoSrc={logoSrc}
-            ariaLabel="Canning Brothers Careers"
-          />
+          <Link
+            href="/"
+            className="relative h-16 w-64 max-w-[min(100%,22rem)] shrink-0 sm:h-[4.75rem] sm:w-80 md:h-20 md:w-[22rem]"
+            aria-label="Canning Brothers Careers"
+          >
+            <Image
+              src={logoSrc}
+              alt="Canning Brothers"
+              fill
+              className="object-contain object-right"
+              sizes="(max-width: 640px) 256px, (max-width: 768px) 320px, 352px"
+              priority
+              unoptimized={logoRemote}
+            />
+          </Link>
         </div>
 
         <div className="space-y-4">
