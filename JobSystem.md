@@ -18,7 +18,7 @@ Do pracy nad modułem pod **FOX Automate** i do linkowania z **foxautomate.com**
 
 - **Publicznie:** lista aktywnych ofert, szczegóły oferty, formularz aplikacyjny (CV, dane kontaktowe).
 - **Admin:** logowanie (NextAuth), CRUD ofert, branding (logo, tła, OG), przegląd zgłoszeń.
-- **Tryb demo (`DEMO_MODE` / `NEXT_PUBLIC_DEMO`):** aplikacja działa **bez bazy**; oferty i ustawienia pochodzą z **hardcodowanych fixture’ów** (`src/data/demo-fixtures.ts` + `src/data/seed-job.ts`). Zgłoszenia demo nie zapisują się w DB (logika w akcjach).
+- **Tryb demo (`DEMO_MODE` / `NEXT_PUBLIC_DEMO`):** aplikacja działa **bez bazy**; oferty i ustawienia pochodzą z **hardcodowanych fixture’ów** (`src/data/demo-fixtures.ts` + `src/data/seed-job.ts`). Zgłoszenia demo nie zapisują się w DB (logika w akcjach). Treść ofert w seedzie: **język podstawowy estoński** (`title`, `shortDescription`, `content.*`), **angielski (UK)** w `content.en` + `secondLanguageEnabled` — zgodnie z przełącznikiem ET / EN (UK) w UI.
 
 ---
 
