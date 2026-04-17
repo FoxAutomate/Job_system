@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 
 import { Providers } from "@/components/Providers";
+import { getMetadataBase } from "@/lib/site-url";
 
 import "./globals.css";
 
@@ -11,14 +12,6 @@ const inter = Inter({
   variable: "--font-sans",
 });
 
-const publicSite = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-const siteUrl =
-  publicSite && publicSite.length > 0
-    ? publicSite
-    : process.env.VERCEL_URL != null
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000";
-
 const siteTitle = "Cannery Careers — Cannery OÜ tööpakkumised";
 const description =
   "Cannery OÜ ametikohad: villimisliinid, masinaehitus, Laagri. Kandideeri veebis või saada CV.";
@@ -27,7 +20,7 @@ const description =
 const defaultOgImage = "/cannery/full_machine_cannery_line.png";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: getMetadataBase(),
   title: siteTitle,
   description,
   openGraph: {

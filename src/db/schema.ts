@@ -53,6 +53,16 @@ export const siteSettings = pgTable("site_settings", {
   /** Plain text; placeholders: {{name}} {{hrEmail}} {{jobTitle}} {{jobLabel}} {{cvHint}} */
   applicantEmailBodyEt: text("applicant_email_body_et"),
   applicantEmailBodyEn: text("applicant_email_body_en"),
+  /** Public HTTPS URL (e.g. Vercel Blob) or empty → built-in asset */
+  siteLogoUrl: text("site_logo_url"),
+  homeHeroBackgroundUrl: text("home_hero_background_url"),
+  jobHeroBackgroundUrl: text("job_hero_background_url"),
+  /** Open Graph / social preview — home (root layout override via page metadata) */
+  homeOpenGraphImageUrl: text("home_open_graph_image_url"),
+  /** Default OG image for job detail pages */
+  jobOpenGraphImageUrl: text("job_open_graph_image_url"),
+  /** Hero product/illustration image on job listing (strict: PNG/WebP, max size & PNG dimensions) */
+  jobListingIllustrationUrl: text("job_listing_illustration_url"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 

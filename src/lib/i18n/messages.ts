@@ -74,6 +74,8 @@ export type Messages = {
   adminNavOverview: string;
   adminNavOffers: string;
   adminNavApplications: string;
+  /** Branding / visuals (logo, hero, OG) */
+  adminNavBranding: string;
   adminNavSignOut: string;
   adminLayoutHomeLink: string;
   adminLoginTitle: string;
@@ -173,6 +175,25 @@ export type Messages = {
   adminSettingsApplicantBodyEt: string;
   adminSettingsApplicantBodyEn: string;
   adminSettingsApplicantPlaceholderHint: string;
+  adminBrandingTitle: string;
+  adminBrandingSubtitle: string;
+  adminBrandingSave: string;
+  adminBrandingSaved: string;
+  adminBrandingUpload: string;
+  adminBrandingUploading: string;
+  adminBrandingClear: string;
+  adminBrandingCurrent: string;
+  adminBrandingLogo: string;
+  adminBrandingHomeBg: string;
+  adminBrandingJobBg: string;
+  adminBrandingHomeOg: string;
+  adminBrandingJobOg: string;
+  adminBrandingJobIllustration: string;
+  adminBrandingHintLogo: string;
+  adminBrandingHintBg: string;
+  adminBrandingHintOg: string;
+  adminBrandingHintIllustration: string;
+  adminBrandingUploadFailed: string;
   adminJobRowActive: string;
   adminJobRowSalary: string;
   adminJobDeleteConfirm: string;
@@ -293,6 +314,7 @@ const et: Messages = {
   adminNavOverview: "Ülevaade",
   adminNavOffers: "Kuulutused",
   adminNavApplications: "Kandidaadid",
+  adminNavBranding: "Kujundus",
   adminNavSignOut: "Logi välja",
   adminLayoutHomeLink: "← Avaleht",
   adminLoginTitle: "Admin login",
@@ -394,6 +416,27 @@ const et: Messages = {
   adminSettingsApplicantBodyEn: "Inglise (UK) tekst",
   adminSettingsApplicantPlaceholderHint:
     "Väljad on eeltäidetud vaikimisi sõnumiga (muuda ja salvesta). Tühjenda väli ja salvesta, et kasutada sisseehitatud HTML-kujundust. Tühi rida alustab uut lõiku. Kohad: {{name}}, {{hrEmail}}, {{jobTitle}}, {{jobLabel}}, {{cvHint}}.",
+  adminBrandingTitle: "Logo ja visuaalid",
+  adminBrandingSubtitle:
+    "Logo, taustapildid, sotsiaalmeedia eelvaated (OG) ja kuulutuse illustratsioon. Failid laaditakse Vercel Blobi.",
+  adminBrandingSave: "Salvesta kujundus",
+  adminBrandingSaved: "Kujundus salvestatud.",
+  adminBrandingUpload: "Laadi üles",
+  adminBrandingUploading: "Laadin…",
+  adminBrandingClear: "Lähtesta vaikimisi",
+  adminBrandingCurrent: "Eelvaade",
+  adminBrandingLogo: "Logo (ülemine parem nurk)",
+  adminBrandingHomeBg: "Taust — avalehe hero",
+  adminBrandingJobBg: "Taust — kuulutuse hero",
+  adminBrandingHomeOg: "Open Graph — avaleht (sotsiaalmeedia jagamine)",
+  adminBrandingJobOg: "Open Graph — kuulutuste leht",
+  adminBrandingJobIllustration: "Pilt kuulutuse all (purk / toode)",
+  adminBrandingHintLogo: "PNG, WebP või JPEG. Max ~1,5 MB.",
+  adminBrandingHintBg: "PNG, WebP või JPEG. Max ~4 MB. Lai horisontaal sobib taustaks.",
+  adminBrandingHintOg: "PNG, WebP või JPEG. Max ~2,5 MB. Soovitus ~1200×630 px.",
+  adminBrandingHintIllustration:
+    "Ainult PNG või WebP. Max 600 KB. PNG puhul mõõdud 200–1024 px (laius ja kõrgus).",
+  adminBrandingUploadFailed: "Üleslaadimine ebaõnnestus. Proovi uuesti.",
   adminJobRowActive: "Aktiivne",
   adminJobRowSalary: "Palk",
   adminJobDeleteConfirm:
@@ -514,6 +557,7 @@ const en: Messages = {
   adminNavOverview: "Overview",
   adminNavOffers: "Job posts",
   adminNavApplications: "Candidates",
+  adminNavBranding: "Branding",
   adminNavSignOut: "Sign out",
   adminLayoutHomeLink: "← Home",
   adminLoginTitle: "Admin login",
@@ -615,6 +659,27 @@ const en: Messages = {
   adminSettingsApplicantBodyEn: "English (UK) body",
   adminSettingsApplicantPlaceholderHint:
     "Fields start filled with the default wording (edit and save). Clear a field and save to use the built-in HTML layout instead. Blank line starts a new paragraph. Placeholders: {{name}}, {{hrEmail}}, {{jobTitle}}, {{jobLabel}}, {{cvHint}}.",
+  adminBrandingTitle: "Logo & visuals",
+  adminBrandingSubtitle:
+    "Logo, hero backgrounds, social preview images (OG), and the job listing illustration. Files are stored on Vercel Blob.",
+  adminBrandingSave: "Save branding",
+  adminBrandingSaved: "Branding saved.",
+  adminBrandingUpload: "Upload",
+  adminBrandingUploading: "Uploading…",
+  adminBrandingClear: "Reset to default",
+  adminBrandingCurrent: "Preview",
+  adminBrandingLogo: "Logo (top right)",
+  adminBrandingHomeBg: "Background — home hero",
+  adminBrandingJobBg: "Background — job listing hero",
+  adminBrandingHomeOg: "Open Graph — home (social share)",
+  adminBrandingJobOg: "Open Graph — job listings",
+  adminBrandingJobIllustration: "Image under job title (product / can)",
+  adminBrandingHintLogo: "PNG, WebP, or JPEG. Max ~1.5 MB.",
+  adminBrandingHintBg: "PNG, WebP, or JPEG. Max ~4 MB. Wide landscape works best.",
+  adminBrandingHintOg: "PNG, WebP, or JPEG. Max ~2.5 MB. Recommended ~1200×630 px.",
+  adminBrandingHintIllustration:
+    "PNG or WebP only. Max 600 KB. For PNG, width and height must be 200–1024 px.",
+  adminBrandingUploadFailed: "Upload failed. Please try again.",
   adminJobRowActive: "Active",
   adminJobRowSalary: "Salary",
   adminJobDeleteConfirm:

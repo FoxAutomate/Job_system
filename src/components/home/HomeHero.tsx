@@ -9,19 +9,27 @@ import { buttonVariants } from "@/components/ui/button";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { cn } from "@/lib/utils";
 
-export function HomeHero() {
+type HomeHeroProps = {
+  logoSrc: string;
+  heroBgSrc: string;
+};
+
+export function HomeHero({ logoSrc, heroBgSrc }: HomeHeroProps) {
   const { t } = useLocale();
+  const bgRemote = heroBgSrc.startsWith("http");
+  const logoRemote = logoSrc.startsWith("http");
 
   return (
     <section className="relative isolate overflow-hidden bg-neutral-100">
       <div className="pointer-events-none absolute inset-0">
         <Image
-          src="/cannery/full_machine_cannery_line.png"
+          src={heroBgSrc}
           alt=""
           fill
           priority
           sizes="100vw"
           className="object-cover object-center opacity-[0.22]"
+          unoptimized={bgRemote}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/95 via-neutral-50/90 to-neutral-100" />
       </div>
@@ -47,11 +55,12 @@ export function HomeHero() {
               aria-label="Cannery"
             >
               <Image
-                src="/cannery/Cannery_logo_horizontal.png"
+                src={logoSrc}
                 alt="Cannery"
                 fill
                 className="object-contain object-right"
                 sizes="(max-width: 640px) 144px, 176px"
+                unoptimized={logoRemote}
               />
             </Link>
           </div>

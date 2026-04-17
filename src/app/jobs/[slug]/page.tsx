@@ -8,10 +8,13 @@ import { JobHero } from "@/components/jobs/JobHero";
 import { JobPageFooter } from "@/components/jobs/JobPageFooter";
 import { resolveJobForLocale } from "@/lib/jobs/resolve-job-locale";
 import type { Locale } from "@/lib/i18n/messages";
-import { getJobBySlug } from "@/lib/queries";
+import { getJobBySlug, getSiteSettings } from "@/lib/queries";
+import {
+  absoluteOgImageUrl,
+  resolveSiteBranding,
+} from "@/lib/site-branding";
+import { getMetadataBase } from "@/lib/site-url";
 import type { ApplyFormValues } from "@/lib/validation";
-
-const jobOgImage = "/cannery/full_machine_cannery_line.png";
 
 function localeFromCookie(val: string | undefined): Locale {
   return val === "en" ? "en" : "et";
@@ -33,6 +36,9 @@ export async function generateMetadata({
   const loc = localeFromCookie(cookieStore.get("cannery_locale")?.value);
   const resolved = resolveJobForLocale(job, loc);
   const pageTitle = `${resolved.title} | Cannery Careers`;
+  const settings = await getSiteSettings();
+  const b = resolveSiteBranding(settings);
+  const jobOgImage = absoluteOgImageUrl(b.jobOgSrc, getMetadataBase());
   return {
     title: pageTitle,
     description: resolved.shortDescription,
@@ -47,9 +53,9 @@ export async function generateMetadata({
       images: [
         {
           url: jobOgImage,
-          width: 1920,
-          height: 1080,
-          alt: "Cannery — production line",
+          width: 1200,
+          height: 630,
+          alt: "Cannery Careers",
         },
       ],
     },
@@ -80,9 +86,18 @@ export default async function JobDetailPage({ params, searchParams }: Props) {
     phone: sp.phone,
   };
 
+  const settings = await getSiteSettings();
+  const branding = resolveSiteBranding(settings);
+
   return (
     <div className="min-h-dvh bg-neutral-50">
-      <JobHero job={job} applyHref="#apply-job" />
+      <JobHero
+        job={job}
+        applyHref="#apply-job"
+        logoSrc={branding.logoSrc}
+        heroBgSrc={branding.jobHeroBgSrc}
+        illustrationSrc={branding.jobIllustrationSrc}
+      />
       <JobContentSections job={job} />
       <ApplySection
         variant="job"

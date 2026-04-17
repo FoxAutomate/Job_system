@@ -10,6 +10,12 @@ const DEMO_SITE_SETTINGS_ROW = {
   defaultApplicationEmail: "demo@cannery-careers.demo",
   applicantEmailBodyEt: null as string | null,
   applicantEmailBodyEn: null as string | null,
+  siteLogoUrl: null as string | null,
+  homeHeroBackgroundUrl: null as string | null,
+  jobHeroBackgroundUrl: null as string | null,
+  homeOpenGraphImageUrl: null as string | null,
+  jobOpenGraphImageUrl: null as string | null,
+  jobListingIllustrationUrl: null as string | null,
   updatedAt: new Date("2026-01-15T10:00:00.000Z"),
 };
 

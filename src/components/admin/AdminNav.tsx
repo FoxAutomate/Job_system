@@ -15,6 +15,7 @@ export function AdminNav() {
 
   const links = [
     { href: "/admin", label: t.adminNavOverview },
+    { href: "/admin/branding", label: t.adminNavBranding },
     { href: "/admin/offers", label: t.adminNavOffers },
     { href: "/admin/applications", label: t.adminNavApplications },
   ];

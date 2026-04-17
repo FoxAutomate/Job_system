@@ -15,26 +15,39 @@ import { cn } from "@/lib/utils";
 type JobHeroProps = {
   job: Job;
   applyHref?: string;
+  logoSrc: string;
+  heroBgSrc: string;
+  illustrationSrc: string;
 };
 
-export function JobHero({ job, applyHref = "#apply-job" }: JobHeroProps) {
+export function JobHero({
+  job,
+  applyHref = "#apply-job",
+  logoSrc,
+  heroBgSrc,
+  illustrationSrc,
+}: JobHeroProps) {
   const showSalary = job.showSalary && job.salaryRange;
   const { locale, t } = useLocale();
   const { title, content } = useMemo(
     () => resolveJobForLocale(job, locale),
     [job, locale]
   );
+  const bgRemote = heroBgSrc.startsWith("http");
+  const logoRemote = logoSrc.startsWith("http");
+  const illRemote = illustrationSrc.startsWith("http");
 
   return (
     <section className="relative isolate overflow-hidden bg-neutral-100">
       <div className="pointer-events-none absolute inset-0">
         <Image
-          src="/cannery/full_machine_cannery_line.png"
+          src={heroBgSrc}
           alt=""
           fill
           priority
           sizes="100vw"
           className="object-cover object-center opacity-55"
+          unoptimized={bgRemote}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/70 via-neutral-50/55 to-neutral-100/85" />
       </div>
@@ -54,11 +67,12 @@ export function JobHero({ job, applyHref = "#apply-job" }: JobHeroProps) {
             aria-label="Cannery Careers"
           >
             <Image
-              src="/cannery/Cannery_logo_horizontal.png"
+              src={logoSrc}
               alt="Cannery"
               fill
               className="object-contain object-right"
               sizes="(max-width: 640px) 144px, 176px"
+              unoptimized={logoRemote}
             />
           </Link>
         </div>
@@ -108,12 +122,13 @@ export function JobHero({ job, applyHref = "#apply-job" }: JobHeroProps) {
 
         <div className="relative mx-auto mt-2 w-full max-w-xs sm:max-w-sm">
           <Image
-            src="/cannery/Canner-1.webp"
+            src={illustrationSrc}
             alt="Cannery purk"
             width={400}
             height={400}
             loading="lazy"
             className="h-auto w-full object-contain drop-shadow-md"
+            unoptimized={illRemote}
           />
         </div>
       </div>
