@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: ogUrl,
           width: 1200,
           height: 630,
-          alt: "Cannery Careers",
+          alt: "Canning Brothers Careers",
         },
       ],
     },
@@ -65,7 +65,7 @@ export default async function HomePage({
         variant="general"
         sectionId="apply-general"
         mailtoEmail={defaultMail}
-        mailtoSubject="Cannery Careers — üldine kandideerimine"
+        mailtoSubject="Canning Brothers Careers — üldine kandideerimine"
         prefill={prefill}
       />
 

@@ -55,7 +55,7 @@ function getNotifyRecipient(): string {
 function getFromHeader(): string {
   const email =
     process.env.SMTP_FROM_EMAIL?.trim() || DEFAULT_SMTP_FROM_EMAIL;
-  const name = process.env.SMTP_FROM_NAME?.trim() || "Cannery Careers";
+  const name = process.env.SMTP_FROM_NAME?.trim() || "Canning Brothers Careers";
   const safeName = name.replace(/"/g, "\\");
   return `"${safeName}" <${email}>`;
 }
@@ -108,7 +108,7 @@ function buildNotificationHtml(
 <head><meta charset="utf-8" /></head>
 <body style="font-family:system-ui,-apple-system,sans-serif;line-height:1.5;color:#171717;max-width:560px;margin:0;padding:24px;">
   <div style="border-bottom:4px solid #fdb813;padding-bottom:16px;margin-bottom:20px;">
-    <h1 style="margin:0;font-size:20px;">Cannery Careers — uus kandideerimine</h1>
+    <h1 style="margin:0;font-size:20px;">Canning Brothers Careers — uus kandideerimine</h1>
     <p style="margin:8px 0 0;font-size:14px;color:#525252;">Saadetud: ${escapeHtml(formatDate(application.createdAt))}</p>
   </div>
   <table style="width:100%;border-collapse:collapse;font-size:15px;">
@@ -122,7 +122,7 @@ function buildNotificationHtml(
   <p style="margin-top:24px;">
     <a href="${escapeHtml(adminAppUrl)}" style="display:inline-block;background:#171717;color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:14px;font-weight:600;">Ava adminis</a>
   </p>
-  <p style="font-size:12px;color:#a3a3a3;margin-top:24px;">Cannery Careers · see kiri saadeti automaatselt (SMTP)</p>
+  <p style="font-size:12px;color:#a3a3a3;margin-top:24px;">Canning Brothers Careers · see kiri saadeti automaatselt (SMTP)</p>
 </body>
 </html>
 `;
@@ -221,7 +221,7 @@ function applicantDefaultInnerHtmlEt(
     : `<p>Kui Sa ei lisanud veel CV-d, saada see palun aadressil <a href="mailto:${hrMail}">${hrMail}</a>.</p>`;
 
   const closingEt =
-    '<p>Võtame peagi ühendust.</p><p style="margin-top:16px;color:#737373;font-size:13px;">Cannery Careers · Cannery OÜ</p>';
+    '<p>Võtame peagi ühendust.</p><p style="margin-top:16px;color:#737373;font-size:13px;">Canning Brothers Careers · Canning Brothers</p>';
 
   return blockEt + cvEt + closingEt;
 }
@@ -243,7 +243,7 @@ function applicantDefaultInnerHtmlEn(
     : `<p>If you have not attached a CV yet, please send it to <a href="mailto:${hrMail}">${hrMail}</a>.</p>`;
 
   const closingEn =
-    '<p>We will be in touch soon.</p><p style="margin-top:16px;color:#737373;font-size:13px;">Cannery Careers · Cannery OÜ</p>';
+    '<p>We will be in touch soon.</p><p style="margin-top:16px;color:#737373;font-size:13px;">Canning Brothers Careers · Canning Brothers</p>';
 
   return blockEn + cvEn + closingEn;
 }
@@ -288,8 +288,8 @@ function buildApplicantConfirmationHtml(
 
   const subject =
     locale === "en"
-      ? "Cannery Careers — application received"
-      : "Cannery Careers — kandideerimine vastu võetud";
+      ? "Canning Brothers Careers — application received"
+      : "Canning Brothers Careers — kandideerimine vastu võetud";
 
   return { html, subject };
 }

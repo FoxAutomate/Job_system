@@ -12,9 +12,9 @@ const inter = Inter({
   variable: "--font-sans",
 });
 
-const siteTitle = "Cannery Careers — Cannery OÜ tööpakkumised";
+const siteTitle = "Canning Brothers Careers — tööpakkumised";
 const description =
-  "Cannery OÜ ametikohad: villimisliinid, masinaehitus, Laagri. Kandideeri veebis või saada CV.";
+  "Canning Brothers: villimisliinid, masinaehitus, Tallinn. Kandideeri veebis või saada CV.";
 
 /** Same hero visual as the site — avoids link previews picking a doc-like asset. */
 const defaultOgImage = "/cannery/full_machine_cannery_line.png";
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
         url: defaultOgImage,
         width: 1920,
         height: 1080,
-        alt: "Cannery — villimisliin",
+        alt: "Canning Brothers — villimisliin",
       },
     ],
   },

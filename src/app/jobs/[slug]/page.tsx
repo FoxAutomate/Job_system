@@ -30,12 +30,12 @@ export async function generateMetadata({
   const { slug } = await params;
   const job = await getJobBySlug(slug);
   if (!job || !job.active) {
-    return { title: "Kuulutus | Cannery Careers" };
+    return { title: "Kuulutus | Canning Brothers Careers" };
   }
   const cookieStore = await cookies();
-  const loc = localeFromCookie(cookieStore.get("cannery_locale")?.value);
+  const loc = localeFromCookie(cookieStore.get("careers_locale")?.value);
   const resolved = resolveJobForLocale(job, loc);
-  const pageTitle = `${resolved.title} | Cannery Careers`;
+  const pageTitle = `${resolved.title} | Canning Brothers Careers`;
   const settings = await getSiteSettings();
   const b = resolveSiteBranding(settings);
   const jobOgImage = absoluteOgImageUrl(b.jobOgSrc, getMetadataBase());
@@ -47,7 +47,7 @@ export async function generateMetadata({
       title: pageTitle,
       description: resolved.shortDescription,
       url: `/jobs/${slug}`,
-      siteName: "Cannery Careers",
+      siteName: "Canning Brothers Careers",
       locale: loc === "en" ? "en_GB" : "et_EE",
       type: "website",
       images: [
@@ -55,7 +55,7 @@ export async function generateMetadata({
           url: jobOgImage,
           width: 1200,
           height: 630,
-          alt: "Cannery Careers",
+          alt: "Canning Brothers Careers",
         },
       ],
     },

@@ -64,11 +64,11 @@ export function JobHero({
           <Link
             href="/"
             className="relative h-10 w-36 shrink-0 sm:h-12 sm:w-44"
-            aria-label="Cannery Careers"
+            aria-label="Canning Brothers Careers"
           >
             <Image
               src={logoSrc}
-              alt="Cannery"
+              alt="Canning Brothers"
               fill
               className="object-contain object-right"
               sizes="(max-width: 640px) 144px, 176px"
@@ -123,7 +123,7 @@ export function JobHero({
         <div className="relative mx-auto mt-2 w-full max-w-xs sm:max-w-sm">
           <Image
             src={illustrationSrc}
-            alt="Cannery purk"
+            alt="Tootepurk"
             width={400}
             height={400}
             loading="lazy"

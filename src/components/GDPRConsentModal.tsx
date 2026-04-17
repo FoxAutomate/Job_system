@@ -36,8 +36,8 @@ export function GDPRConsentModal({ open, onOpenChange }: Props) {
             </h3>
             <ul className="list-disc space-y-2 pl-4">
               <li>
-                <strong>Andmete vastutav töötleja:</strong> Cannery OÜ
-                (Eesti).
+                <strong>Andmete vastutav töötleja:</strong> Canning Brothers
+                (Eesti), aadress: Canning tn 12, Tallinn.
               </li>
               <li>
                 <strong>Töötluse eesmärk:</strong> värbamisprotsessi
@@ -71,7 +71,8 @@ export function GDPRConsentModal({ open, onOpenChange }: Props) {
             </h3>
             <ul className="list-disc space-y-2 pl-4">
               <li>
-                <strong>Data controller:</strong> Cannery OÜ (Estonia).
+                <strong>Data controller:</strong> Canning Brothers (Estonia),
+                address: Canning tn 12, Tallinn.
               </li>
               <li>
                 <strong>Purposes of processing:</strong> carrying out the

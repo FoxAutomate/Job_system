@@ -11,7 +11,7 @@ import {
 
 import { type Locale, type Messages, messages } from "@/lib/i18n/messages";
 
-const COOKIE = "cannery_locale";
+const COOKIE = "careers_locale";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 type LocaleContextValue = {

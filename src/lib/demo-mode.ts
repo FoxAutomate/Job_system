@@ -2,18 +2,18 @@
  * Showcase / demo deploy (osobny projekt Vercel, zalecana gałąź `demo`):
  *
  * 1. W Vercel utwórz **nowy** projekt wskazujący na repo (np. branch `demo`) —
- *    nie podłączaj pod istniejący produkcyjny projekt Cannery Jobs, żeby nie
+ *    nie podłączaj pod istniejący produkcyjny deploy głównej strony, żeby nie
  *    nadpisać produkcji.
  * 2. W Settings → Environment Variables dodaj:
  *    - `DEMO_MODE` = `true`
  *    - `NEXT_PUBLIC_DEMO` = `true`
- *    - `AUTH_SECRET` (losowy), `ADMIN_EMAIL` (np. `admin@cannery-careers.demo` —
+ *    - `AUTH_SECRET` (losowy), `ADMIN_EMAIL` (np. `admin@canningbrothers-careers.demo` —
  *      pole logowania to `type="email"`, więc nie używaj samego `admin`),
  *    - `ADMIN_PASSWORD_HASH` (bcrypt dla hasła demo, np. `admin123`)
  * 3. **Nie** ustawiaj `DATABASE_URL` / `BLOB_*` produkcji — w demo dane są
  *    statyczne; zgłoszenia nie są zapisywane (patrz `submitApplication`).
  *
- * Na **produkcji** (Cannery Jobs) nie ustawiaj `DEMO_MODE` ani `NEXT_PUBLIC_DEMO`.
+ * Na **produkcji** (główny serwis) nie ustawiaj `DEMO_MODE` ani `NEXT_PUBLIC_DEMO`.
  */
 export function isDemoMode(): boolean {
   return process.env.DEMO_MODE === "true";

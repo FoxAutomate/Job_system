@@ -11,7 +11,7 @@ export const DEFAULT_APPLICANT_EMAIL_BODY_ET = [
   "",
   "Võtame peagi ühendust.",
   "",
-  "Cannery Careers · Cannery OÜ",
+  "Canning Brothers Careers · Canning Brothers",
 ].join("\n");
 
 export const DEFAULT_APPLICANT_EMAIL_BODY_EN = [
@@ -23,7 +23,7 @@ export const DEFAULT_APPLICANT_EMAIL_BODY_EN = [
   "",
   "We will be in touch soon.",
   "",
-  "Cannery Careers · Cannery OÜ",
+  "Canning Brothers Careers · Canning Brothers",
 ].join("\n");
 
 export function normalizeApplicantEmailBody(s: string): string {

@@ -24,7 +24,7 @@ export function HomePageFooter({ defaultMail }: HomePageFooterProps) {
         </a>
       </p>
       <p className="mt-4 text-xs text-neutral-500">
-        Cannery Careers · Cannery OÜ
+        Canning Brothers Careers · Canning Brothers
       </p>
       <p className="mt-2">
         <Link

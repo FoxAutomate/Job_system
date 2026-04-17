@@ -7,7 +7,7 @@ import { isDemoMode } from "@/lib/demo-mode";
 
 const DEMO_SITE_SETTINGS_ROW = {
   id: "default",
-  defaultApplicationEmail: "demo@cannery-careers.demo",
+  defaultApplicationEmail: "demo@canningbrothers-careers.demo",
   applicantEmailBodyEt: null as string | null,
   applicantEmailBodyEn: null as string | null,
   siteLogoUrl: null as string | null,

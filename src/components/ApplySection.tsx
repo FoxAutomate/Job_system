@@ -37,7 +37,7 @@ export function ApplySection({
   jobId,
   job = null,
   mailtoEmail = DEFAULT_PUBLIC_CONTACT_EMAIL,
-  mailtoSubject = "Cannery Careers",
+  mailtoSubject = "Canning Brothers Careers",
   sectionId = "apply",
   prefill,
 }: ApplySectionProps) {
@@ -74,7 +74,7 @@ export function ApplySection({
     resolved?.content.footerEmail?.trim() ?? job?.emailTo ?? mailtoEmail;
   const subjectResolved =
     variant === "job" && resolved
-      ? `Cannery — ${resolved.title}`
+      ? `Canning Brothers — ${resolved.title}`
       : mailtoSubject;
 
   return (

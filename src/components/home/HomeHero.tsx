@@ -52,11 +52,11 @@ export function HomeHero({ logoSrc, heroBgSrc }: HomeHeroProps) {
             <Link
               href="/"
               className="relative h-10 w-36 sm:h-12 sm:w-44"
-              aria-label="Cannery"
+              aria-label="Canning Brothers"
             >
               <Image
                 src={logoSrc}
-                alt="Cannery"
+                alt="Canning Brothers"
                 fill
                 className="object-contain object-right"
                 sizes="(max-width: 640px) 144px, 176px"

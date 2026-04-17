@@ -7,16 +7,16 @@ export const seedJob = {
   slug: defaultJobSlug,
   title: "Villimismasinate koostaja-tehnik",
   shortDescription:
-    "Mehaaniline montaaž, seadistamine ja testimine — Laagri, Harjumaa. Brutopalk 1400–1700 €.",
+    "Mehaaniline montaaž, seadistamine ja testimine — Tallinn. Brutopalk 1400–1700 €.",
   active: true,
   showSalary: true,
   salaryRange: "1400–1700 € / kuu",
   emailTo: DEFAULT_PUBLIC_CONTACT_EMAIL,
   content: {
-    tagline: "Cannery OÜ · Harjumaa",
+    tagline: "Canning Brothers · Tallinn",
     heroIntro:
-      "Cannery OÜ arendab ja ehitab joogitööstusele mõeldud purkidesse villimise liine ning tegeleb jookide tootmisega. Liitu meeskonnaga, kes paneb kokku ja seadistab päris villimisliine üle Eesti ja välismaal.",
-    location: "Hoiu 16, Laagri, Harjumaa",
+      "Canning Brothers arendab ja ehitab joogitööstusele mõeldud purkidesse villimise liine ning tegeleb jookide tootmisega. Liitu meeskonnaga, kes paneb kokku ja seadistab villimisliine Eestis ja välismaal.",
+    location: "Canning tn 12, Tallinn",
     deadlineDisplay: "30.06.2026",
     deadlineIso: "2026-06-30",
     responsibilities: [

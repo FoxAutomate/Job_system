@@ -1,6 +1,6 @@
 /** Built-in paths under /public when DB URL is null */
 export const BRANDING_DEFAULTS = {
-  logo: "/cannery/Cannery_logo_horizontal.png",
+  logo: "/canning-brothers/logo-wide.png",
   homeHeroBg: "/cannery/full_machine_cannery_line.png",
   jobHeroBg: "/cannery/full_machine_cannery_line.png",
   homeOg: "/cannery/full_machine_cannery_line.png",
