@@ -19,6 +19,10 @@ function attachmentFileName(cvFileName: string | null, pathname: string): string
   return raw.slice(0, 200);
 }
 
+function isPdfContentType(ct: string | null | undefined): boolean {
+  return (ct ?? "").toLowerCase().includes("pdf");
+}
+
 /**
  * Admin-only: stream CV from Vercel Blob via SDK (reliable;302 to downloadUrl
  * often saves a tiny body instead of the file on Vercel).
@@ -61,14 +65,13 @@ export async function GET(request: Request) {
   }
 
   const fileName = attachmentFileName(row.cvFileName, result.blob.pathname);
+  const contentType = result.blob.contentType || "application/octet-stream";
+  const inline = isPdfContentType(contentType);
   const headers = new Headers();
-  headers.set(
-    "Content-Type",
-    result.blob.contentType || "application/octet-stream"
-  );
+  headers.set("Content-Type", contentType);
   headers.set(
     "Content-Disposition",
-    `attachment; filename*=UTF-8''${encodeURIComponent(fileName)}`
+    `${inline ? "inline" : "attachment"}; filename*=UTF-8''${encodeURIComponent(fileName)}`
   );
   if (typeof result.blob.size === "number") {
     headers.set("Content-Length", String(result.blob.size));
